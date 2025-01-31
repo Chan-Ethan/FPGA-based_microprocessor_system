@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# ==================================================================================
+# File name   : check_log_comp
+# Title       : check regression compile logs
+# Project     : template
+# Description : 1. read each testcase's compile log
+#               2. print testcase name and 'FAIL' if any compile error was detected
+#               3. print statistic infomation
+# Modification: initial
+# ==================================================================================
+
+# preparation
+cd comp_log
+flist=`ls *.log`
+echo 
+
+# print compile result of each testcase, and count statistic info
+CaseNum=0
+ErrNum=0
+for log in $flist
+do
+    let CaseNum++
+    if grep -q 'Error-' $log;
+    then
+        let ErrNum++
+        printf "%-5s %-40s %-5s\n" $CaseNum ${log/.log/} 'FAIL!'
+    fi
+done
+
+# print statistic info
+if let $ErrNum>0;
+then
+        echo
+        echo "      Total   Testcase number is $CaseNum"
+    echo "      Error   Testcase number is $ErrNum";
+else
+    echo "      All $CaseNum Testcases are Compiled Successfully";
+fi

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+flist=`ls ../../testcase`
+
+rm -f test_list
+for file in $flist
+do
+    echo ${file/.sv/} >> test_list
+done
+
+echo 'finish'

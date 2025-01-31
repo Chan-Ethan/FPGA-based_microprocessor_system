@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#======================================================================================
+# File name   : check_log
+# Title       : check regression compile and simulation logs
+# Project     : template
+# Description : 1. read each testcase's sim log and print its result
+#               2. calculate and print statistic information
+#               3. run check_log_comp, open check_log_comp script for more infomation
+# Modification: initial
+#=====================================================================================
+
+# preparation and print table head
+cd sim_log
+flist=`ls *.log`
+echo | tee ../report.log -a
+echo '-------------------------------------------------------------------' | tee ../report.log -a
+printf "%-5s %-40s %-10s\n" 'No' 'Testcase' 'Result'                       | tee ../report.log -a
+echo '-------------------------------------------------------------------' | tee ../report.log -a
+
+# print sim result of each testcase, and count statistic info
+CaseNum=0
+PassNum=0
+TimeoutNum=0
+for log in $flist
+do
+    let CaseNum++
+    if grep -q 'TEST CASE PASS' $log;
+    then
+        let PassNum++
+        printf "%-5s %-40s %-10s\n" $CaseNum ${log/.log/} 'PASS'                | tee ../report.log -a
+        elif grep -q 'TEST CASE TIMEOUT' $log;
+        then
+                let     TimeoutNum++
+                printf "%-5s %-40s %-10s\n" $CaseNum ${log/.log/} '           TIMEOUT!' | tee ../report.log -a
+    else
+        printf "%-5s %-40s %-10s\n" $CaseNum ${log/.log/} '     FAIL!'          | tee ../report.log -a
+    fi
+done
+
+# print statistic info
+echo '-------------------------------------------------------------------'      | tee ../report.log -a
+echo "      Total   Testcase number is $CaseNum"                                | tee ../report.log -a
+echo "      Passed  Testcase number is $PassNum"                                | tee ../report.log -a
+echo "      Failed  Testcase number is $[$CaseNum - $PassNum - $TimeoutNum]"    | tee ../report.log -a
+echo "      Timeout Testcase number is $[$TimeoutNum]"                          | tee ../report.log -a
+echo '-------------------------------------------------------------------'      | tee ../report.log -a
+
+# run check_log_comp script
+cd ..
+./check_log_comp | tee report.log -a

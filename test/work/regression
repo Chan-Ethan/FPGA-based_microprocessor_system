@@ -1,0 +1,188 @@
+#!/bin/bash
+
+#----------------------------------------------------
+# func : print help infomation for run_regression
+#----------------------------------------------------
+function print_help() {
+    clear
+    echo '************************************** regression script **************************************'
+    echo 'use this script to run a list of testcases'
+    echo
+    echo '[Optional parameter]'
+    echo '    -c|C : enable coverage collection                           '
+    echo '    -e|E : run all error testcases listed by ./run/problem_list,'
+    echo '           default: run all testcases listed by ./run/test_list'
+    echo '    -h|H : print help infomation'
+    echo '    -i|I : initial: clean all testcase folder and regresion result folder'
+    echo '    -l|L : print test list'
+    echo '    -t|T : set thread_number for running testcases, run thread_num testcases at the same time'
+    echo '           default: thread_num = 10'
+    echo
+    echo '[Regression result]'
+    echo "the regression result would be stored in directory:           'all_regression'"
+    echo "the user define testlist result would be stored in directory: 'user_regression'"
+    echo "run all error testcases result would be stored in directory:  'err_regression'"
+    echo "run all APP testcases result would be stored in directory:    'app_regression'"
+    echo "run all IPSec testcases result would be stored in directory:  'ipsec_regression'"
+    echo 'cd to specific directory to check result:'
+    echo "    use command './check_log' to print testcase and result table"
+    echo "    use command 'make run_verdi tc=TEST_CASE' to open verdi with the waveform of specific TEST_CASE"
+    echo "    all simulation logs would be stored in directory 'sim_log'"
+    echo
+    echo '******************************************* THE END *******************************************'
+}
+
+#----------------------------------------------------
+# func : run one testcase function
+# input: $1 - testcase name
+#        $2 - regression result directory
+#        $3 - coverage enable flag
+#----------------------------------------------------
+function run_case() {
+    rm -rf $1
+    cp -r template $1
+    cd $1
+    make all tc=$1 cov=$3
+    cp comp_log/* ../$2/comp_log/
+    cp sim_log/* ../$2/sim_log/
+    cp fsdb/* ../$2/fsdb/
+    if [ $3 = 1 ]
+    then
+        cp -r coverage/* ../$2/coverage/
+    fi
+    cd ..
+}
+
+#----------------------------------------------------
+# func : clean testcase temp files function
+# notes: delete fsdb/vdb/log tmp files,not dir
+#---------------------------------------------------
+function clean_tmp_file() {
+    find . -maxdepth 1 -type d ! -name "a" ! -name "b" ! -name "." -exec rm -rf {} \;
+    echo "clean all temp files"
+}
+
+#----------------------------------------------------
+# get optional parameter
+#----------------------------------------------------
+test_list=./run/test_list
+result_dir=all_regression
+print_list=0
+cov=0
+thread_num=10
+while getopts 'cCeEhHiIlLpPt:T:u:U:' opt
+do
+    case $opt in
+        c|C)    cov=1;;
+        e|E)    test_list=./run/problem_list
+                result_dir=err_regression;;
+        h|H)    print_help
+                exit;;
+        i|I)    clean_tmp_file
+                exit;;
+        l|L)    print_list=1;;
+        t|T)    thread_num=$OPTARG;;
+        *)      echo "[Error] illegal option input, use './set_run_all -h' to get more help"
+                exit;;
+    esac
+done
+
+#----------------------------------------------------
+# print test_list and exit (if print_list is set)
+#----------------------------------------------------
+if [ $print_list = 1 ]
+then
+    echo
+    echo "---------------------- test list ----------------------"        
+    sed /#/d $test_list
+    echo
+    echo "-------------------------------------------------------"
+    echo
+    exit
+fi
+
+#----------------------------------------------------
+# confirm operation
+#----------------------------------------------------
+echo
+echo "=========================== W A R N I N G ! =========================== "
+echo "                                                                        "
+echo "  Do you really want to run regression?                                 "
+echo "                                                                        "
+echo "  testcases list is [$test_list]                                        "
+echo "                                                                        "
+echo "  regression result would be stored in [$result_dir]                    "
+echo "                                                                        "
+if [ $cov = 1 ]
+then
+    echo "  coverage collection on                                            "
+else
+    echo "  coverage collection off                                           "
+fi
+echo "                                                                        "
+echo "  thread_num = [$thread_num]                                            "
+echo "                                                                        "
+echo "  Please enter [yes] to continue...                                     "
+echo "                                                                        "
+echo "======================================================================= "
+echo
+read result
+if [ $result = 'yes' ]
+then
+    echo "begin to run regression"
+else
+    echo "regression stop"
+    exit
+fi
+
+#----------------------------------------------------
+# preparation
+#----------------------------------------------------
+clean_tmp_file
+mkdir $result_dir
+cd run
+chmod 755 check_log check_log_comp
+cp check_log ../$result_dir/
+cp check_log_comp ../$result_dir/
+cd ../tpl
+chmod 755 makefile verdi.tcl
+cp makefile ../$result_dir/
+cp verdi.tcl ../$result_dir/
+cd ../$result_dir/
+mkdir sim_log
+mkdir comp_log
+mkdir fsdb
+mkdir coverage
+cd ..
+
+#----------------------------------------------------
+# run simulation
+#----------------------------------------------------
+for tc in `sed /#/d $test_list`
+do
+    joblist=($(jobs -p))
+    while ((${#joblist[@]}>=$thread_num))
+    do
+        sleep 5
+        joblist=($(jobs -p))
+    done
+    run_case $tc $result_dir $cov &
+done
+wait
+
+#----------------------------------------------------
+# generate coverage report
+#----------------------------------------------------
+if [ $cov = 1 ]
+then
+    cd $result_dir/coverage
+    urg -dir *.vdb -report ../coverage_report
+    cd ../../
+fi
+
+#----------------------------------------------------
+# print simulation result and update report
+#----------------------------------------------------
+cd $result_dir
+echo
+./check_log
