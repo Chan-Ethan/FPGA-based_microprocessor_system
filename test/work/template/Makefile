@@ -4,6 +4,7 @@ tc = simple_test
 VERBOSITY = HIGH
 MAX_QUIT_COUNT = 500
 UVM_HOME = ../../uvm-1.1d/uvm-1.1d
+XIILINX_VIVADO = /home/Xilinx/Vivado/2019.1
 
 compile:
 	vcs	\
@@ -17,9 +18,11 @@ compile:
 	-timescale=1ns/1ns \
 	-fsdb \
 	+incdir+dirctory+$(UVM_HOME)/src \
+	-y $(XILINX_VIVADO)/data/verilog/src/unisims \
+    -y $(XILINX_VIVADO)/data/verilog/src/unimacro \
+    -y $(XILINX_VIVADO)/data/verilog/src/retarget \
 	$(UVM_HOME)/src/uvm.sv \
 	-f $(FILE_LIST) \
-	../../testcase/$(tc).sv \
 	-l ./comp_log/$(tc).log \
 	#-o $(tc).o
 
@@ -46,7 +49,8 @@ wave:
     & 
 
 clean:
-	rm -rf *.log ucli.key vc_hdrs.h csrc simv* verdiLog novas* ./comp_log/* ./sim_log/* ./fsdb/*
+	rm -rf *.log ucli.key vc_hdrs.h csrc simv* verdiLog novas* comp_log sim_log fsdb
+	mkdir comp_log sim_log fsdb
 
 all: clean compile sim
 all2: all wave
