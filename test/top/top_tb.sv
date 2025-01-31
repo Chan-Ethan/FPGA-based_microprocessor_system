@@ -13,7 +13,7 @@ module top_tb (
     // my_if   output_if(clk, rst_n);
 
     initial begin   
-        clk = 1'b0;
+        clk_100M = 1'b0;
         rst_n = 1'b1;
 
         // #100us;
@@ -35,7 +35,7 @@ module top_tb (
     end
 
     always begin
-        #5ns;   clk <= ~clk; // 100 MHz
+        #5ns; clk_100M <= ~clk_100M; // 100 MHz
     end
 
     top top (

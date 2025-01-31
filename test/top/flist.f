@@ -2,7 +2,7 @@
 ../../sim_model/clk_wiz_0_funcsim.v
 
 // DUT
-../../../src/seg7/seg7decoder.sv
+../../../src/seg7/seg7decoder.v
 ../../../src/top/top.sv
 
 // UVM platform
