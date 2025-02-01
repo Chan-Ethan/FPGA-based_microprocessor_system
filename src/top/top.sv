@@ -6,7 +6,8 @@ module top(
     output  reg   [3:0]     SEG_SELECT_OUT  ,
     output  reg   [7:0]     HEX_OUT         ,
 
-    output  reg             MMCM_LOCKED
+    output  reg             LED15_LOCKED    ,
+    output  reg             LED14_1HZ    
 );
 
 logic           clk_sys;
@@ -30,10 +31,10 @@ end
 // instantiate the clock wizard
 clk_wiz_0 clk_wiz_0_inst
  (
-    .clk_in1    (CLK100_IN  ),
-    .clk_out1   (clk_sys    ),
-    .resetn     (rst_n      ),
-    .locked     (MMCM_LOCKED)
+    .clk_in1    (CLK100_IN      ),
+    .clk_out1   (clk_sys        ),
+    .resetn     (rst_n          ),
+    .locked     (LED15_LOCKED   )
  );
 
 // instantiate the seven segment decoder
@@ -73,6 +74,19 @@ always @(posedge clk_sys or negedge rst_n) begin
         else begin
             clk_1hz <= 1'b0;
         end
+    end
+end
+
+// 1Hz signal to LED14
+always @(posedge clk_sys or negedge rst_n) begin
+    if (!rst_n) begin
+        LED14_1HZ <= 1'b0;
+    end
+    else begin
+        if (clk_1hz) begin
+            LED14_1HZ <= ~LED14_1HZ;
+        end
+        else;
     end
 end
 
