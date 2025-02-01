@@ -12,5 +12,5 @@ do
 done
 
 git add -u
-git commit -m $message
+git commit -m "$message"
 git push
