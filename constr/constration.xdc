@@ -6,7 +6,7 @@ create_clock -period 10.000 -name clk100 -waveform {0.000 5.000} [get_ports CLK1
 ## Reset Constraints
 set_property PACKAGE_PIN U18 [get_ports HARD_RSTN]
 set_property IOSTANDARD LVCMOS33 [get_ports HARD_RSTN]
-set_property PULLUP true [get_ports HARD_RSTN]
+## set_property PULLDOWN true [get_ports HARD_RSTN]
 
 ## Seven Segment Display Constraints
 set_property PACKAGE_PIN U2 [get_ports {SEG_SELECT_OUT[0]}]

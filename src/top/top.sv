@@ -30,9 +30,9 @@ logic   [1:0]   seg_select_in;
 
 // reset logic
 always_ff @(posedge CLK100_IN) begin
-    HARD_RSTN_1dly <= HARD_RSTN;
+    HARD_RSTN_1dly <= ~HARD_RSTN;
     HARD_RSTN_2dly <= HARD_RSTN_1dly;
-    rst_n <= (HARD_RSTN_1dly & HARD_RSTN_2dly);
+    rst_n <= (HARD_RSTN_1dly | HARD_RSTN_2dly);
 end
 
 
