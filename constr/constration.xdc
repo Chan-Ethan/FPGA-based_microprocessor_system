@@ -28,3 +28,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports {HEX_OUT[*]}]
 ## MMCM Locked Signal Constraints
 set_property PACKAGE_PIN L1 [get_ports LED15_LOCKED]
 set_property IOSTANDARD LVCMOS33 [get_ports LED15_LOCKED]
+
+set_property PACKAGE_PIN P1 [get_ports LED14_1HZ]
+set_property IOSTANDARD LVCMOS33 [get_ports LED14_1HZ]

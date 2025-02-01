@@ -8,7 +8,8 @@ module top_tb (
     logic           SEG_SELECT_OUT  ;
     logic           HEX_OUT         ;
 
-    logic           MMCM_LOCKED     ;
+    logic           LED15_LOCKED    ;
+    logic           LED14_1HZ       ;
 
     // my_if   input_if(clk, rst_n);
     // my_if   output_if(clk, rst_n);
@@ -57,7 +58,8 @@ module top_tb (
         .HARD_RSTN      (rst_n         ),
         .SEG_SELECT_OUT (SEG_SELECT_OUT),
         .HEX_OUT        (HEX_OUT       ),
-        .MMCM_LOCKED    (MMCM_LOCKED   )
+        .LED15_LOCKED   (LED15_LOCKED  ),
+        .LED14_1HZ      (LED14_1HZ     )
     );
 
     // initial begin
