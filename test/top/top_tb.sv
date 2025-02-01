@@ -5,8 +5,8 @@ module top_tb (
     logic           clk_50M         ; // 50 MHz force sys_clk
     logic           rst_n           ;
     
-    logic           SEG_SELECT_OUT  ;
-    logic           HEX_OUT         ;
+    logic   [3:0]   SEG_SELECT_OUT  ;
+    logic   [7:0]   HEX_OUT         ;
 
     logic           LED15_LOCKED    ;
     logic           LED14_1HZ       ;
@@ -27,10 +27,7 @@ module top_tb (
         #200us;
         rst_n = 1'b1;
         $display("reset finish");
-        
-        #500us;
-        rst_n = 1'b0;
-        #2ms;
+        #1ms;
         $finish();
     end
 

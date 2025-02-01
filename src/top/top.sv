@@ -11,9 +11,9 @@ module top(
 );
 
 `ifdef SIMULATION
-    CNT_NUM = 26'd49;
+    `define CNT_NUM 26'd49
 `else
-    CNT_NUM = 26'd49999999;
+    `define CNT_NUM 26'd49999999
 `endif
 
 logic           clk_sys;
@@ -60,11 +60,11 @@ always @(posedge clk_sys or negedge rst_n) begin
         clk_cnt <= 26'b0;
     end
     else begin
-        if (clk_cnt == CNT_NUM) begin
+        if (clk_cnt == `CNT_NUM) begin
             clk_cnt <= 26'b0;
         end
         else begin
-            clk_cnt++;
+            clk_cnt <= clk_cnt + 26'd1;
         end
     end
 end
@@ -74,7 +74,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         clk_1hz <= 1'b0;
     end
     else begin
-        if (clk_cnt == CNT_NUM) begin
+        if (clk_cnt == `CNT_NUM) begin
             clk_1hz <= 1'b1;
         end
         else begin
