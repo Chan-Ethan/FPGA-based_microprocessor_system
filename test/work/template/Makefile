@@ -4,11 +4,11 @@ tc = simple_test
 VERBOSITY = HIGH
 MAX_QUIT_COUNT = 500
 UVM_HOME = ../../uvm-1.1d/uvm-1.1d
-XIILINX_VIVADO = /home/Xilinx/Vivado/2019.1
+XIILINX_VIVADO = /home/Xilinx/Vivado/2015.2
 
 compile:
 	vcs	\
-	+v2k \
+	+bext+v2k \
 	+define+SIMULATION \
 	-full64 \
 	-sverilog \
@@ -17,15 +17,6 @@ compile:
 	-ntb_opts uvm-1.1 \
 	-timescale=1ns/1ns \
 	-fsdb \
-	+incdir+dirctory+$(UVM_HOME)/src \
-	-y $(XILINX_VIVADO)/data/verilog/src/unisims \
-    -y $(XILINX_VIVADO)/data/verilog/src/unimacro \
-    -y $(XILINX_VIVADO)/data/verilog/src/retarget \
-	+incdir+$(XILINX_VIVADO)/verilog/src+libext+.v \
-    $(XILINX_VIVADO)/data/verilog/src/unisim_comp.v \
-    $(XILINX_VIVADO)/data/verilog/src/unisim_retarget_comp.v \
-    $(XILINX_VIVADO)/data/verilog/src/unisim_retarget_comp.vp \
-    $(XILINX_VIVADO)/data/verilog/src/glbl.v \
 	$(UVM_HOME)/src/uvm.sv \
 	-f $(FILE_LIST) \
 	-l ./comp_log/$(tc).log \

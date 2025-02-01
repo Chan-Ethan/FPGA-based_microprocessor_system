@@ -1,3 +1,16 @@
+-y /home/Xilinx/Vivado/2015.2/data/verilog/src/unisims
+-y /home/Xilinx/Vivado/2015.2/data/verilog/src/unimacro
+-y /home/Xilinx/Vivado/2015.2/data/verilog/src/retarget
+-y /home/Xilinx/Vivado/2015.2/data/verilog/src/
++libext+.v
+/home/Xilinx/Vivado/2015.2/data/verilog/src/unisim_comp.v
+// /home/Xilinx/Vivado/2015.2/data/verilog/src/glbl.v
+// /home/Xilinx/Vivado/2015.2/data/verilog/src/unisims/BUFG.v
+// /home/Xilinx/Vivado/2015.2/data/verilog/src/unisims/IBUF.v
+// /home/Xilinx/Vivado/2015.2/data/verilog/src/unisims/MMCME2_ADV.v
+// /home/Xilinx/Vivado/2015.2/data/verilog/src/unisims/LUT1.v
+
+
 // simulation IP
 ../../sim_model/clk_wiz_0_funcsim.v
 

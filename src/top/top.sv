@@ -56,6 +56,9 @@ always @(posedge clk_sys or negedge rst_n) begin
         if (clk_cnt == 26'd49999999) begin
             clk_cnt <= 26'b0;
         end
+        else begin
+            clk_cnt++;
+        end
     end
 end
 
