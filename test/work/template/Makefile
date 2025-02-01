@@ -5,6 +5,7 @@ VERBOSITY = HIGH
 MAX_QUIT_COUNT = 500
 UVM_HOME = ../../uvm-1.1d/uvm-1.1d
 XIILINX_VIVADO = /home/Xilinx/Vivado/2015.2
+DEFINE = +define+SIMULATION
 
 compile:
 	vcs	\
@@ -29,7 +30,7 @@ sim:
 	+UVM_VERBOSITY=$(VERBOSITY) \
 	+UVM_TESTNAME=$(tc)	\
 	+UVM_MAX_QUIT_COUNT=$(MAX_QUIT_COUNT) \
-	+define+SIMULATION \
+	$(DEFINE) \
 	+fsdb+autoflush \
 	+fsdbfile+./fsdb/$(tc).fsdb \
 	#+UVM_TR_RECORD \
@@ -38,7 +39,7 @@ sim:
 wave:
 	verdi \
     -sv \
-    +define+SIMULATION \
+    $(DEFINE) \
     -f $(FILE_LIST) \
 	-top top_tb \
     -ssf ./fsdb/$(tc).fsdb \
