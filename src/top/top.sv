@@ -54,15 +54,6 @@ seg7decoder seg7decoder_inst(
     .HEX_OUT            (HEX_OUT        )
 );
 
-always @(posedge clk_sys or negedge rst_n) begin
-    if (!rst_n) begin
-        LED14_1HZ <= 1'b0;
-    end
-    else begin
-        LED14_1HZ <= ~LED14_1HZ;
-    end
-end
-
 // 1Hz signal generation
 logic           clk_1hz;
 logic [25:0]    clk_cnt;
@@ -147,7 +138,7 @@ always @(posedge clk_sys or negedge rst_n) begin
     end
 end
 
-always @(posedge clk_sys or negedge rst_n) begin
+always @(posedge clk_sys) begin
     seg_select_in <= seg_select;
 end
 
