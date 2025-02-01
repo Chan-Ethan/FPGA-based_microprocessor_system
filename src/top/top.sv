@@ -26,6 +26,8 @@ logic   [1:0]   seg_select;
 logic   [3:0]   bin;
 logic           dot;
 
+logic   [1:0]   seg_select_in;
+
 // reset logic
 always_ff @(posedge CLK100_IN) begin
     HARD_RSTN_1dly <= HARD_RSTN;
@@ -45,12 +47,21 @@ clk_wiz_0 clk_wiz_0_inst
 
 // instantiate the seven segment decoder
 seg7decoder seg7decoder_inst(
-    .SEG_SELECT_IN      (seg_select     ),
+    .SEG_SELECT_IN      (seg_select_in  ),
     .BIN_IN             (bin            ),
     .DOT_IN             (dot            ),
     .SEG_SELECT_OUT     (SEG_SELECT_OUT ),
     .HEX_OUT            (HEX_OUT        )
 );
+
+always @(posedge clk_sys or negedge rst_n) begin
+    if (!rst_n) begin
+        LED14_1HZ <= 1'b0;
+    end
+    else begin
+        LED14_1HZ <= ~LED14_1HZ;
+    end
+end
 
 // 1Hz signal generation
 logic           clk_1hz;
@@ -134,6 +145,10 @@ always @(posedge clk_sys or negedge rst_n) begin
             default: dot <= 1'b0;
         endcase
     end
+end
+
+always @(posedge clk_sys or negedge rst_n) begin
+    seg_select_in <= seg_select;
 end
 
 endmodule
