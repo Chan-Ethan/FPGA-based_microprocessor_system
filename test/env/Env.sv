@@ -1,7 +1,10 @@
 `ifndef ENV_SV
 `define ENV_SV
 
-class env extends uvm_env;
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+class Env extends uvm_env;
     // my_agent i_agt;
     // my_agent o_agt;
     // my_model mdl;
@@ -11,9 +14,9 @@ class env extends uvm_env;
     // uvm_tlm_analysis_fifo #(my_transaction) mdl_scb_fifo;
     // uvm_tlm_analysis_fifo #(my_transaction) oagt_scb_fifo;
 
-    function new(string name = "env", uvm_component parent = null);
+    function new(string name = "Env", uvm_component parent = null);
         super.new(name, parent);
-        `uvm_info("env", "env is created", UVM_MEDIUM)
+        `uvm_info("Env", "Env is created", UVM_MEDIUM)
 
         // agt_mdl_fifo = new("agt_mdl_fifo", this);
         // mdl_scb_fifo = new("mdl_scb_fifo", this);
@@ -23,13 +26,13 @@ class env extends uvm_env;
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual function void connect_phase(uvm_phase phase);
 
-    `uvm_component_utils(env)
+    `uvm_component_utils(Env)
 
 endclass
 
-function void env::build_phase(uvm_phase phase);
+function void Env::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info("env", "env build_phase", UVM_MEDIUM)
+    `uvm_info("Env", "Env build_phase", UVM_MEDIUM)
     
     // i_agt = my_agent::type_id::create("i_agt", this);
     // o_agt = my_agent::type_id::create("o_agt", this);
@@ -46,9 +49,9 @@ function void env::build_phase(uvm_phase phase);
     //     my_sequence::type_id::get());
 endfunction
 
-function void env::connect_phase(uvm_phase phase);
+function void Env::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    `uvm_info("env", "env connect_phase", UVM_MEDIUM)
+    `uvm_info("Env", "Env connect_phase", UVM_MEDIUM)
     
     // i_agt.ap.connect(agt_mdl_fifo.analysis_export);
     // mdl.port.connect(agt_mdl_fifo.blocking_get_export);

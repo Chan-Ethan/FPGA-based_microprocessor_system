@@ -2,7 +2,7 @@
 `define BASE_TEST_SV
 
 class base_test extends uvm_test;
-    my_env env;
+    Env env;
 
     `uvm_component_utils(base_test)
 
@@ -19,11 +19,11 @@ function void base_test::build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("base_test", "base_test build_phase", UVM_MEDIUM)
 
-    env = my_env::type_id::create("env", this);
-    uvm_config_db #(uvm_object_wrapper)::set(this,
-        "env.i_agt.sqr.main_phase", 
-        "default_sequence", 
-        my_sequence::type_id::get());
+    env = Env::type_id::create("Env", this);
+    // uvm_config_db #(uvm_object_wrapper)::set(this,
+    //     "env.i_agt.sqr.main_phase", 
+    //     "default_sequence", 
+    //     my_sequence::type_id::get());
 endfunction
 
 function void base_test::report_phase(uvm_phase phase);
