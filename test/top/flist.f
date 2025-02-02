@@ -29,6 +29,6 @@
 // 
 // ../../model/my_model.sv
 // ../../scoreboard/my_scoreboard.sv
-// ../../env/my_env.sv
-// ../../top/base_test.sv
+../../env/env.sv
+../../top/base_test.sv
 ../../top/top_tb.sv

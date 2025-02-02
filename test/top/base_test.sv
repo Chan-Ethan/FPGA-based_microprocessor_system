@@ -12,6 +12,7 @@ class base_test extends uvm_test;
 
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual function void report_phase(uvm_phase phase);
+    extern virtual task main_phase(uvm_phase phase);
 endclass
 
 function void base_test::build_phase(uvm_phase phase);
@@ -42,5 +43,16 @@ function void base_test::report_phase(uvm_phase phase);
         $display("\n========== TEST CASE PASS ==========\n");
     end
 endfunction
+
+task base_test::main_phase(uvm_phase phase);
+    super.main_phase(phase);
+    `uvm_info("base_test", "base_test main_phase", UVM_MEDIUM)
+
+    phase.raise_objection(this);
+
+    #1ms;
+
+    phase.drop_objection(this);
+endtask
 
 `endif // BASE_TEST_SV

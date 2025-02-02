@@ -27,8 +27,6 @@ module top_tb (
         #200us;
         rst_n = 1'b1;
         $display("reset finish");
-        #1ms;
-        $finish();
     end
 
     initial begin
@@ -59,10 +57,10 @@ module top_tb (
         .LED14_1HZ      (LED14_1HZ     )
     );
 
-    // initial begin
-    //     run_test();
-    //     $finish();
-    // end
+    initial begin
+        run_test();
+        $finish();
+    end
 
     // initial begin
     //     uvm_config_db#(virtual my_if)::set(null, "uvm_test_top.env.i_agt.// drv", "vif", input_if);
