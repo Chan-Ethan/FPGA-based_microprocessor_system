@@ -8,6 +8,15 @@ set_property PACKAGE_PIN U18 [get_ports HARD_RSTN]
 set_property IOSTANDARD LVCMOS33 [get_ports HARD_RSTN]
 ## set_property PULLDOWN true [get_ports HARD_RSTN]
 
+## PS/2 Constraints
+set_property PACKAGE_PIN C17 [get_ports PS2_CLK]
+set_property IOSTANDARD LVCMOS33 [get_ports PS2_CLK]
+set_property PULLUP true [get_ports PS2_CLK]
+set_property PACKAGE_PIN B17 [get_ports PS2_DATA]
+set_property IOSTANDARD LVCMOS33 [get_ports PS2_DATA]
+set_property PULLUP true [get_ports PS2_DATA]
+
+
 ## Seven Segment Display Constraints
 set_property PACKAGE_PIN U2 [get_ports {SEG_SELECT_OUT[0]}]
 set_property PACKAGE_PIN U4 [get_ports {SEG_SELECT_OUT[1]}]
@@ -28,6 +37,3 @@ set_property IOSTANDARD LVCMOS33 [get_ports {HEX_OUT[*]}]
 ## MMCM Locked Signal Constraints
 set_property PACKAGE_PIN L1 [get_ports LED15_LOCKED]
 set_property IOSTANDARD LVCMOS33 [get_ports LED15_LOCKED]
-
-set_property PACKAGE_PIN P1 [get_ports LED14_1HZ]
-set_property IOSTANDARD LVCMOS33 [get_ports LED14_1HZ]
