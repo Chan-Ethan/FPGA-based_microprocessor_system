@@ -11,8 +11,8 @@ module top_tb (
     logic           LED15_LOCKED    ;
     logic           LED14_1HZ       ;
 
-    // my_if   input_if(clk, rst_n);
-    // my_if   output_if(clk, rst_n);
+    ps2_if   input_if(clk_50M, rst_n);
+    // ps2_if   output_if(clk, rst_n);
 
     initial begin    
         clk_100M = 1'b0;
@@ -49,22 +49,26 @@ module top_tb (
     end
 
     top top (
-        .CLK100_IN      (clk_100M      ),
-        .HARD_RSTN      (rst_n         ),
-        .SEG_SELECT_OUT (SEG_SELECT_OUT),
-        .HEX_OUT        (HEX_OUT       ),
-        .LED15_LOCKED   (LED15_LOCKED  ),
-        .LED14_1HZ      (LED14_1HZ     )
-    );
+        .CLK100_IN      (clk_100M           ),
+        .HARD_RSTN      (rst_n              ),
+
+        .PS2_CLK        (input_if.PS2_CLK   ),
+        .PS2_DATA       (input_if.PS2_DATA  ),
+
+        .SEG_SELECT_OUT (SEG_SELECT_OUT     ),
+        .HEX_OUT        (HEX_OUT            ),
+
+        .LED15_LOCKED   (LED15_LOCKED       )
+        );
 
     initial begin
         run_test();
         $finish();
     end
 
-    // initial begin
-    //     uvm_config_db#(virtual my_if)::set(null, "uvm_test_top.env.i_agt.// drv", "vif", input_if);
-    //     uvm_config_db#(virtual my_if)::set(null, "uvm_test_top.env.i_agt.// mon", "vif", input_if);
-    //     uvm_config_db#(virtual my_if)::set(null, "uvm_test_top.env.o_agt.// mon", "vif", output_if);
-    // end
+    initial begin
+        uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.drv", "vif", input_if);
+    //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.// mon", "vif", input_if);
+    //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.o_agt.// mon", "vif", output_if);
+    end
 endmodule
