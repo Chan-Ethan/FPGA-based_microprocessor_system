@@ -20,6 +20,7 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             //     tr.pload.size <= 48;
             // })
             `uvm_do(tr)
+            #50us;
         end
         #10us;
 

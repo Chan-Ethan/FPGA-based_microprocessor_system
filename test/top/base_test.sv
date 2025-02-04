@@ -19,7 +19,7 @@ function void base_test::build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("base_test", "base_test build_phase", UVM_MEDIUM)
 
-    env = Env::type_id::create("Env", this);
+    env = Env::type_id::create("env", this);
     // uvm_config_db #(uvm_object_wrapper)::set(this,
     //     "env.i_agt.sqr.main_phase", 
     //     "default_sequence", 
