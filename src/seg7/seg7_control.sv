@@ -13,8 +13,8 @@ module seg7_control(
 
 `ifdef SIMULATION
     // use smaller number for faster simulation
-    `define CNT_NUM_200HZ 26'd49
-    `define CNT_NUM_1HZ   8'd19
+    `define CNT_NUM_200HZ 26'd999
+    `define CNT_NUM_1HZ   8'd199
 `else
     `define CNT_NUM_200HZ 26'd249999
     `define CNT_NUM_1HZ   8'd199
@@ -72,7 +72,7 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         clk_1hz_cnt <= 8'b0;
     end
-    else begin
+    else if (clk_200hz == 1'b1) begin
         if (clk_1hz_cnt == `CNT_NUM_1HZ) begin
             clk_1hz_cnt <= 8'b0;
         end
@@ -80,13 +80,14 @@ always @(posedge clk_sys or negedge rst_n) begin
             clk_1hz_cnt <= clk_1hz_cnt + 8'd1;
         end
     end
+    else;
 end
 
 always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         clk_1hz <= 1'b0;
     end
-    else begin
+    else if (clk_200hz == 1'b1) begin
         if (clk_1hz_cnt == `CNT_NUM_1HZ) begin
             clk_1hz <= 1'b1;
         end
@@ -94,6 +95,7 @@ always @(posedge clk_sys or negedge rst_n) begin
             clk_1hz <= 1'b0;
         end
     end
+    else;
 end
 
 //================= PS/2 packet latch =================//
