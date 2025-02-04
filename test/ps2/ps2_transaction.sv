@@ -28,7 +28,7 @@ class ps2_transaction extends uvm_sequence_item;
         super.new(name);
     endfunction
 
-    function post_randomize();
+    function void post_randomize();
         byte0_pack();
     endfunction
 
@@ -36,7 +36,7 @@ class ps2_transaction extends uvm_sequence_item;
         byte0 = {y_ovf, x_ovf, y_sign, x_sign, 1'b1, 1'b0, R_button, L_button};
     endfunction
 
-    function byte0_unpack();0
+    function byte0_unpack();
         L_button = byte0[0];
         R_button = byte0[1];
         x_sign = byte0[4];

@@ -1,14 +1,14 @@
-`ifndef MY_AGENT_SV
-`define MY_AGENT_SV
+`ifndef PS2_AGENT_SV
+`define PS2_AGENT_SV
 
-class my_agent extends uvm_agent;
-    my_driver       drv;
+class ps2_agent extends uvm_agent;
+    ps2_driver       drv;
     // my_monitor      mon;
-    my_sequencer    sqr;
+    ps2_sequencer    sqr;
 
-    uvm_analysis_port #(my_transaction) ap;
+    uvm_analysis_port #(ps2_transaction) ap;
 
-    `uvm_component_utils(my_agent)
+    `uvm_component_utils(ps2_agent)
 
     function new(string name = "my_agent", uvm_component parent = null);
         super.new(name, parent);
@@ -20,18 +20,18 @@ class my_agent extends uvm_agent;
 
 endclass
 
-function void my_agent::build_phase(uvm_phase phase);
+function void ps2_agent::build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("my_agent", "my_agent build_phase", UVM_MEDIUM)
     
     if (is_active == UVM_ACTIVE) begin
-        sqr = my_sequencer::type_id::create("sqr", this);
-        drv = my_driver::type_id::create("drv", this);
+        sqr = ps2_sequencer::type_id::create("sqr", this);
+        drv = ps2_driver::type_id::create("drv", this);
     end
     // mon = my_monitor::type_id::create("mon", this);
 endfunction
 
-function void my_agent::connect_phase(uvm_phase phase);
+function void ps2_agent::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     `uvm_info("my_agent", "my_agent connect_phase", UVM_MEDIUM)
 
@@ -42,4 +42,4 @@ function void my_agent::connect_phase(uvm_phase phase);
     // ap = mon.ap;
 endfunction
 
-`endif // MY_AGENT_SV
+`endif // PS2_AGENT_SV

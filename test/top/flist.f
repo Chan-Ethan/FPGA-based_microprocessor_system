@@ -16,16 +16,19 @@
 
 // DUT
 ../../../src/seg7/seg7decoder.v
+../../../src/seg7/seg7_control.sv
+../../../src/ps2/ps2_rx.sv
+../../../src/ps2/ps2_top.sv
 ../../../src/top/top.sv
 
 // UVM platform
-../../ps2_port/ps2_if.sv
-../../ps2_port/ps2_transaction.sv
-../../ps2_port/ps2_sequence.sv
-../../ps2_port/ps2_sequencer.sv
-// ../../ps2_port/ps2_monitor.sv
-../../ps2_port/ps2_driver.sv
-../../ps2_port/ps2_agent.sv
+../../ps2/ps2_if.sv
+../../ps2/ps2_transaction.sv
+../../ps2/ps2_sequence.sv
+../../ps2/ps2_sequencer.sv
+// ../../ps2/ps2_monitor.sv
+../../ps2/ps2_driver.sv
+../../ps2/ps2_agent.sv
  
 // ../../model/my_model.sv
 // ../../scoreboard/my_scoreboard.sv
