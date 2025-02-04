@@ -10,7 +10,9 @@ module top(
     output  reg   [3:0]     SEG_SELECT_OUT  ,
     output  reg   [7:0]     HEX_OUT         ,
 
-    output  reg             LED15_LOCKED    
+    output  reg             LED15_L         ,
+    output  reg             LED14_R         ,
+    output  reg             LED0_LOCKED     
 );
 
 logic           clk_sys;
@@ -36,7 +38,7 @@ clk_wiz_0 clk_wiz_0_inst
     .clk_in1    (CLK100_IN      ),
     .clk_out1   (clk_sys        ),
     .resetn     (rst_n          ),
-    .locked     (LED15_LOCKED   )
+    .locked     (LED0_LOCKED    )
  );
 
 // instantiate the PS2 receiver
@@ -63,7 +65,10 @@ seg7_control seg7_control_inst(
     .rd_data            (rd_data        ),
     
     .SEG_SELECT_OUT     (SEG_SELECT_OUT ),
-    .HEX_OUT            (HEX_OUT        )
+    .HEX_OUT            (HEX_OUT        ),
+
+    .L_button           (LED15_L        ),
+    .R_button           (LED14_R        )
 );
 
 endmodule
