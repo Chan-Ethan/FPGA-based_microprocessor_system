@@ -1,11 +1,8 @@
 `ifndef ENV_SV
 `define ENV_SV
 
-`include "uvm_macros.svh"
-import uvm_pkg::*;
-
 class Env extends uvm_env;
-    sp2_agent i_agt;
+    ps2_agent i_agt;
     // my_agent o_agt;
     // my_model mdl;
     // my_scoreboard scb;
@@ -34,7 +31,7 @@ function void Env::build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("Env", "Env build_phase", UVM_MEDIUM)
     
-    i_agt = my_agent::type_id::create("i_agt", this);
+    i_agt = ps2_agent::type_id::create("i_agt", this);
     // o_agt = my_agent::type_id::create("o_agt", this);
     i_agt.is_active = UVM_ACTIVE;
     // o_agt.is_active = UVM_PASSIVE;
