@@ -3,13 +3,13 @@ module seg7_control(
     input                   rst_n           , // reset signal
     
     // from ps2_rx
-    input                   rd_vld          ,
-    input       [23:0]      rd_data         ,   
+    (* mark_debug = "true" *) input                   rd_vld          ,
+    (* mark_debug = "true" *) input       [23:0]      rd_data         ,   
 
     // seven segment display
     output  reg [3:0]       SEG_SELECT_OUT  ,
     output  reg [7:0]       HEX_OUT         ,
-
+    
     // Button status link to LED
     output  reg             L_button        , // Left button
     output  reg             R_button          // Right button

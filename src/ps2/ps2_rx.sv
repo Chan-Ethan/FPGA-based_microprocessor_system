@@ -5,8 +5,8 @@ module ps2_rx(
     input                   rst_n           , // reset signal
     
     // PS2 interface input
-    input                   PS2_CLK         ,
-    input                   PS2_DATA        ,
+    (* mark_debug = "true" *) input                   PS2_CLK         ,
+    (* mark_debug = "true" *) input                   PS2_DATA        ,
     
     // receiver output interface
     input                   rd_en           ,
