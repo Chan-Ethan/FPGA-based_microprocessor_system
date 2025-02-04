@@ -19,14 +19,14 @@
 ../../../src/top/top.sv
 
 // UVM platform
-// ../../my_port/my_if.sv
-// ../../my_port/my_transaction.sv
-// ../../my_port/my_sequence.sv
-// ../../my_port/my_sequencer.sv
-// ../../my_port/my_monitor.sv
-// ../../my_port/my_driver.sv
-// ../../my_port/my_agent.sv
-// 
+../../ps2_port/ps2_if.sv
+../../ps2_port/ps2_transaction.sv
+../../ps2_port/ps2_sequence.sv
+../../ps2_port/ps2_sequencer.sv
+// ../../ps2_port/ps2_monitor.sv
+../../ps2_port/ps2_driver.sv
+../../ps2_port/ps2_agent.sv
+ 
 // ../../model/my_model.sv
 // ../../scoreboard/my_scoreboard.sv
 ../../env/Env.sv

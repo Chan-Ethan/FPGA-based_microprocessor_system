@@ -1,12 +1,12 @@
-`ifndef MY_SEQUENCE_SV
-`define MY_SEQUENCE_SV
+`ifndef PS2_SEQUENCE_SV
+`define PS2_SEQUENCE_SV
 
-class my_sequence extends uvm_sequence #(my_transaction);
-    my_transaction tr;
+class ps2_sequence extends uvm_sequence #(ps2_transaction);
+    ps2_transaction tr;
 
-    `uvm_object_utils(my_sequence)
+    `uvm_object_utils(ps2_sequence)
 
-    function new(string name = "my_sequence");
+    function new(string name = "ps2_sequence");
         super.new(name);
     endfunction
 
@@ -28,4 +28,4 @@ class my_sequence extends uvm_sequence #(my_transaction);
     endtask
 endclass
 
-`endif // MY_SEQUENCE_SV
+`endif // PS2_SEQUENCE_SV

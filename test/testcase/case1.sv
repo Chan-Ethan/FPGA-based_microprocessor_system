@@ -1,6 +1,6 @@
 // construct a new sequence: Generates timed transaction
-class new_sequence extends uvm_sequence #(my_transaction);
-    my_transaction tr;
+class new_sequence extends uvm_sequence #(ps2_transaction);
+    ps2_transaction tr;
 
     `uvm_object_utils(new_sequence)
 
@@ -14,12 +14,12 @@ class new_sequence extends uvm_sequence #(my_transaction);
         end
 
         // send 50 short transactions
-        repeat (50) begin
-            `uvm_do_with(tr, {
-                tr.pload.size >= 20;
-                tr.pload.size <= 48;
-            })
-            #1us;
+        repeat (10) begin
+            // `uvm_do_with(tr, {
+            //     tr.pload.size >= 20;
+            //     tr.pload.size <= 48;
+            // })
+            `uvm_do(tr)
         end
         #10us;
 

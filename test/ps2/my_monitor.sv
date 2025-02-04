@@ -1,35 +1,35 @@
-`ifndef MY_MONITOR_SV
-`define MY_MONITOR_SV
+`ifndef PS2_MONITOR_SV
+`define PS2_MONITOR_SV
 
-class my_monitor extends uvm_monitor;
-	virtual my_if vif;
-	uvm_analysis_port #(my_transaction) ap;
+class ps2_monitor extends uvm_monitor;
+	virtual ps2_if vif;
+	uvm_analysis_port #(ps2_transaction) ap;
 
-	`uvm_component_utils(my_monitor)
+	`uvm_component_utils(ps2_monitor)
   
-  	function new(string name = "my_monitor", uvm_component parent = null);
+  	function new(string name = "ps2_monitor", uvm_component parent = null);
 		super.new(name, parent);
-		`uvm_info("my_monitor", "my_monitor is created", UVM_MEDIUM)
+		`uvm_info("ps2_monitor", "ps2_monitor is created", UVM_MEDIUM)
   	endfunction
 
 	extern virtual function void build_phase(uvm_phase phase);
   	extern virtual task main_phase(uvm_phase phase);
-	extern virtual task collect_one_pkt(my_transaction tr);
+	extern virtual task collect_one_pkt(ps2_transaction tr);
 endclass
 
-function void my_monitor::build_phase(uvm_phase phase);
+function void ps2_monitor::build_phase(uvm_phase phase);
 	super.build_phase(phase);
-	`uvm_info("my_monitor", "my_monitor build_phase", UVM_MEDIUM)
+	`uvm_info("ps2_monitor", "ps2_monitor build_phase", UVM_MEDIUM)
 
-	if (!uvm_config_db#(virtual my_if)::get(this, "", "vif", vif)) begin
-		`uvm_fatal("my_monitor", "virtual interface must be set for vif!")
+	if (!uvm_config_db#(virtual ps2_if)::get(this, "", "vif", vif)) begin
+		`uvm_fatal("ps2_monitor", "virtual interface must be set for vif!")
 	end
 
 	ap = new("ap", this);
 endfunction
 
-task my_monitor::main_phase(uvm_phase phase);
-	my_transaction tr;
+task ps2_monitor::main_phase(uvm_phase phase);
+	ps2_transaction tr;
 
 	while (1) begin
 		// wait for valid signal
@@ -43,14 +43,14 @@ task my_monitor::main_phase(uvm_phase phase);
 	end
 endtask
 
-task my_monitor::collect_one_pkt(my_transaction tr);
+task ps2_monitor::collect_one_pkt(ps2_transaction tr);
 	bit [7:0] 	data_q[$];
 	bit [7:0] 	data_array[];
 	bit [7:0]	data;
 	bit  		valid = 0;
 	int			data_size;
 
-	`uvm_info("my_monitor", "begin to collect one pkt", UVM_LOW)
+	`uvm_info("ps2_monitor", "begin to collect one pkt", UVM_LOW)
 	while (vif.valid) begin
 		data_q.push_back(vif.data);
 		@(posedge vif.clk);
@@ -69,4 +69,4 @@ task my_monitor::collect_one_pkt(my_transaction tr);
 	`uvm_info("RECE_PKT", "collect one pkt finish", UVM_LOW)
 endtask
 
-`endif
+`endif // PS2_MONITOR_SV

@@ -1,19 +1,19 @@
-`ifndef MY_SEQUENCER_SV
-`define MY_SEQUENCER_SV
+`ifndef PS2_SEQUENCER_SV
+`define PS2_SEQUENCER_SV
 
-class my_sequencer extends uvm_sequencer #(my_transaction);
-    `uvm_component_utils(my_sequencer)
+class ps2_sequencer extends uvm_sequencer #(ps2_transaction);
+    `uvm_component_utils(ps2_sequencer)
 
-    function new(string name = "my_sequencer", uvm_component parent = null);
+    function new(string name = "ps2_sequencer", uvm_component parent = null);
         super.new(name, parent);
-        `uvm_info("my_sequencer", "my_sequencer is created", UVM_MEDIUM)
+        `uvm_info("ps2_sequencer", "ps2_sequencer is created", UVM_MEDIUM)
     endfunction
 
     // extern virtual function void build_phase(uvm_phase phase);
     // extern virtual task main_phase(uvm_phase phase);
 endclass
 
-// task my_sequencer::main_phase(uvm_phase phase);
+// task ps2_sequencer::main_phase(uvm_phase phase);
 //     my_sequence seq;
 //     
 //     phase.raise_objection(this);
@@ -25,4 +25,4 @@ endclass
 //     phase.drop_objection(this);
 // endtask
 
-`endif 
+`endif // PS2_SEQUENCER_SV
