@@ -67,8 +67,8 @@ module top_tb (
     end
 
     initial begin
-        uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.drv", "vif", input_if);
-    //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.// mon", "vif", input_if);
-    //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.o_agt.// mon", "vif", output_if);
+        uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.Env.i_agt.drv", "vif", input_if);
+    //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.Env.i_agt.// mon", "vif", input_if);
+    //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.Env.o_agt.// mon", "vif", output_if);
     end
 endmodule

@@ -84,8 +84,6 @@ task ps2_driver::drive_one_pkt(ps2_transaction tr);
 		@(posedge vif.PS2_CLK);
 	end
 
-	@(posedge vif.clk);
-	vif.valid <= 1'b0;
 	`uvm_info("SNED_PKT", "drive one pkt done:", UVM_LOW)
     tr.print();
 endtask
