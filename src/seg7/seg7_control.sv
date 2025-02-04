@@ -13,8 +13,8 @@ module seg7_control(
 
 `ifdef SIMULATION
     // use smaller number for faster simulation
-    `define CNT_NUM_200HZ 26'd999
-    `define CNT_NUM_1HZ   8'd99
+    `define CNT_NUM_200HZ 26'd499
+    `define CNT_NUM_1HZ   8'd49
 `else
     `define CNT_NUM_200HZ 26'd249999
     `define CNT_NUM_1HZ   8'd199

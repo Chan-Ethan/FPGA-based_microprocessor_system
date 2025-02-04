@@ -14,13 +14,14 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
         end
 
         // send 50 short transactions
-        repeat (10) begin
+        #500us;
+        repeat (20) begin
             // `uvm_do_with(tr, {
             //     tr.pload.size >= 20;
             //     tr.pload.size <= 48;
             // })
             `uvm_do(tr)
-            #50us;
+            #200us;
         end
         #10us;
 
