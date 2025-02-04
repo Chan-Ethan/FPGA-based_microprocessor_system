@@ -68,6 +68,7 @@ end
 always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
         fsm_state <= `FSM_IDLE;
+        bit_cnt <= 0;
     end
     else begin
         case (fsm_state)
@@ -102,7 +103,12 @@ always @(posedge clk_sys or negedge rst_n) begin
             end
             `FSM_STOP: begin
                 if (ps2_clk_vld == 1'b1) begin
-                    fsm_state <= `FSM_IDLE;
+                    if(PS2_DATA == 1'b0) begin
+                        fsm_state <= `FSM_START;
+                    end
+                    else begin
+                        fsm_state <= `FSM_IDLE;
+                    end
                 end
                 else; // stay in stop fsm_state
             end
@@ -119,8 +125,8 @@ always @(posedge clk_sys or negedge rst_n) begin
         data <= 0;
     end
     else begin
-        if (fsm_state == `FSM_DATA) begin
-            data <= {data[6:0], ps2_data_dly};
+        if ((fsm_state == `FSM_DATA) && (ps2_clk_vld == 1'b1)) begin
+            data <= {ps2_data_dly, data[7:1]};
         end
         else;
     end
@@ -132,7 +138,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         odd_parity_recv <= 1'b0;
     end
     else begin
-        if (fsm_state == `FSM_PARITY) begin
+        if ((fsm_state == `FSM_PARITY) && (ps2_clk_vld == 1'b1)) begin
             odd_parity_recv <= ps2_data_dly;
         end
         else;
@@ -145,7 +151,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         odd_parity_calc <= 1'b0;
     end
     else begin
-        if (fsm_state == `FSM_PARITY) begin
+        if ((fsm_state == `FSM_PARITY) && (ps2_clk_vld == 1'b1)) begin
             odd_parity_calc <= ^data;
         end
         else;
@@ -158,7 +164,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         byte_cnt <= 0;
     end
     else begin
-        if (fsm_state == `FSM_STOP) begin
+        if ((fsm_state == `FSM_STOP) && (ps2_clk_vld == 1'b1)) begin
             byte_cnt <= byte_cnt + 1;
             if (byte_cnt == 2) begin
                 byte_cnt <= 0;
@@ -174,7 +180,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         rd_data <= 24'b0;
     end
     else begin
-        if (fsm_state == `FSM_STOP) begin
+        if ((fsm_state == `FSM_STOP) && (ps2_clk_vld == 1'b1)) begin
             case (byte_cnt)
                 0: rd_data[7:0] <= data;
                 1: rd_data[15:8] <= data;
@@ -191,7 +197,9 @@ always @(posedge clk_sys or negedge rst_n) begin
         rd_vld <= 1'b0;
     end
     else begin
-        if ((fsm_state == `FSM_STOP) && (byte_cnt == 2)) begin
+        if ((fsm_state == `FSM_STOP) && 
+            (ps2_clk_vld == 1'b1) &&
+            (byte_cnt == 2)) begin
             rd_vld <= 1'b1;
         end
         else begin
@@ -207,6 +215,7 @@ always @(posedge clk_sys or negedge rst_n) begin
     else begin
         // odd_parity_err will stay 1 once set
         if ((fsm_state == `FSM_STOP) && 
+            (ps2_clk_vld == 1'b1) &&
             (odd_parity_recv != odd_parity_calc)) begin
             odd_parity_err <= 1'b1;
         end

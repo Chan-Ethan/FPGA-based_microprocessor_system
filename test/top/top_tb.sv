@@ -17,11 +17,6 @@ module top_tb (
     initial begin    
         clk_100M = 1'b0;
         rst_n = 1'b0;
-        #1us;
-        rst_n = 1'b1;
-
-        #100us;
-        rst_n = 1'b0;
         $display("rst_n active");
         
         #200us;
@@ -50,7 +45,7 @@ module top_tb (
 
     top top (
         .CLK100_IN      (clk_100M           ),
-        .HARD_RSTN      (rst_n              ),
+        .HARD_RSTN      (~rst_n             ), // tmp, connect to a high buttom
 
         .PS2_CLK        (input_if.PS2_CLK   ),
         .PS2_DATA       (input_if.PS2_DATA  ),

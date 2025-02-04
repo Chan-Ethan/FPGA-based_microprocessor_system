@@ -70,7 +70,7 @@ task ps2_driver::drive_one_pkt(ps2_transaction tr);
 		@(posedge vif.PS2_CLK);
 
 		// drive data bits
-		foreach (data_array[i][j]) begin
+        for (int j = 0; j < 8; j++) begin
 			vif.PS2_DATA <= data_array[i][j];
 			@(posedge vif.PS2_CLK);
 		end
