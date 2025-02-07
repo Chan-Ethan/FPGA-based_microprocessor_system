@@ -13,7 +13,7 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             starting_phase.raise_objection(this);
         end
 
-        #500us; // wait for DUT init
+        #1ms; // wait for DUT init
 
         // send init transaction
         `uvm_do_with(tr, {

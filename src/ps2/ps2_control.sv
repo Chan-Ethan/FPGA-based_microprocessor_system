@@ -16,12 +16,12 @@ module ps2_control
     input                   wr_done         ,
 
     // connection to seven segment display
-    output reg              ps2pkt_vlk      ,
+    output reg              ps2pkt_vld      ,
     output reg  [23:0]      ps2pkt_data     ,
 
     // device status debug signal
     output reg              init_done       ,
-    output      [2:0]       current_state   
+    output      [3:0]       current_state   
 );
 
 `define FSM_IDLE        4'b0001
@@ -30,7 +30,7 @@ module ps2_control
 `define FSM_STREAM_MOD  4'b1000
 
 // current_state FSM variable
-logic   [2:0]       current_state, next_state;
+logic   [3:0]       current_state, next_state;
 
 logic               waiting_wr_done;
 
@@ -118,29 +118,24 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
         byte_cnt <= 2'b00;
     end
-    else begin
-        if ((current_state == `FSM_STREAM_MOD) &&
-            (rd_vld == 1'b1)) begin
-            byte_cnt <= (byte_cnt == 2'b10) ? 2'b00 : byte_cnt + 2'b01;
-        end
-        else begin
-            byte_cnt <= 2'b00;
-        end
+    else if ((current_state == `FSM_STREAM_MOD) &&
+             (rd_vld == 1'b1)) begin
+        byte_cnt <= (byte_cnt == 2'b10) ? 2'b00 : byte_cnt + 2'b01;
     end
 end
 
 always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
-        ps2pkt_vlk <= 1'b0;
+        ps2pkt_vld <= 1'b0;
     end
     else begin
         if ((current_state == `FSM_STREAM_MOD) &&
             (rd_vld == 1'b1) &&
             (byte_cnt == 2'b10)) begin
-            ps2pkt_vlk <= 1'b1;
+            ps2pkt_vld <= 1'b1;
         end
         else begin
-            ps2pkt_vlk <= 1'b0;
+            ps2pkt_vld <= 1'b0;
         end
     end
 end
@@ -149,19 +144,14 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
         ps2pkt_data <= 24'b0;
     end
-    else begin
-        if ((current_state == `FSM_STREAM_MOD) &&
-            (rd_vld == 1'b1)) begin
-            case (byte_cnt)
-                2'b00: ps2pkt_data[7:0]    <= rd_data;
-                2'b01: ps2pkt_data[15:8]   <= rd_data;
-                2'b10: ps2pkt_data[23:16]  <= rd_data;
-                default;
-            endcase
-        end
-        else begin
-            ps2pkt_data <= 24'h000000;
-        end
+    else if ((current_state == `FSM_STREAM_MOD) &&
+             (rd_vld == 1'b1)) begin
+        case (byte_cnt)
+            2'b00: ps2pkt_data[7:0]    <= rd_data;
+            2'b01: ps2pkt_data[15:8]   <= rd_data;
+            2'b10: ps2pkt_data[23:16]  <= rd_data;
+            default;
+        endcase
     end
 end
 

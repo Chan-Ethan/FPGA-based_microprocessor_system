@@ -28,7 +28,6 @@ module ps2_rx(
 logic   [4:0]       current_state, next_state;
 
 logic   [2:0]       bit_cnt;  // 3-bit counter for data bit count
-logic   [1:0]       byte_cnt; // 0~2 for 3-byte data
 logic               odd_parity_recv;
 logic               odd_parity_calc;
 
@@ -152,28 +151,11 @@ end
 //================= Output Data Generation =================//
 always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
-        byte_cnt <= 0;
-    end
-    else begin
-        if ((current_state == `FSM_STOP) && (ps2_clk_vld == 1'b1)) begin
-            byte_cnt <= byte_cnt + 1;
-            if (byte_cnt == 2) begin
-                byte_cnt <= 0;
-            end
-            else;
-        end
-        else;
-    end
-end
-
-always @(posedge clk_sys or negedge rst_n) begin
-    if (~rst_n) begin
         rd_vld <= 1'b0;
     end
     else begin
         if ((current_state == `FSM_STOP) && 
-            (ps2_clk_vld == 1'b1) &&
-            (byte_cnt == 2)) begin
+            (ps2_clk_vld == 1'b1)) begin
             rd_vld <= rd_en;
         end
         else begin

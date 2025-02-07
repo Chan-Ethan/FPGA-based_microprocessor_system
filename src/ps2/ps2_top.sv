@@ -9,12 +9,12 @@ module ps2_top(
     inout                   PS2_DATA        ,
     
    // PS/2 receiver data packet output
-    output reg              ps2pkt_vlk      ,
+    output reg              ps2pkt_vld      ,
     output reg  [23:0]      ps2pkt_data     ,
     
     // degug signal
     output reg              init_done       ,
-    output reg  [2:0]       current_state
+    output reg  [3:0]       current_state
 );
 
 logic           rd_en   ;   
@@ -38,7 +38,7 @@ ps2_control ps2_control_inst(
     .wr_data        (wr_data        ),
     .wr_done        (wr_done        ),
         
-    .ps2pkt_vlk     (ps2pkt_vlk     ),
+    .ps2pkt_vld     (ps2pkt_vld     ),
     .ps2pkt_data    (ps2pkt_data    ),
     
     .init_done      (init_done      ),
