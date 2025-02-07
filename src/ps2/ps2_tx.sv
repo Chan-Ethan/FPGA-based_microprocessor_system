@@ -31,9 +31,26 @@ logic               drive_clk;      // control PS2_CLK output
 logic               drive_en;       // enable driving data line
 logic               drive_data;       // value to drive on PS2_DATA
 
-// Tri-state buffers
+// PS2_CLK positive edge detection
+logic   [2:0]       ps2_clk_dly;
+logic               ps2_clk_vld;
+
+
+//================= Tri-state Buffer =================//
 assign PS2_CLK  = drive_clk ? 1'b0 : 1'bz;  // 0 when driving, z otherwise
 assign PS2_DATA = drive_en  ? drive_data : 1'bz; 
+
+//================= PS2_CLK positive edge detection =================//
+always_ff @(posedge clk_sys or negedge rst_n) begin
+    if (~rst_n) begin
+        ps2_clk_dly <= 3'b000;
+    end
+    else begin
+        ps2_clk_dly <= {ps2_clk_dly[1:0], PS2_CLK};
+    end
+end
+
+assign ps2_clk_vld = (ps2_clk_dly[2] == 1'b0) && (ps2_clk_dly[1] == 1'b1);
 
 //================= State Machine =================//
 // State Transition Logic
@@ -52,7 +69,7 @@ always_comb begin
             end
         end
         `FSM_START: begin
-            if (PS2_CLK == 1'b0)  begin
+            if (ps2_clk_vld == 1'b0)  begin
                 // Wait for device to release clock
                 next_state = `FSM_DATA;
             end
@@ -99,14 +116,14 @@ always_ff @(posedge clk_sys or negedge rst_n) begin
                 clk_cnt <= (clk_cnt == 16'd9999) ? 16'd0 : clk_cnt + 16'd1;
             end
             `FSM_DATA: begin
-                if (PS2_CLK == 1'b1) begin // On clock rising edge
+                if (ps2_clk_vld == 1'b1) begin // On clock rising edge
                     bit_cnt <= bit_cnt + 4'd1;
                     tx_data <= {1'b0, tx_data[7:1]}; // right shift data
                 end
                 else;
             end
             `FSM_PARITY: begin
-                if (PS2_CLK == 1'b1) begin
+                if (ps2_clk_vld == 1'b1) begin
                     bit_cnt <= bit_cnt + 4'd1;
                 end
                 else;
