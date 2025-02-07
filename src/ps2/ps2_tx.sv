@@ -144,7 +144,7 @@ always_comb begin
 
     case (current_state)
         `FSM_CLK_LOW: begin
-            drive_clk = (clk_cnt == `CMT_NUM) ? 1'b1 : 1'b0;
+            drive_clk = (clk_cnt == `CMT_NUM) ? 1'b0 : 1'b1;
             drive_en = 1'b1;  
             drive_data = 1'b1; 
         end
