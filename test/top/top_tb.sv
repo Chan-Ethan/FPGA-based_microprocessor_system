@@ -8,6 +8,9 @@ module top_tb (
     logic   [3:0]   SEG_SELECT_OUT  ;
     logic   [7:0]   HEX_OUT         ;
 
+    wire            PS2_CLK         ;
+    wire            PS2_DATA        ;
+
     ps2_if   input_if(clk_50M, rst_n);
     // ps2_if   output_if(clk, rst_n);
 
@@ -40,12 +43,15 @@ module top_tb (
         force top.clk_sys = clk_50M;
     end
 
+
+    assign (weak0, weak1) PS2_CLK  = input_if.PS2_CLK ;
+    assign (weak0, weak1) PS2_DATA = input_if.PS2_DATA;
     top top (
         .CLK100_IN      (clk_100M           ),
         .HARD_RSTN      (~rst_n             ), // tmp, connect to a high buttom
 
-        .PS2_CLK        (input_if.PS2_CLK   ),
-        .PS2_DATA       (input_if.PS2_DATA  ),
+        .PS2_CLK        (PS2_CLK            ),
+        .PS2_DATA       (PS2_DATA           ),
 
         .SEG_SELECT_OUT (SEG_SELECT_OUT     ),
         .HEX_OUT        (HEX_OUT            ),
@@ -59,6 +65,13 @@ module top_tb (
 
     initial begin
         run_test();
+        $finish();
+    end
+
+    initial begin
+        // System run timeout
+        #10ms;
+        $display("\n\nTIMEOUT!\n\n");
         $finish();
     end
 
