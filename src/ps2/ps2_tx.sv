@@ -21,7 +21,7 @@ module ps2_tx(
 `define FSM_PARITY     6'b010000
 `define FSM_STOP       6'b100000
 
-`define CMT_NUM         16'd9999
+`define CNT_NUM         16'd9999
 
 // FSM and control signals
 logic [5:0]         current_state, next_state;
@@ -65,7 +65,7 @@ always_comb begin
             end
         end
         `FSM_CLK_LOW: begin
-            if ((clk_cnt == `CMT_NUM) && (ps2_clk_vld == 1'b1)) begin
+            if ((clk_cnt == `CNT_NUM) && (ps2_clk_vld == 1'b1)) begin
                 // 200us elapsed
                 next_state = `FSM_START;
             end
@@ -120,7 +120,7 @@ always_ff @(posedge clk_sys or negedge rst_n) begin
                 else;
             end
             `FSM_CLK_LOW: begin
-                clk_cnt <= (clk_cnt == `CMT_NUM) ? clk_cnt : clk_cnt + 16'd1;
+                clk_cnt <= (clk_cnt == `CNT_NUM) ? clk_cnt : clk_cnt + 16'd1;
             end
             `FSM_DATA: begin
                 if (ps2_clk_vld == 1'b1) begin // On clock rising edge
@@ -144,7 +144,7 @@ always_comb begin
 
     case (current_state)
         `FSM_CLK_LOW: begin
-            drive_clk = (clk_cnt == `CMT_NUM) ? 1'b0 : 1'b1;
+            drive_clk = (clk_cnt == `CNT_NUM) ? 1'b0 : 1'b1;
             drive_en = 1'b1;  
             drive_data = 1'b1; 
         end

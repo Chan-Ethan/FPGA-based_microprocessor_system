@@ -59,7 +59,7 @@ module top_tb (
         .LED15_L        (                   ),
         .LED14_R        (                   ),
         .LED13_INIT_DONE(                   ),
-        .LED12_9_STATE  (                   ),
+        .LED12_8_STATE  (                   ),
         .LED0_LOCKED    (                   )
         );
 

@@ -13,7 +13,7 @@ module top(
     output  reg             LED15_L         ,
     output  reg             LED14_R         ,
     output  reg             LED13_INIT_DONE ,
-    output  reg   [3:0]     LED12_9_STATE  ,
+    output  reg   [4:0]     LED12_8_STATE  ,
     output  reg             LED0_LOCKED     
 );
 
@@ -54,7 +54,7 @@ ps2_top ps2_top_inst(
     .ps2pkt_data        (ps2pkt_data    ),
 
     .init_done          (LED13_INIT_DONE),
-    .current_state      (LED12_9_STATE  )
+    .current_state      (LED12_8_STATE  )
 );
 
 // instantiate the seven segment display controller

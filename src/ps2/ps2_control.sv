@@ -21,20 +21,31 @@ module ps2_control
 
     // device status debug signal
     output reg              init_done       ,
-    output      [3:0]       current_state   
+    output      [4:0]       current_state   
 );
 
-`define FSM_IDLE        4'b0001
-`define FSM_SEND_RST    4'b0010
-`define FSM_WAIT_ACK    4'b0100
-`define FSM_STREAM_MOD  4'b1000
+`define FSM_IDLE        5'b00001
+`define FSM_SEND_RST    5'b00010
+`define FSM_WAIT_ACK    5'b00100
+`define FSM_STAR_STM    5'b01000
+`define FSM_STREAM_MOD  5'b10000
+
+`ifdef SIMULATION
+    // for faster simulation
+    `define CNT_NUM_1MS     16'd4999
+    `define CNT_NUM_1S      10'd19
+`else
+    `define CNT_NUM_1MS     16'd49_999
+    `define CNT_NUM_1S      10'd999
+`endif
 
 // current_state FSM variable
-logic   [3:0]       current_state, next_state;
+logic   [4:0]       current_state, next_state;
 
 logic               waiting_wr_done;
-
 logic   [1:0]       byte_cnt; // from 0 to 2
+logic   [15:0]      cnt_1ms;  // 1ms counter, 50MHz * 1ms = 50_000 cycles
+logic   [9:0]       cnt_1s;   // 1s counter = 1ms counter * 1000
 
 //================= State Machine =================//
 // State Transition Logic
@@ -54,17 +65,29 @@ always_comb begin
         end
         `FSM_WAIT_ACK: begin
             // wait for device to ack
-            // otherwise, reset the device again
+            // return to FSM_SEND_RST if waiting time is too long (1ms)
             if (rd_vld) begin
-                if (rd_data == 8'hFA) begin
-                    next_state = `FSM_STREAM_MOD;
-                end
-                else begin
-                    next_state = `FSM_SEND_RST;
+                if ((rd_data == 8'hFA) || (rd_data == 8'hF4)) begin
+                    next_state = `FSM_STAR_STM;
                 end
             end
+            else if (cnt_1ms == `CNT_NUM_1MS) begin
+                next_state = `FSM_SEND_RST;
+            end
         end
-        `FSM_STREAM_MOD: ; // do nothing
+        `FSM_STAR_STM: begin
+            // start streaming mode
+            if (wr_done) begin
+                next_state = `FSM_STREAM_MOD;
+            end
+        end
+        `FSM_STREAM_MOD: begin
+            // streaming mode
+            // return to FSM_SEND_RST if no data is received in 1s
+            if (cnt_1s == `CNT_NUM_1S) begin
+                next_state = `FSM_SEND_RST;
+            end
+        end
         default: begin
             next_state = `FSM_IDLE;
         end
@@ -81,6 +104,38 @@ always_ff @(posedge clk_sys or negedge rst_n) begin
     end
 end
 
+//================= scounter =================//
+always @(posedge clk_sys or negedge rst_n) begin
+    if (~rst_n) begin
+        cnt_1ms <= 16'd0;
+    end
+    else if ((current_state == `FSM_WAIT_ACK) ||
+             (current_state == `FSM_STREAM_MOD)) begin
+        cnt_1ms <= (cnt_1ms == `CNT_NUM_1MS) ? 16'd0 : cnt_1ms + 16'd1;
+    end
+    else begin
+        cnt_1ms <= 16'd0;
+    end
+end
+
+always @(posedge clk_sys or negedge rst_n) begin
+    if (~rst_n) begin
+        cnt_1s <= 10'd0;
+    end
+    else if (current_state == `FSM_STREAM_MOD) begin
+        if (rd_vld) begin
+            cnt_1s <= 10'd0;
+        end
+        else if (cnt_1ms == `CNT_NUM_1MS) begin
+            cnt_1s <= (cnt_1s == `CNT_NUM_1S) ? 10'd0 : cnt_1s + 10'd1;
+        end
+        else;
+    end
+    else begin
+        cnt_1s <= 10'd0;
+    end
+end
+
 //================= Output to ps2_tx/rx =================//
 // write enable control
 always @(posedge clk_sys or negedge rst_n) begin
@@ -89,7 +144,8 @@ always @(posedge clk_sys or negedge rst_n) begin
         waiting_wr_done <= 1'b0;
     end
     else begin
-        if (current_state == `FSM_SEND_RST) begin
+        if ((current_state == `FSM_SEND_RST) || 
+            (current_state == `FSM_STAR_STM)) begin
             wr_en <= ~waiting_wr_done;
             waiting_wr_done <= 1'b1;
         end
@@ -101,7 +157,7 @@ always @(posedge clk_sys or negedge rst_n) begin
 end
 
 always @(posedge clk_sys) begin
-    wr_data <= 8'hFF;
+    wr_data <= (current_state == `FSM_STAR_STM) ? 8'hF4: 8'hFF;
 end
 
 always @(posedge clk_sys) begin

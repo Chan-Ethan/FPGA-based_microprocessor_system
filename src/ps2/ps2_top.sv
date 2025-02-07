@@ -14,7 +14,7 @@ module ps2_top(
     
     // degug signal
     output reg              init_done       ,
-    output reg  [3:0]       current_state
+    output reg  [4:0]       current_state
 );
 
 logic           rd_en   ;   
