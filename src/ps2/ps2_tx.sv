@@ -24,7 +24,7 @@ module ps2_tx(
 // FSM and control signals
 logic [5:0]         current_state, next_state;
 logic [15:0]        clk_cnt;        // 200us counter (50MHz * 200us = 10_000 cycles)
-logic [3:0]         bit_cnt;        // 0-7: data bits, 8: parity
+logic [2:0]         bit_cnt;        // 0-7: data bits
 logic [7:0]         tx_data;        // data to send
 logic               parity_bit;     // odd parity
 logic               drive_clk;      // control PS2_CLK output
@@ -69,18 +69,22 @@ always_comb begin
             end
         end
         `FSM_START: begin
-            if (ps2_clk_vld == 1'b0)  begin
+            if (ps2_clk_vld == 1'b1)  begin
                 // Wait for device to release clock
                 next_state = `FSM_DATA;
             end
         end
         `FSM_DATA: begin
-            if (bit_cnt == 4'd8)     // 8 data bits sent
+            if ((bit_cnt == 3'd7) && (ps2_clk_vld == 1'b1)) begin
+                // 8 data bits sent
                 next_state = `FSM_PARITY;
+            end
         end
         `FSM_PARITY: begin
-            if (bit_cnt == 4'd9)     // Parity bit sent
+            if (ps2_clk_vld == 1'b1) begin
+                // Parity bit sent
                 next_state = `FSM_STOP;
+            end
         end
         `FSM_STOP: begin
             next_state = `FSM_IDLE;  // Return to idle after stop
@@ -95,7 +99,7 @@ always_ff @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         current_state <= `FSM_IDLE;
         clk_cnt       <= 16'd0;
-        bit_cnt       <= 4'd0;
+        bit_cnt       <= 3'd0;
         tx_data       <= 8'd0;
         parity_bit    <= 1'b0;
         wr_done       <= 1'b0;
@@ -117,14 +121,8 @@ always_ff @(posedge clk_sys or negedge rst_n) begin
             end
             `FSM_DATA: begin
                 if (ps2_clk_vld == 1'b1) begin // On clock rising edge
-                    bit_cnt <= bit_cnt + 4'd1;
+                    bit_cnt <= bit_cnt + 3'd1;
                     tx_data <= {1'b0, tx_data[7:1]}; // right shift data
-                end
-                else;
-            end
-            `FSM_PARITY: begin
-                if (ps2_clk_vld == 1'b1) begin
-                    bit_cnt <= bit_cnt + 4'd1;
                 end
                 else;
             end
@@ -144,6 +142,8 @@ always_comb begin
     case (current_state)
         `FSM_CLK_LOW: begin
             drive_clk = 1'b1;  //  200us clock low
+            drive_en = 1'b1;  
+            drive_data = 1'b1; 
         end
         `FSM_START: begin
             drive_en = 1'b1;  
