@@ -3,8 +3,8 @@ module top(
     input                   HARD_RSTN       ,
 
     // PS2 interface input
-    input                   PS2_CLK         ,
-    input                   PS2_DATA        ,
+    inout                   PS2_CLK         ,
+    inout                   PS2_DATA        ,
 
     // seven segment display
     output  reg   [3:0]     SEG_SELECT_OUT  ,
