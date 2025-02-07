@@ -24,20 +24,22 @@ module ps2_control
     output      [4:0]       current_state   
 );
 
-`define FSM_IDLE        5'b00001
-`define FSM_SEND_RST    5'b00010
-`define FSM_WAIT_ACK    5'b00100
-`define FSM_STAR_STM    5'b01000
+`define FSM_RESET       5'b00001
+`define FSM_WAIT_ACK    5'b00010
+`define FSM_STAR_STM    5'b00100
+`define FSM_WAIT_ACK2   5'b01000
 `define FSM_STREAM_MOD  5'b10000
 
 `ifdef SIMULATION
     // for faster simulation
     `define CNT_NUM_1MS     16'd4999
-    `define CNT_NUM_1S      10'd19
+    `define CNT_NUM_20S     15'd39
 `else
     `define CNT_NUM_1MS     16'd49_999
-    `define CNT_NUM_1S      10'd999
+    `define CNT_NUM_20S     15'd19_999
 `endif
+
+`define CNT_BYTES       2'b10
 
 // current_state FSM variable
 logic   [4:0]       current_state, next_state;
@@ -45,51 +47,61 @@ logic   [4:0]       current_state, next_state;
 logic               waiting_wr_done;
 logic   [1:0]       byte_cnt; // from 0 to 2
 logic   [15:0]      cnt_1ms;  // 1ms counter, 50MHz * 1ms = 50_000 cycles
-logic   [9:0]       cnt_1s;   // 1s counter = 1ms counter * 1000
+logic   [14:0]      cnt_20s;   // 20s counter = 1ms counter * 20_000
+
 
 //================= State Machine =================//
 // State Transition Logic
 always_comb begin
     next_state = current_state;
     case (current_state)
-        `FSM_IDLE: begin
-            if (rd_vld) begin
-                // reset device what ever the data is received
-                next_state = `FSM_SEND_RST;
-            end
-        end
-        `FSM_SEND_RST: begin
+        `FSM_RESET: begin
             if (wr_done) begin
                 next_state = `FSM_WAIT_ACK;
             end
         end
         `FSM_WAIT_ACK: begin
             // wait for device to ack
-            // return to FSM_SEND_RST if waiting time is too long (1ms)
-            if (rd_vld) begin
-                if ((rd_data == 8'hFA) || (rd_data == 8'hF4)) begin
-                    next_state = `FSM_STAR_STM;
-                end
+            // return to FSM_RESET if waiting time is too long (1ms)
+            // if (rd_vld) begin
+            //     if ((rd_data == 8'hFA) || (rd_data == 8'hF4)) begin
+            //         next_state = `FSM_STAR_STM;
+            //     end
+            // end
+            if (byte_cnt == 2'd2) begin
+                next_state = `FSM_STAR_STM;
             end
             else if (cnt_1ms == `CNT_NUM_1MS) begin
-                next_state = `FSM_SEND_RST;
+                next_state = `FSM_RESET;
             end
         end
         `FSM_STAR_STM: begin
             // start streaming mode
             if (wr_done) begin
-                next_state = `FSM_STREAM_MOD;
+                next_state = `FSM_WAIT_ACK2;
+            end
+        end
+        `FSM_WAIT_ACK2: begin
+            // wait for device to ack
+            // return to FSM_RESET if waiting time is too long (1ms)
+            if (rd_vld) begin
+                if ((rd_data == 8'hFA) || (rd_data == 8'hF4)) begin
+                    next_state = `FSM_STREAM_MOD;
+                end
+            end
+            else if (cnt_1ms == `CNT_NUM_1MS) begin
+                next_state = `FSM_RESET;
             end
         end
         `FSM_STREAM_MOD: begin
             // streaming mode
-            // return to FSM_SEND_RST if no data is received in 1s
-            if (cnt_1s == `CNT_NUM_1S) begin
-                next_state = `FSM_SEND_RST;
+            // return to FSM_RESET if no data is received in 1s
+            if (cnt_20s == `CNT_NUM_20S) begin
+                next_state = `FSM_RESET;
             end
         end
         default: begin
-            next_state = `FSM_IDLE;
+            next_state = `FSM_RESET;
         end
     endcase
 end
@@ -97,7 +109,7 @@ end
 // State Register
 always_ff @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
-        current_state <= `FSM_IDLE;
+        current_state <= `FSM_RESET;
     end
     else begin
         current_state <= next_state;
@@ -120,19 +132,19 @@ end
 
 always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
-        cnt_1s <= 10'd0;
+        cnt_20s <= 15'd0;
     end
     else if (current_state == `FSM_STREAM_MOD) begin
         if (rd_vld) begin
-            cnt_1s <= 10'd0;
+            cnt_20s <= 15'd0;
         end
         else if (cnt_1ms == `CNT_NUM_1MS) begin
-            cnt_1s <= (cnt_1s == `CNT_NUM_1S) ? 10'd0 : cnt_1s + 10'd1;
+            cnt_20s <= (cnt_20s == `CNT_NUM_20S) ? 15'd0 : cnt_20s + 15'd1;
         end
         else;
     end
     else begin
-        cnt_1s <= 10'd0;
+        cnt_20s <= 15'd0;
     end
 end
 
@@ -144,7 +156,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         waiting_wr_done <= 1'b0;
     end
     else begin
-        if ((current_state == `FSM_SEND_RST) || 
+        if ((current_state == `FSM_RESET) || 
             (current_state == `FSM_STAR_STM)) begin
             wr_en <= ~waiting_wr_done;
             waiting_wr_done <= 1'b1;
@@ -161,7 +173,7 @@ always @(posedge clk_sys) begin
 end
 
 always @(posedge clk_sys) begin
-    rd_en <= (current_state == `FSM_SEND_RST) ? 1'b0 : 1'b1;
+    rd_en <= (current_state == `FSM_RESET) ? 1'b0 : 1'b1;
 end
 
 always @(posedge clk_sys) begin
@@ -174,9 +186,12 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
         byte_cnt <= 2'b00;
     end
-    else if ((current_state == `FSM_STREAM_MOD) &&
+    // else if ((current_state == `FSM_STREAM_MOD) &&
+    //          (rd_vld == 1'b1)) begin
+    else if (((current_state == `FSM_STREAM_MOD) ||
+              (current_state == `FSM_WAIT_ACK)) &&
              (rd_vld == 1'b1)) begin
-        byte_cnt <= (byte_cnt == 2'b10) ? 2'b00 : byte_cnt + 2'b01;
+        byte_cnt <= (byte_cnt == `CNT_BYTES) ? 2'b00 : byte_cnt + 2'b01;
     end
 end
 
@@ -187,7 +202,7 @@ always @(posedge clk_sys or negedge rst_n) begin
     else begin
         if ((current_state == `FSM_STREAM_MOD) &&
             (rd_vld == 1'b1) &&
-            (byte_cnt == 2'b10)) begin
+            (byte_cnt == `CNT_BYTES)) begin
             ps2pkt_vld <= 1'b1;
         end
         else begin

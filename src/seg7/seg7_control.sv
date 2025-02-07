@@ -110,7 +110,7 @@ always @(posedge clk_sys or negedge rst_n) begin
              (rd_data_update_rdy == 1'b1)) begin
         rd_data_update_rdy <= 1'b0;
     end
-    else if (clk_1hz) begin
+    else if (clk_1hz == 1'b1) begin
         rd_data_update_rdy <= 1'b1;
     end
     else;
@@ -195,16 +195,16 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         L_button <= 1'b0;
     end
-    else if (ps2pkt_vld == 1'b1) begin
-        // if the left button is pressed, set L_button to 1
-        // the status is latched for one second
-        L_button <= ps2pkt_data[0] | L_button;
-    end
     else if ((ps2pkt_vld == 1'b1) && 
              (rd_data_update_rdy == 1'b1) &&
              (ps2pkt_data[0] == 1'b0)) begin
         // if the left button is released after one second, clear L_button
         L_button <= 1'b0;
+    end
+    else if (ps2pkt_vld == 1'b1) begin
+        // if the left button is pressed, set L_button to 1
+        // the status is latched for one second
+        L_button <= ps2pkt_data[0] | L_button;
     end
     else;
 end
@@ -213,16 +213,16 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         R_button <= 1'b0;
     end
-    else if (ps2pkt_vld == 1'b1) begin
-        // if the right button is pressed, set R_button to 1
-        // the status is latched for one second
-        R_button <= ps2pkt_data[1] | R_button;
-    end
     else if ((ps2pkt_vld == 1'b1) && 
              (rd_data_update_rdy == 1'b1) &&
              (ps2pkt_data[1] == 1'b0)) begin
         // if the right button is released after one second, clear R_button
         R_button <= 1'b0;
+    end
+    else if (ps2pkt_vld == 1'b1) begin
+        // if the right button is pressed, set R_button to 1
+        // the status is latched for one second
+        R_button <= ps2pkt_data[1] | R_button;
     end
     else;
 end
