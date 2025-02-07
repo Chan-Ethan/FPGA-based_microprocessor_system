@@ -13,14 +13,27 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             starting_phase.raise_objection(this);
         end
 
-        // send 50 short transactions
-        #500us;
+        #500us; // wait for DUT init
+
+        // send init transaction
+        `uvm_do_with(tr, {
+            tr.pkt_type == CMD;
+            tr.cmd_byte == 8'hAA;
+        })
+        #300us;
+
+        // send ack transaction
+        `uvm_do_with(tr, {
+            tr.pkt_type == CMD;
+            tr.cmd_byte == 8'hFA;
+        })
+
+        // send 20 data transactions
+        # 100us;
         repeat (20) begin
-            // `uvm_do_with(tr, {
-            //     tr.pload.size >= 20;
-            //     tr.pload.size <= 48;
-            // })
-            `uvm_do(tr)
+            `uvm_do_with(tr, {
+                tr.pkt_type == DATA;
+            })
             #200us;
         end
         #10us;

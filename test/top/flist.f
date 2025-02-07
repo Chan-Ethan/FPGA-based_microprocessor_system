@@ -18,6 +18,8 @@
 ../../../src/seg7/seg7decoder.v
 ../../../src/seg7/seg7_control.sv
 ../../../src/ps2/ps2_rx.sv
+../../../src/ps2/ps2_tx.sv
+../../../src/ps2/ps2_control.sv
 ../../../src/ps2/ps2_top.sv
 ../../../src/top/top.sv
 
