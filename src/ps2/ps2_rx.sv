@@ -9,9 +9,9 @@ module ps2_rx(
     (* mark_debug = "true" *) input         PS2_DATA        ,
     
     // receiver output interface
-    input                   rd_en           ,
-    output reg              rd_vld          ,
-    output reg   [7:0]      rd_data         ,
+    (* mark_debug = "true" *) input                   rd_en           ,
+    (* mark_debug = "true" *) output reg              rd_vld          ,
+    (* mark_debug = "true" *) output reg   [7:0]      rd_data         ,
 
     // receive data debug signal, sync to rd_vld
     output reg              odd_parity_err  ,
