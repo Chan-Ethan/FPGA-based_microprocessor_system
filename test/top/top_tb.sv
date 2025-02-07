@@ -8,9 +8,6 @@ module top_tb (
     logic   [3:0]   SEG_SELECT_OUT  ;
     logic   [7:0]   HEX_OUT         ;
 
-    logic           LED15_LOCKED    ;
-    logic           LED14_1HZ       ;
-
     ps2_if   input_if(clk_50M, rst_n);
     // ps2_if   output_if(clk, rst_n);
 
@@ -53,7 +50,11 @@ module top_tb (
         .SEG_SELECT_OUT (SEG_SELECT_OUT     ),
         .HEX_OUT        (HEX_OUT            ),
 
-        .LED15_LOCKED   (LED15_LOCKED       )
+        .LED15_L        (                   ),
+        .LED14_R        (                   ),
+        .LED13_INIT_DONE(                   ),
+        .LED12_10_STATE (                   ),
+        .LED0_LOCKED    (                   )
         );
 
     initial begin
