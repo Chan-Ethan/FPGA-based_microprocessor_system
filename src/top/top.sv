@@ -63,7 +63,7 @@ seg7_control seg7_control_inst(
     .rst_n              (rst_n          ),
 
     .ps2pkt_vld         (ps2pkt_vld     ),
-    .ps2pkt_vld         (ps2pkt_vld     ),
+    .ps2pkt_data        (ps2pkt_data    ),
     
     .SEG_SELECT_OUT     (SEG_SELECT_OUT ),
     .HEX_OUT            (HEX_OUT        ),
