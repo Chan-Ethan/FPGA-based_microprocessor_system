@@ -3,8 +3,8 @@ module seg7_control(
     input                   rst_n           , // reset signal
     
     // from ps2_rx
-    (* mark_debug = "true" *) input                   rd_vld          ,
-    (* mark_debug = "true" *) input       [23:0]      rd_data         ,   
+    (* mark_debug = "true" *) input                   ps2pkg_vlk    ,
+    (* mark_debug = "true" *) input       [23:0]      ps2pkg_data   ,   
 
     // seven segment display
     output  reg [3:0]       SEG_SELECT_OUT  ,
@@ -106,7 +106,8 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         rd_data_update_rdy <= 1'b0;
     end
-    else if ((rd_vld == 1'b1) && (rd_data_update_rdy == 1'b1)) begin
+    else if ((ps2pkg_vlk == 1'b1) && 
+             (rd_data_update_rdy == 1'b1)) begin
         rd_data_update_rdy <= 1'b0;
     end
     else if (clk_1hz) begin
@@ -124,13 +125,14 @@ always @(posedge clk_sys or negedge rst_n) begin
         x_ovf <= 1'b0;
         y_ovf <= 1'b0;
     end
-    else if ((rd_vld == 1'b1) && (rd_data_update_rdy == 1'b1)) begin
-        x_move <= rd_data[15:8];
-        y_move <= rd_data[23:16];
-        x_neg <= rd_data[4];
-        y_neg <= rd_data[5];
-        x_ovf <= rd_data[6];
-        y_ovf <= rd_data[7];
+    else if ((ps2pkg_vlk == 1'b1) && 
+             (rd_data_update_rdy == 1'b1)) begin
+        x_move <= ps2pkg_data[15:8];
+        y_move <= ps2pkg_data[23:16];
+        x_neg <= ps2pkg_data[4];
+        y_neg <= ps2pkg_data[5];
+        x_ovf <= ps2pkg_data[6];
+        y_ovf <= ps2pkg_data[7];
     end
     else;
 end
@@ -193,14 +195,14 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         L_button <= 1'b0;
     end
-    else if (rd_vld == 1'b1) begin
+    else if (ps2pkg_vlk == 1'b1) begin
         // if the left button is pressed, set L_button to 1
         // the status is latched for one second
-        L_button <= rd_data[0] | L_button;
+        L_button <= ps2pkg_data[0] | L_button;
     end
-    else if ((rd_vld == 1'b1) && 
+    else if ((ps2pkg_vlk == 1'b1) && 
              (rd_data_update_rdy == 1'b1) &&
-             (rd_data[0] == 1'b0)) begin
+             (ps2pkg_data[0] == 1'b0)) begin
         // if the left button is released after one second, clear L_button
         L_button <= 1'b0;
     end
@@ -211,14 +213,14 @@ always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         R_button <= 1'b0;
     end
-    else if (rd_vld == 1'b1) begin
+    else if (ps2pkg_vlk == 1'b1) begin
         // if the right button is pressed, set R_button to 1
         // the status is latched for one second
-        R_button <= rd_data[1] | R_button;
+        R_button <= ps2pkg_data[1] | R_button;
     end
-    else if ((rd_vld == 1'b1) && 
+    else if ((ps2pkg_vlk == 1'b1) && 
              (rd_data_update_rdy == 1'b1) &&
-             (rd_data[1] == 1'b0)) begin
+             (ps2pkg_data[1] == 1'b0)) begin
         // if the right button is released after one second, clear R_button
         R_button <= 1'b0;
     end

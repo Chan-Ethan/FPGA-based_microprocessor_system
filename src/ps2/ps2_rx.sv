@@ -1,21 +1,17 @@
-// PS2 receiver, receives data from PS/2 interace and outputs 8-bit data
+// PS/2 receiver, receives data from PS/2 interace and outputs 8-bit data
 
 module ps2_rx(
     input                   clk_sys         , // 50MHz system clock
     input                   rst_n           , // reset signal
     
     // PS2 interface input
-    (* mark_debug = "true" *) input                   PS2_CLK         ,
-    (* mark_debug = "true" *) input                   PS2_DATA        ,
+    (* mark_debug = "true" *) input         PS2_CLK         ,
+    (* mark_debug = "true" *) input         PS2_DATA        ,
     
     // receiver output interface
     input                   rd_en           ,
     output reg              rd_vld          ,
-    output reg   [23:0]     rd_data         ,
-
-    // device status debug signal, long latency
-    output reg              init_done       ,
-    output reg              is_mouse        ,
+    output reg   [7:0]      rd_data         ,
 
     // receive data debug signal, sync to rd_vld
     output reg              odd_parity_err  ,
@@ -28,10 +24,9 @@ module ps2_rx(
 `define FSM_PARITY     5'b01000
 `define FSM_STOP       5'b10000
 
-// fsm_state FSM variable
-logic   [4:0]       fsm_state;
+// current_state FSM variable
+logic   [4:0]       current_state, next_state;
 
-logic   [7:0]       data;
 logic   [2:0]       bit_cnt;  // 3-bit counter for data bit count
 logic   [1:0]       byte_cnt; // 0~2 for 3-byte data
 logic               odd_parity_recv;
@@ -63,70 +58,66 @@ always @(posedge clk_sys) begin
     else;
 end
 
-
-//================= Finite State Machine =================//
-always @(posedge clk_sys or negedge rst_n) begin
-    if (~rst_n) begin
-        fsm_state <= `FSM_IDLE;
-        bit_cnt <= 0;
+//================= Finite State Machine (Three-Segment Style) =================//
+// State Transition Logic (Combinational)
+always_comb begin
+    if (rd_en == 1'b0) begin
+        next_state = `FSM_IDLE; // go to idle state when rd_en is low
     end
     else begin
-        case (fsm_state)
+        next_state = current_state; // Default: stay in current state
+        case (current_state)
             `FSM_IDLE: begin
-                if ((ps2_clk_vld == 1'b1) && (PS2_DATA == 1'b0)) begin
-                    // wait for start bit 0
-                    fsm_state <= `FSM_START;
-                end
-                else; // stay in idle fsm_state
+                if ((ps2_clk_vld == 1'b1) && (PS2_DATA == 1'b0))
+                    next_state = `FSM_START;
             end
             `FSM_START: begin
-                if (ps2_clk_vld == 1'b1) begin
-                    fsm_state <= `FSM_DATA;
-                end
-                else; // stay in start fsm_state
+                if (ps2_clk_vld == 1'b1) 
+                    next_state = `FSM_DATA;
             end
             `FSM_DATA: begin
-                if (ps2_clk_vld == 1'b1) begin
-                    bit_cnt <= bit_cnt + 1;
-                    if (bit_cnt == 7) begin
-                        fsm_state <= `FSM_PARITY;
-                        bit_cnt <= 0;
-                    end
-                end
-                else; // stay in data fsm_state
+                if ((ps2_clk_vld == 1'b1) && (bit_cnt == 7))
+                    next_state = `FSM_PARITY;
             end
             `FSM_PARITY: begin
-                if (ps2_clk_vld == 1'b1) begin
-                    fsm_state <= `FSM_STOP;
-                end
-                else; // stay in parity fsm_state
+                if (ps2_clk_vld == 1'b1) 
+                    next_state = `FSM_STOP;
             end
             `FSM_STOP: begin
-                if (ps2_clk_vld == 1'b1) begin
-                    if(PS2_DATA == 1'b0) begin
-                        fsm_state <= `FSM_START;
-                    end
-                    else begin
-                        fsm_state <= `FSM_IDLE;
-                    end
-                end
-                else; // stay in stop fsm_state
+                if (ps2_clk_vld == 1'b1) 
+                    next_state = (PS2_DATA == 1'b0) ? `FSM_START : `FSM_IDLE;
             end
-            default: begin
-                fsm_state <= `FSM_IDLE;
-            end
+            default: 
+                next_state = `FSM_IDLE;
         endcase
+    end
+end
+
+// tate Register Update (Sequential)
+always_ff @(posedge clk_sys or negedge rst_n) begin
+    if (~rst_n) begin
+        current_state <= `FSM_IDLE;
+        bit_cnt       <= 3'b0;
+    end
+    else begin
+        current_state <= next_state;
+        
+        // Handle bit counter separately
+        if ((current_state == `FSM_DATA) && 
+            (ps2_clk_vld == 1'b1)) begin
+            bit_cnt <= bit_cnt + 3'b1; // bit_cnt will return 0 after 7
+        end
     end
 end
 
 //================= Receive Data Processing =================//
 always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
-        data <= 0;
+        rd_data <= 8'b0;
     end
     else begin
-        if ((fsm_state == `FSM_DATA) && (ps2_clk_vld == 1'b1)) begin
-            data <= {ps2_data_dly, data[7:1]};
+        if ((current_state == `FSM_DATA) && (ps2_clk_vld == 1'b1)) begin
+            rd_data <= {ps2_data_dly, rd_data[7:1]}; // right shift
         end
         else;
     end
@@ -138,7 +129,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         odd_parity_recv <= 1'b0;
     end
     else begin
-        if ((fsm_state == `FSM_PARITY) && (ps2_clk_vld == 1'b1)) begin
+        if ((current_state == `FSM_PARITY) && (ps2_clk_vld == 1'b1)) begin
             odd_parity_recv <= ps2_data_dly;
         end
         else;
@@ -151,8 +142,8 @@ always @(posedge clk_sys or negedge rst_n) begin
         odd_parity_calc <= 1'b0;
     end
     else begin
-        if ((fsm_state == `FSM_PARITY) && (ps2_clk_vld == 1'b1)) begin
-            odd_parity_calc <= ^data;
+        if ((current_state == `FSM_PARITY) && (ps2_clk_vld == 1'b1)) begin
+            odd_parity_calc <= ~^rd_data;
         end
         else;
     end
@@ -164,7 +155,7 @@ always @(posedge clk_sys or negedge rst_n) begin
         byte_cnt <= 0;
     end
     else begin
-        if ((fsm_state == `FSM_STOP) && (ps2_clk_vld == 1'b1)) begin
+        if ((current_state == `FSM_STOP) && (ps2_clk_vld == 1'b1)) begin
             byte_cnt <= byte_cnt + 1;
             if (byte_cnt == 2) begin
                 byte_cnt <= 0;
@@ -177,30 +168,13 @@ end
 
 always @(posedge clk_sys or negedge rst_n) begin
     if (~rst_n) begin
-        rd_data <= 24'b0;
-    end
-    else begin
-        if ((fsm_state == `FSM_STOP) && (ps2_clk_vld == 1'b1)) begin
-            case (byte_cnt)
-                0: rd_data[7:0] <= data;
-                1: rd_data[15:8] <= data;
-                2: rd_data[23:16] <= data;
-                default;
-            endcase
-        end
-        else;
-    end
-end
-
-always @(posedge clk_sys or negedge rst_n) begin
-    if (~rst_n) begin
         rd_vld <= 1'b0;
     end
     else begin
-        if ((fsm_state == `FSM_STOP) && 
+        if ((current_state == `FSM_STOP) && 
             (ps2_clk_vld == 1'b1) &&
             (byte_cnt == 2)) begin
-            rd_vld <= 1'b1;
+            rd_vld <= rd_en;
         end
         else begin
             rd_vld <= 1'b0;
@@ -214,7 +188,7 @@ always @(posedge clk_sys or negedge rst_n) begin
     end
     else begin
         // odd_parity_err will stay 1 once set
-        if ((fsm_state == `FSM_STOP) && 
+        if ((current_state == `FSM_STOP) && 
             (ps2_clk_vld == 1'b1) &&
             (odd_parity_recv != odd_parity_calc)) begin
             odd_parity_err <= 1'b1;
@@ -229,7 +203,7 @@ always @(posedge clk_sys or negedge rst_n) begin
     end
     else begin
         // stop_bit_err will stay 1 once set
-        if ((fsm_state == `FSM_STOP) && (ps2_data_dly == 1'b1)) begin
+        if ((current_state == `FSM_STOP) && (ps2_data_dly == 1'b1)) begin
             stop_bit_err <= 1'b1;
         end
         else;

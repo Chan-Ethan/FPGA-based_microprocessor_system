@@ -12,6 +12,8 @@ module top(
 
     output  reg             LED15_L         ,
     output  reg             LED14_R         ,
+    output  reg             LED13_INIT_DONE ,
+    output  reg   [2:0]     LED12_10_STATE  ,
     output  reg             LED0_LOCKED     
 );
 
@@ -21,9 +23,8 @@ logic           rst_n;
 logic           HARD_RSTN_1dly;
 logic           HARD_RSTN_2dly;
 
-logic           rd_en;
-logic           rd_vld;
-logic   [23:0]  rd_data;
+logic           ps2pkt_vld;
+logic   [23:0]  ps2pkt_data;
 
 // reset logic
 always_ff @(posedge CLK100_IN) begin
@@ -41,9 +42,7 @@ clk_wiz_0 clk_wiz_0_inst
     .locked     (LED0_LOCKED    )
  );
 
-// instantiate the PS2 receiver
-assign rd_en = 1'b1; // always enable the PS2 receiver
-
+// instantiate the PS2 interface
 ps2_top ps2_top_inst(
     .clk_sys            (clk_sys        ),
     .rst_n              (rst_n          ),
@@ -51,9 +50,11 @@ ps2_top ps2_top_inst(
     .PS2_CLK            (PS2_CLK        ),
     .PS2_DATA           (PS2_DATA       ),
 
-    .rd_en              (rd_en          ),
-    .rd_vld             (rd_vld         ),
-    .rd_data            (rd_data        )
+    .ps2pkt_vld         (ps2pkt_vld     ),
+    .ps2pkt_data        (ps2pkt_data    ),
+
+    .init_done          (LED13_INIT_DONE),
+    .current_state      (LED12_10_STATE )
 );
 
 // instantiate the seven segment display controller
@@ -61,8 +62,8 @@ seg7_control seg7_control_inst(
     .clk_sys            (clk_sys        ),
     .rst_n              (rst_n          ),
 
-    .rd_vld             (rd_vld         ),
-    .rd_data            (rd_data        ),
+    .ps2pkt_vld         (ps2pkt_vld     ),
+    .ps2pkt_vld         (ps2pkt_vld     ),
     
     .SEG_SELECT_OUT     (SEG_SELECT_OUT ),
     .HEX_OUT            (HEX_OUT        ),

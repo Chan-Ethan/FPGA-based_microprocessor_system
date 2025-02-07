@@ -76,7 +76,7 @@ task ps2_driver::drive_one_pkt(ps2_transaction tr);
 		end
 
 		// drive odd parity bit
-		vif.PS2_DATA <= ^data_array[i];
+		vif.PS2_DATA <= ~^data_array[i];
 		@(posedge vif.PS2_CLK);
 
 		// drive stop bit
