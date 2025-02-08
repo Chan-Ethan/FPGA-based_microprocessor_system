@@ -134,6 +134,16 @@ always @(posedge clk_sys or negedge rst_n) begin
         x_ovf <= ps2pkt_data[6];
         y_ovf <= ps2pkt_data[7];
     end
+    else if ((clk_1hz == 1'b1) && 
+             (rd_data_update_rdy == 1'b1)) begin
+        // if no PS/2 packet received in one second, clear the movement
+        x_move <= 8'b0;
+        y_move <= 8'b0;
+        x_neg <= 1'b0;
+        y_neg <= 1'b0;
+        x_ovf <= 1'b0;
+        y_ovf <= 1'b0;
+    end
     else;
 end
 
@@ -206,6 +216,11 @@ always @(posedge clk_sys or negedge rst_n) begin
         // the status is latched for one second
         L_button <= ps2pkt_data[0] | L_button;
     end
+    else if ((clk_1hz == 1'b1) && 
+             (rd_data_update_rdy == 1'b1)) begin
+        // if no PS/2 packet received in one second, clear the movement
+        L_button <= 1'b0;
+    end
     else;
 end
 
@@ -223,6 +238,11 @@ always @(posedge clk_sys or negedge rst_n) begin
         // if the right button is pressed, set R_button to 1
         // the status is latched for one second
         R_button <= ps2pkt_data[1] | R_button;
+    end
+    else if ((clk_1hz == 1'b1) && 
+             (rd_data_update_rdy == 1'b1)) begin
+        // if no PS/2 packet received in one second, clear the movement
+        R_button <= 1'b0;
     end
     else;
 end
