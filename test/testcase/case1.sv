@@ -13,19 +13,25 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             starting_phase.raise_objection(this);
         end
 
-        #1ms; // wait for DUT init
+        #500us; // wait for DUT init
+        // send ack transaction (For reset)
+        `uvm_do_with(tr, {
+            tr.pkt_type == CMD;
+            tr.cmd_byte == 8'hF4;
+        })
 
-        // send init transaction
+        #100us;
+        // send ID
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
             tr.cmd_byte == 8'hAA;
         })
-        #300us;
 
-        // send ack transaction
+        #400us;
+        // send ack transaction (For start stream mode)
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
-            tr.cmd_byte == 8'hFA;
+            tr.cmd_byte == 8'hF4;
         })
 
         // send 20 data transactions

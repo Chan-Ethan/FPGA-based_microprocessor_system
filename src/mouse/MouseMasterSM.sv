@@ -27,7 +27,7 @@ output reg SEND_INTERRUPT
 `define FSM_STREAM_MOD  5'b10000
 
 `ifdef SIMULATION
-    `define CNT_NUM_1MS     16'd4999
+    `define CNT_NUM_1MS     16'd49_999
     `define CNT_NUM_20S     15'd39
 `else
     `define CNT_NUM_1MS     16'd49_999
@@ -115,21 +115,28 @@ end
 assign BYTE_TO_SEND = (current_state == `FSM_STAR_STM) ? 8'hF4 : 8'hFF;
 
 //================= Receiver Control =================//
-assign READ_ENABLE = (current_state != `FSM_RESET) && (current_state != `FSM_WAIT_ACK2);
+assign READ_ENABLE = (current_state != `FSM_RESET) && (current_state != `FSM_STAR_STM);
 
 //================= Data Packing =================//
 always_ff @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
         byte_cnt <= 2'b00;
         pkt_buffer <= 24'b0;
-    end else if ((current_state == `FSM_STREAM_MOD || current_state == `FSM_WAIT_ACK) && BYTE_READY) begin
-        byte_cnt <= (byte_cnt == `CNT_BYTES) ? 2'b00 : byte_cnt + 2'b01;
-        case (byte_cnt)
-            2'b00: pkt_buffer[7:0] <= BYTE_READ;
-            2'b01: pkt_buffer[15:8] <= BYTE_READ;
-            2'b10: pkt_buffer[23:16] <= BYTE_READ;
-            default: ;
-        endcase
+    end else if (current_state == `FSM_STREAM_MOD) begin
+        if (BYTE_READY == 1'b1) begin
+            byte_cnt <= (byte_cnt == `CNT_BYTES) ? 2'b00 : byte_cnt + 2'b01;
+            case (byte_cnt)
+                2'b00: pkt_buffer[7:0] <= BYTE_READ;
+                2'b01: pkt_buffer[15:8] <= BYTE_READ;
+                2'b10: pkt_buffer[23:16] <= BYTE_READ;
+                default: ;
+            endcase
+        end
+        else;
+    end
+    else begin
+        byte_cnt <= 2'b0;
+        pkt_buffer <= 24'b0;
     end
 end
 
