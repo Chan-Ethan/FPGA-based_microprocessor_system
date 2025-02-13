@@ -120,11 +120,9 @@ assign READ_ENABLE = (current_state != `FSM_RESET) && (current_state != `FSM_STA
 //================= Data Packing =================//
 always_ff @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
-        byte_cnt <= 2'b00;
         pkt_buffer <= 24'b0;
     end else if (current_state == `FSM_STREAM_MOD) begin
         if (BYTE_READY == 1'b1) begin
-            byte_cnt <= (byte_cnt == `CNT_BYTES) ? 2'b00 : byte_cnt + 2'b01;
             case (byte_cnt)
                 2'b00: pkt_buffer[7:0] <= BYTE_READ;
                 2'b01: pkt_buffer[15:8] <= BYTE_READ;
@@ -135,10 +133,26 @@ always_ff @(posedge CLK or negedge RESET) begin
         else;
     end
     else begin
-        byte_cnt <= 2'b0;
         pkt_buffer <= 24'b0;
     end
 end
+
+always @(posedge CLK or negedge RESET) begin
+    if (!RESET) begin
+        byte_cnt <= 2'b00;
+    end
+    else if ((current_state == `FSM_STREAM_MOD) || (current_state == `FSM_WAIT_ACK2)) begin
+        if (BYTE_READY == 1'b1) begin
+            byte_cnt <= (byte_cnt == `CNT_BYTES) ? 2'b00 : byte_cnt + 2'b01;
+        end
+        else;
+    end
+    else begin
+        byte_cnt <= 2'b00;
+    end
+
+end
+
 
 //================= Output Registers =================//
 assign MOUSE_STATUS = pkt_buffer[7:0];
