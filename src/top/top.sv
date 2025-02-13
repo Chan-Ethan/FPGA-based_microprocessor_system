@@ -1,75 +1,71 @@
 module top(
-    input                   CLK100_IN       , // 100 MHz oscillator clock input, W5
-    input                   HARD_RSTN       ,
-
-    // PS2 interface input
-    inout                   PS2_CLK         ,
-    inout                   PS2_DATA        ,
-
+    input           CLK100_IN       , // 100 MHz oscillator clock input, W5
+    input           HARD_RSTN       ,
+    
+    // PS2 interface
+    inout           PS2_CLK         ,
+    inout           PS2_DATA        ,
+    
     // seven segment display
-    output  reg   [3:0]     SEG_SELECT_OUT  ,
-    output  reg   [7:0]     HEX_OUT         ,
-
-    output  reg             LED15_L         ,
-    output  reg             LED14_R         ,
-    output  reg             LED13_INIT_DONE ,
-    output  reg   [4:0]     LED12_8_STATE  ,
-    output  reg             LED0_LOCKED     
+    output reg [3:0] SEG_SELECT_OUT ,
+    output reg [7:0] HEX_OUT        ,
+    
+    // LED status indicators
+    output          LED0_LOCKED     ,
+    output [3:0]    MOUSE_STATUS_LED
 );
 
-logic           clk_sys;
-logic           rst_n;
+logic       clk_sys;    // 50MHz system clock
+logic       rst_n;      // active-low reset
 
-logic           HARD_RSTN_1dly;
-logic           HARD_RSTN_2dly;
+// Mouse interface signals
+wire [7:0]  MOUSE_DX;
+wire [7:0]  MOUSE_DY;
 
-logic           ps2pkt_vld;
-logic   [23:0]  ps2pkt_data;
-
-// reset logic
+// Reset synchronization logic
+logic HARD_RSTN_1dly, HARD_RSTN_2dly;
 always_ff @(posedge CLK100_IN) begin
-    HARD_RSTN_1dly <= ~HARD_RSTN;
-    HARD_RSTN_2dly <= HARD_RSTN_1dly;
-    rst_n <= (HARD_RSTN_1dly | HARD_RSTN_2dly);
+    HARD_RSTN_1dly <= ~HARD_RSTN;      // Sync reset input
+    HARD_RSTN_2dly <= HARD_RSTN_1dly;  // Metastability protection
+    rst_n <= HARD_RSTN_2dly;           // Generate active-low reset
 end
 
-// instantiate the clock wizard
-clk_wiz_0 clk_wiz_0_inst
- (
-    .clk_in1    (CLK100_IN      ),
-    .clk_out1   (clk_sys        ),
-    .resetn     (rst_n          ),
-    .locked     (LED0_LOCKED    )
- );
-
-// instantiate the PS2 interface
-ps2_top ps2_top_inst(
-    .clk_sys            (clk_sys        ),
-    .rst_n              (rst_n          ),
-
-    .PS2_CLK            (PS2_CLK        ),
-    .PS2_DATA           (PS2_DATA       ),
-
-    .ps2pkt_vld         (ps2pkt_vld     ),
-    .ps2pkt_data        (ps2pkt_data    ),
-
-    .init_done          (LED13_INIT_DONE),
-    .current_state      (LED12_8_STATE  )
+// Clock wizard (50MHz system clock)
+clk_wiz_0 clk_wiz_inst (
+    .clk_in1    (CLK100_IN),
+    .clk_out1   (clk_sys),   // 50MHz output
+    .resetn     (rst_n),
+    .locked     (LED0_LOCKED)
 );
 
-// instantiate the seven segment display controller
-seg7_control seg7_control_inst(
-    .clk_sys            (clk_sys        ),
-    .rst_n              (rst_n          ),
-
-    .ps2pkt_vld         (ps2pkt_vld     ),
-    .ps2pkt_data        (ps2pkt_data    ),
+// Mouse Transceiver subsystem
+MouseTransceiver MouseTransceiver_inst (
+    .RESET          (rst_n),
+    .CLK            (clk_sys),
     
-    .SEG_SELECT_OUT     (SEG_SELECT_OUT ),
-    .HEX_OUT            (HEX_OUT        ),
+    // PS/2 interface
+    .CLK_MOUSE      (PS2_CLK),
+    .DATA_MOUSE     (PS2_DATA),
+    
+    // Mouse data output
+    .MOUSE_STATUS   (MOUSE_STATUS_LED),
+    .MOUSE_DX       (MOUSE_DX),
+    .MOUSE_DY       (MOUSE_DY),
+    .SEND_INTERRUPT ()
+);
 
-    .L_button           (LED15_L        ),
-    .R_button           (LED14_R        )
+// Seven-segment display controller
+seg7_control seg7_control_inst (
+    .clk_sys        (clk_sys),
+    .rst_n          (rst_n),
+    
+    // Mouse coordinates
+    .MOUSE_DX       (MOUSE_DX),
+    .MOUSE_DY       (MOUSE_DY),
+    
+    // Display outputs
+    .SEG_SELECT_OUT (SEG_SELECT_OUT),
+    .HEX_OUT        (HEX_OUT)
 );
 
 endmodule
