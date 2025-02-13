@@ -141,7 +141,7 @@ always @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
         byte_cnt <= 2'b00;
     end
-    else if ((current_state == `FSM_STREAM_MOD) || (current_state == `FSM_WAIT_ACK2)) begin
+    else if ((current_state == `FSM_STREAM_MOD) || (current_state == `FSM_WAIT_ACK)) begin
         if (BYTE_READY == 1'b1) begin
             byte_cnt <= (byte_cnt == `CNT_BYTES) ? 2'b00 : byte_cnt + 2'b01;
         end
