@@ -34,8 +34,8 @@ task ps2_monitor::main_phase(uvm_phase phase);
 	while (1) begin
 		// wait for valid signal
 		while (1) begin
-			@(posedge vif.clk);
-			if (vif.valid) break;
+			@(negedge vif.PS2_CLK);
+			if (vif.PS2_DATA == 1'b0) break;
 		end
 		tr = new("tr");
 		collect_one_pkt(tr);
@@ -51,17 +51,23 @@ task ps2_monitor::collect_one_pkt(ps2_transaction tr);
 	int			data_size;
 
 	`uvm_info("ps2_monitor", "begin to collect one pkt", UVM_LOW)
-	while (vif.valid) begin
-		data_q.push_back(vif.data);
-		@(posedge vif.clk);
+	// collect start bit
+	data_q.push_back(vif.PS2_DATA);
+	@(negedge vif.PS2_CLK);
+
+	// collect 8 data bits
+	for (int i = 0; i < 8; i++) begin
+		data_q.push_back(vif.PS2_DATA);
+		@(negedge vif.PS2_CLK);
 	end
 
-	// convert queue to array
-	data_size = data_q.size();
-	data_array = new[data_size];
-	foreach (data_q[i]) begin
-		data_array[i] = data_q[i];
-	end
+	// collect parity bit
+	data_q.push_back(vif.PS2_DATA);
+	@(negedge vif.PS2_CLK);
+
+	// collect stop bit
+	data_q.push_back(vif.PS2_DATA);
+	@(negedge vif.PS2_CLK);
 
 	// assign to tr
 	tr.pload = new[data_size - 18]; // 18 is header size
