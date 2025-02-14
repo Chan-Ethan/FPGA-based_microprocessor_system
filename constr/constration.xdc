@@ -54,6 +54,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports {MOUSE_STATE_LED[*]}]
 set_property PACKAGE_PIN U16 [get_ports LED0_LOCKED]
 set_property IOSTANDARD LVCMOS33 [get_ports LED0_LOCKED]
 
+
 create_debug_core u_ila_0 ila
 set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
 set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
@@ -66,25 +67,70 @@ set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
 set_property port_width 1 [get_debug_ports u_ila_0/clk]
 connect_debug_port u_ila_0/clk [get_nets [list clk_wiz_inst/inst/clk_out1]]
 set_property port_width 8 [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {seg7_control_inst/MOUSE_DX[0]} {seg7_control_inst/MOUSE_DX[1]} {seg7_control_inst/MOUSE_DX[2]} {seg7_control_inst/MOUSE_DX[3]} {seg7_control_inst/MOUSE_DX[4]} {seg7_control_inst/MOUSE_DX[5]} {seg7_control_inst/MOUSE_DX[6]} {seg7_control_inst/MOUSE_DX[7]}]]
+connect_debug_port u_ila_0/probe0 [get_nets [list {seg7_control_inst/MOUSE_DY[0]} {seg7_control_inst/MOUSE_DY[1]} {seg7_control_inst/MOUSE_DY[2]} {seg7_control_inst/MOUSE_DY[3]} {seg7_control_inst/MOUSE_DY[4]} {seg7_control_inst/MOUSE_DY[5]} {seg7_control_inst/MOUSE_DY[6]} {seg7_control_inst/MOUSE_DY[7]}]]
 create_debug_port u_ila_0 probe
 set_property port_width 8 [get_debug_ports u_ila_0/probe1]
-connect_debug_port u_ila_0/probe1 [get_nets [list {seg7_control_inst/MOUSE_DY[0]} {seg7_control_inst/MOUSE_DY[1]} {seg7_control_inst/MOUSE_DY[2]} {seg7_control_inst/MOUSE_DY[3]} {seg7_control_inst/MOUSE_DY[4]} {seg7_control_inst/MOUSE_DY[5]} {seg7_control_inst/MOUSE_DY[6]} {seg7_control_inst/MOUSE_DY[7]}]]
+connect_debug_port u_ila_0/probe1 [get_nets [list {seg7_control_inst/MOUSE_DX[0]} {seg7_control_inst/MOUSE_DX[1]} {seg7_control_inst/MOUSE_DX[2]} {seg7_control_inst/MOUSE_DX[3]} {seg7_control_inst/MOUSE_DX[4]} {seg7_control_inst/MOUSE_DX[5]} {seg7_control_inst/MOUSE_DX[6]} {seg7_control_inst/MOUSE_DX[7]}]]
 create_debug_port u_ila_0 probe
-set_property port_width 8 [get_debug_ports u_ila_0/probe2]
-connect_debug_port u_ila_0/probe2 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_READ[0]} {MouseTransceiver_inst/master_sm/BYTE_READ[1]} {MouseTransceiver_inst/master_sm/BYTE_READ[2]} {MouseTransceiver_inst/master_sm/BYTE_READ[3]} {MouseTransceiver_inst/master_sm/BYTE_READ[4]} {MouseTransceiver_inst/master_sm/BYTE_READ[5]} {MouseTransceiver_inst/master_sm/BYTE_READ[6]} {MouseTransceiver_inst/master_sm/BYTE_READ[7]}]]
+set_property port_width 2 [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {MouseTransceiver_inst/master_sm/byte_cnt[0]} {MouseTransceiver_inst/master_sm/byte_cnt[1]}]]
 create_debug_port u_ila_0 probe
 set_property port_width 24 [get_debug_ports u_ila_0/probe3]
 connect_debug_port u_ila_0/probe3 [get_nets [list {MouseTransceiver_inst/master_sm/pkt_buffer[0]} {MouseTransceiver_inst/master_sm/pkt_buffer[1]} {MouseTransceiver_inst/master_sm/pkt_buffer[2]} {MouseTransceiver_inst/master_sm/pkt_buffer[3]} {MouseTransceiver_inst/master_sm/pkt_buffer[4]} {MouseTransceiver_inst/master_sm/pkt_buffer[5]} {MouseTransceiver_inst/master_sm/pkt_buffer[6]} {MouseTransceiver_inst/master_sm/pkt_buffer[7]} {MouseTransceiver_inst/master_sm/pkt_buffer[8]} {MouseTransceiver_inst/master_sm/pkt_buffer[9]} {MouseTransceiver_inst/master_sm/pkt_buffer[10]} {MouseTransceiver_inst/master_sm/pkt_buffer[11]} {MouseTransceiver_inst/master_sm/pkt_buffer[12]} {MouseTransceiver_inst/master_sm/pkt_buffer[13]} {MouseTransceiver_inst/master_sm/pkt_buffer[14]} {MouseTransceiver_inst/master_sm/pkt_buffer[15]} {MouseTransceiver_inst/master_sm/pkt_buffer[16]} {MouseTransceiver_inst/master_sm/pkt_buffer[17]} {MouseTransceiver_inst/master_sm/pkt_buffer[18]} {MouseTransceiver_inst/master_sm/pkt_buffer[19]} {MouseTransceiver_inst/master_sm/pkt_buffer[20]} {MouseTransceiver_inst/master_sm/pkt_buffer[21]} {MouseTransceiver_inst/master_sm/pkt_buffer[22]} {MouseTransceiver_inst/master_sm/pkt_buffer[23]}]]
 create_debug_port u_ila_0 probe
-set_property port_width 1 [get_debug_ports u_ila_0/probe4]
-connect_debug_port u_ila_0/probe4 [get_nets [list MouseTransceiver_inst/master_sm/BYTE_READY]]
+set_property port_width 8 [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_READ[0]} {MouseTransceiver_inst/master_sm/BYTE_READ[1]} {MouseTransceiver_inst/master_sm/BYTE_READ[2]} {MouseTransceiver_inst/master_sm/BYTE_READ[3]} {MouseTransceiver_inst/master_sm/BYTE_READ[4]} {MouseTransceiver_inst/master_sm/BYTE_READ[5]} {MouseTransceiver_inst/master_sm/BYTE_READ[6]} {MouseTransceiver_inst/master_sm/BYTE_READ[7]}]]
 create_debug_port u_ila_0 probe
-set_property port_width 1 [get_debug_ports u_ila_0/probe5]
-connect_debug_port u_ila_0/probe5 [get_nets [list MouseTransceiver_inst/master_sm/BYTE_SENT]]
+set_property port_width 8 [get_debug_ports u_ila_0/probe5]
+connect_debug_port u_ila_0/probe5 [get_nets [list {MouseTransceiver_inst/receiver/BYTE_READ[0]} {MouseTransceiver_inst/receiver/BYTE_READ[1]} {MouseTransceiver_inst/receiver/BYTE_READ[2]} {MouseTransceiver_inst/receiver/BYTE_READ[3]} {MouseTransceiver_inst/receiver/BYTE_READ[4]} {MouseTransceiver_inst/receiver/BYTE_READ[5]} {MouseTransceiver_inst/receiver/BYTE_READ[6]} {MouseTransceiver_inst/receiver/BYTE_READ[7]}]]
 create_debug_port u_ila_0 probe
 set_property port_width 1 [get_debug_ports u_ila_0/probe6]
-connect_debug_port u_ila_0/probe6 [get_nets [list MouseTransceiver_inst/master_sm/SEND_BYTE]]
+connect_debug_port u_ila_0/probe6 [get_nets [list MouseTransceiver_inst/master_sm/BYTE_READY]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe7]
+connect_debug_port u_ila_0/probe7 [get_nets [list MouseTransceiver_inst/receiver/BYTE_READY]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe8]
+connect_debug_port u_ila_0/probe8 [get_nets [list MouseTransceiver_inst/master_sm/BYTE_SENT]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe9]
+connect_debug_port u_ila_0/probe9 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[0]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe10]
+connect_debug_port u_ila_0/probe10 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[1]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe11]
+connect_debug_port u_ila_0/probe11 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[2]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe12]
+connect_debug_port u_ila_0/probe12 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[3]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe13]
+connect_debug_port u_ila_0/probe13 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[4]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe14]
+connect_debug_port u_ila_0/probe14 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[5]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe15]
+connect_debug_port u_ila_0/probe15 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[6]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe16]
+connect_debug_port u_ila_0/probe16 [get_nets [list {MouseTransceiver_inst/master_sm/BYTE_TO_SEND_reg_n_0_[7]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe17]
+connect_debug_port u_ila_0/probe17 [get_nets [list MouseTransceiver_inst/receiver/CLK_MOUSE_IN]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe18]
+connect_debug_port u_ila_0/probe18 [get_nets [list MouseTransceiver_inst/receiver/DATA_MOUSE_IN]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe19]
+connect_debug_port u_ila_0/probe19 [get_nets [list MouseTransceiver_inst/master_sm/READ_ENABLE]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe20]
+connect_debug_port u_ila_0/probe20 [get_nets [list MouseTransceiver_inst/receiver/READ_ENABLE]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe21]
+connect_debug_port u_ila_0/probe21 [get_nets [list MouseTransceiver_inst/master_sm/SEND_BYTE]]
 set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
 set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]

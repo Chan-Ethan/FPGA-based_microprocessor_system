@@ -3,20 +3,20 @@ input CLK,
 input RESET,
 
 //Transmitter Control
-(*mark_debug*) output reg SEND_BYTE,
-(*mark_debug*) output reg [7:0] BYTE_TO_SEND,
-(*mark_debug*) input BYTE_SENT,
+(* mark_debug = "true" *) output reg SEND_BYTE,
+(* mark_debug = "true" *) output reg [7:0] BYTE_TO_SEND,
+(* mark_debug = "true" *) input BYTE_SENT,
 
 //Receiver Control
-(*mark_debug*) output reg READ_ENABLE,
-(*mark_debug*) input [7:0] BYTE_READ,
-(*mark_debug*) input [1:0] BYTE_ERROR_CODE,
-(*mark_debug*) input BYTE_READY,
+(* mark_debug = "true" *) output reg READ_ENABLE,
+(* mark_debug = "true" *) input [7:0] BYTE_READ,
+(* mark_debug = "true" *) input [1:0] BYTE_ERROR_CODE,
+(* mark_debug = "true" *) input BYTE_READY,
 
 //Data Registers
-(*mark_debug*) output reg [7:0] MOUSE_DX,
-(*mark_debug*) output reg [7:0] MOUSE_DY,
-(*mark_debug*) output reg [7:0] MOUSE_STATUS,
+(* mark_debug = "true" *) output reg [7:0] MOUSE_DX,
+(* mark_debug = "true" *) output reg [7:0] MOUSE_DY,
+(* mark_debug = "true" *) output reg [7:0] MOUSE_STATUS,
 output reg SEND_INTERRUPT,
 
 // Debug signals
@@ -41,7 +41,7 @@ output     [4:0] current_state
 
 logic [4:0]         current_state, next_state;
 logic               waiting_wr_done;
-logic [1:0]         byte_cnt;
+(* mark_debug = "true" *) logic [1:0]         byte_cnt;
 logic [15:0]        cnt_1ms;
 logic [14:0]        cnt_20s;
 logic [23:0]        pkt_buffer;
@@ -54,8 +54,8 @@ always_comb begin
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK;
         end
         `FSM_WAIT_ACK: begin
-            if (byte_cnt == 2'd2) next_state = `FSM_STAR_STM;
-            else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
+            if (byte_cnt == 2'd1) next_state = `FSM_STAR_STM;
+            // else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
         end
         `FSM_STAR_STM: begin
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK2;
@@ -64,7 +64,7 @@ always_comb begin
             if (BYTE_READY && (BYTE_READ == 8'hFA || BYTE_READ == 8'hF4)) begin
                 next_state = `FSM_STREAM_MOD;
             end
-            else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
+            // else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
         end
         `FSM_STREAM_MOD: begin
             if (cnt_20s == `CNT_NUM_20S) next_state = `FSM_RESET;
@@ -81,11 +81,12 @@ end
 
 //================= Counters =================//
 always_ff @(posedge CLK or negedge RESET) begin
-    if (!RESET) cnt_1ms <= 16'd0;
-    else if (current_state inside {`FSM_WAIT_ACK, `FSM_STREAM_MOD}) begin
+    if (!RESET) begin
+        cnt_1ms <= 16'd0;
+    end
+    else begin
         cnt_1ms <= (cnt_1ms == `CNT_NUM_1MS) ? 16'd0 : cnt_1ms + 16'd1;
     end
-    else cnt_1ms <= 16'd0;
 end
 
 always_ff @(posedge CLK or negedge RESET) begin
@@ -105,7 +106,7 @@ always_ff @(posedge CLK or negedge RESET) begin
         SEND_BYTE <= 1'b0;
         waiting_wr_done <= 1'b0;
     end else begin
-        if (current_state inside {`FSM_RESET, `FSM_STAR_STM}) begin
+        if ((current_state == `FSM_STAR_STM) || (current_state == `FSM_RESET)) begin
             SEND_BYTE <= ~waiting_wr_done;
             waiting_wr_done <= 1'b1;
         end else begin
@@ -138,7 +139,8 @@ end
 always_ff @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
         pkt_buffer <= 24'b0;
-    end else if (current_state == `FSM_STREAM_MOD) begin
+    end
+    else if (current_state == `FSM_STREAM_MOD) begin
         if (BYTE_READY == 1'b1) begin
             case (byte_cnt)
                 2'b00: pkt_buffer[7:0] <= BYTE_READ;

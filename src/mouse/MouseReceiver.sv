@@ -4,15 +4,15 @@ module MouseReceiver(
     input CLK,
     
     //Mouse IO - CLK
-    input CLK_MOUSE_IN,
+    (* mark_debug = "true" *) input CLK_MOUSE_IN,
     //Mouse IO - DATA
-    input DATA_MOUSE_IN,
+    (* mark_debug = "true" *) input DATA_MOUSE_IN,
 
     //Control
-    input               READ_ENABLE,
-    output reg [7:0]    BYTE_READ,
-    output reg [1:0]    BYTE_ERROR_CODE,
-    output reg          BYTE_READY
+    (* mark_debug = "true" *)  input               READ_ENABLE,
+    (* mark_debug = "true" *)  output reg [7:0]    BYTE_READ,
+    (* mark_debug = "true" *)  output reg [1:0]    BYTE_ERROR_CODE,
+    (* mark_debug = "true" *)  output reg          BYTE_READY
 );
 
 `define FSM_IDLE       5'b00001
