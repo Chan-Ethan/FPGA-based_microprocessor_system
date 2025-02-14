@@ -13,19 +13,25 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             starting_phase.raise_objection(this);
         end
 
-        #1ms; // wait for DUT init
+        #500us; // wait for DUT init
+        // send ack transaction (For reset)
+        `uvm_do_with(tr, {
+            tr.pkt_type == CMD;
+            tr.cmd_byte == 8'hF4;
+        })
 
-        // send init transaction
+        #100us;
+        // send ID
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
             tr.cmd_byte == 8'hAA;
         })
-        #300us;
 
-        // send ack transaction
+        #400us;
+        // send ack transaction (For start stream mode)
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
-            tr.cmd_byte == 8'hFA;
+            tr.cmd_byte == 8'hF4;
         })
 
         // send 20 data transactions
@@ -36,7 +42,7 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             })
             #200us;
         end
-        #10us;
+        #100us;
 
         // send tr finished, drop objection
         if (starting_phase != null) begin
@@ -46,10 +52,10 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
 endclass
 
 // Main testcase: Configures test environment
-class case1 extends base_test;
-    `uvm_component_utils(case1)
+class t2_no_ack extends base_test;
+    `uvm_component_utils(t2_no_ack)
 
-    function new(string name = "case1", uvm_component parent = null);
+    function new(string name = "t2_no_ack", uvm_component parent = null);
         super.new(name, parent);
     endfunction
 
@@ -57,9 +63,9 @@ class case1 extends base_test;
 endclass
 
 // Build phase: Set default sequence for target sequencer
-function void case1::build_phase(uvm_phase phase);
+function void t2_no_ack::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info("case1", "case1 build_phase", UVM_MEDIUM)
+    `uvm_info("t2_no_ack", "t2_no_ack build_phase", UVM_MEDIUM)
 
     uvm_config_db #(uvm_object_wrapper)::set(this,
         "env.i_agt.sqr.main_phase", 
