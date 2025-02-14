@@ -55,7 +55,7 @@ always_comb begin
         end
         `FSM_WAIT_ACK: begin
             if (byte_cnt == 2'd1) next_state = `FSM_STAR_STM;
-            // else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
+            else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
         end
         `FSM_STAR_STM: begin
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK2;
@@ -64,7 +64,7 @@ always_comb begin
             if (BYTE_READY && (BYTE_READ == 8'hFA || BYTE_READ == 8'hF4)) begin
                 next_state = `FSM_STREAM_MOD;
             end
-            // else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
+            else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
         end
         `FSM_STREAM_MOD: begin
             if (cnt_20s == `CNT_NUM_20S) next_state = `FSM_RESET;

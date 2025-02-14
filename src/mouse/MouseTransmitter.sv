@@ -151,7 +151,7 @@ always_comb begin
             DATA_MOUSE_OUT = parity_bit;
         end
         `FSM_STOP: begin
-            DATA_MOUSE_OUT_EN = 1'b0;
+            DATA_MOUSE_OUT_EN = 1'b1;
         end
         default: begin
             CLK_MOUSE_OUT_EN = 1'b0;
