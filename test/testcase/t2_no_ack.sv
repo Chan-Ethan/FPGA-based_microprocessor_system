@@ -13,7 +13,8 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             starting_phase.raise_objection(this);
         end
 
-        #500us; // wait for DUT init
+        #2ms; // wait for DUT init
+        // and no ack for 2ms, wait UDT resend reset cmd
         // send ack transaction (For reset)
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
