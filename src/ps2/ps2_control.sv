@@ -32,7 +32,7 @@ module ps2_control
 
 `ifdef SIMULATION
     // for faster simulation
-    `define CNT_NUM_1MS     16'd4999
+    `define CNT_NUM_1MS     16'd49_999
     `define CNT_NUM_20S     15'd39
 `else
     `define CNT_NUM_1MS     16'd49_999
