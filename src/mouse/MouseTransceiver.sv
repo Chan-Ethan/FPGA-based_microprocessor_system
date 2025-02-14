@@ -9,7 +9,10 @@ inout           DATA_MOUSE,
 output [3:0]    MOUSE_STATUS,
 output [7:0]    MOUSE_DX,
 output [7:0]    MOUSE_DY,
-output          SEND_INTERRUPT
+output          SEND_INTERRUPT,
+
+// debug signals
+output logic [4:0] current_state
 );
 
 parameter [7:0] MouseLimitX = 160;
@@ -48,7 +51,9 @@ MouseMasterSM master_sm(
     .MOUSE_DX       (MOUSE_DX),     
     .MOUSE_DY       (MOUSE_DY),     
     .MOUSE_STATUS   (MOUSE_STATUS_8),     
-    .SEND_INTERRUPT (SEND_INTERRUPT)
+    .SEND_INTERRUPT (SEND_INTERRUPT),
+
+    .current_state  (current_state)
 );
 
 // Instantiate Transmitter with corrected tristate

@@ -3,21 +3,24 @@ input CLK,
 input RESET,
 
 //Transmitter Control
-output reg SEND_BYTE,
-output reg [7:0] BYTE_TO_SEND,
-input BYTE_SENT,
+(*mark_debug*) output reg SEND_BYTE,
+(*mark_debug*) output reg [7:0] BYTE_TO_SEND,
+(*mark_debug*) input BYTE_SENT,
 
 //Receiver Control
-output reg READ_ENABLE,
-input [7:0] BYTE_READ,
-input [1:0] BYTE_ERROR_CODE,
-input BYTE_READY,
+(*mark_debug*) output reg READ_ENABLE,
+(*mark_debug*) input [7:0] BYTE_READ,
+(*mark_debug*) input [1:0] BYTE_ERROR_CODE,
+(*mark_debug*) input BYTE_READY,
 
 //Data Registers
-output reg [7:0] MOUSE_DX,
-output reg [7:0] MOUSE_DY,
-output reg [7:0] MOUSE_STATUS,
-output reg SEND_INTERRUPT
+(*mark_debug*) output reg [7:0] MOUSE_DX,
+(*mark_debug*) output reg [7:0] MOUSE_DY,
+(*mark_debug*) output reg [7:0] MOUSE_STATUS,
+output reg SEND_INTERRUPT,
+
+// Debug signals
+output     [4:0] current_state
 );
 
 `define FSM_RESET       5'b00001
@@ -112,10 +115,24 @@ always_ff @(posedge CLK or negedge RESET) begin
     end
 end
 
-assign BYTE_TO_SEND = (current_state == `FSM_STAR_STM) ? 8'hF4 : 8'hFF;
+always@(posedge CLK or negedge RESET) begin
+    if (!RESET) begin
+        BYTE_TO_SEND <= 8'hFF;
+    end
+    else begin
+        BYTE_TO_SEND <= (current_state == `FSM_STAR_STM) ? 8'hF4 : 8'hFF;
+    end
+end 
 
 //================= Receiver Control =================//
-assign READ_ENABLE = (current_state != `FSM_RESET) && (current_state != `FSM_STAR_STM);
+always @(posedge CLK or negedge RESET) begin
+    if (!RESET) begin
+        READ_ENABLE <= 1'b0;
+    end
+    else begin
+        READ_ENABLE <= (current_state != `FSM_RESET) && (current_state != `FSM_STAR_STM);
+    end
+end 
 
 //================= Data Packing =================//
 always_ff @(posedge CLK or negedge RESET) begin
