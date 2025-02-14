@@ -81,7 +81,9 @@ always_comb begin
             end
         end
         `FSM_STOP: begin
-            next_state = `FSM_IDLE;
+            if (ps2_clk_vld == 1'b1) begin
+                next_state = `FSM_IDLE;
+            end
         end
         default: 
             next_state = `FSM_IDLE;
@@ -120,7 +122,9 @@ always_ff @(posedge CLK or negedge RESET) begin
                 end
             end
             `FSM_STOP: begin
-                BYTE_SENT <= 1'b1;
+                if (ps2_clk_vld == 1'b1) begin
+                    BYTE_SENT <= 1'b1;
+                end
             end
         endcase
     end
