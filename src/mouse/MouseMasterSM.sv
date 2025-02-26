@@ -42,7 +42,7 @@ output     [4:0] current_state
 `define CNT_BYTES       2'b10
 
 (* mark_debug = "true" *) logic [6:0]         current_state, next_state;
-logic               waiting_wr_done;
+(* mark_debug = "true" *) logic               waiting_wr_done;
 (* mark_debug = "true" *) logic [1:0]         byte_cnt;
 logic [18:0]        cnt_10ms;
 // logic [14:0]        cnt_20s;
