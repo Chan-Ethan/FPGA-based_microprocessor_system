@@ -23,27 +23,29 @@ output reg SEND_INTERRUPT,
 output     [4:0] current_state
 );
 
-`define FSM_RESET       5'b00001
-`define FSM_WAIT_ACK    5'b00010
-`define FSM_STAR_STM    5'b00100
-`define FSM_WAIT_ACK2   5'b01000
-`define FSM_STREAM_MOD  5'b10000
+`define FSM_RESET           7'b0000001
+`define FSM_WAIT_ACK        7'b0000010
+`define FSM_WAIT_SELFTST    7'b0000100
+`define FSM_WAIT_ID         7'b0001000
+`define FSM_STAR_STM        7'b0010000
+`define FSM_WAIT_ACK2       7'b0100000
+`define FSM_STREAM_MOD      7'b1000000
 
 `ifdef SIMULATION
-    `define CNT_NUM_1MS     16'd49_999
+    `define CNT_NUM_10MS    19'd49_999
     `define CNT_NUM_20S     15'd39
 `else
-    `define CNT_NUM_1MS     16'd49_999
-    `define CNT_NUM_20S     15'd19_999
+    `define CNT_NUM_10MS    19'd499_999
+    `define CNT_NUM_20S     15'd1_999
 `endif
 
 `define CNT_BYTES       2'b10
 
-logic [4:0]         current_state, next_state;
+(* mark_debug = "true" *) logic [6:0]         current_state, next_state;
 logic               waiting_wr_done;
 (* mark_debug = "true" *) logic [1:0]         byte_cnt;
-logic [15:0]        cnt_1ms;
-logic [14:0]        cnt_20s;
+logic [18:0]        cnt_10ms;
+// logic [14:0]        cnt_20s;
 logic [23:0]        pkt_buffer;
 
 // State Transition Logic
@@ -54,20 +56,70 @@ always_comb begin
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK;
         end
         `FSM_WAIT_ACK: begin
-            if (byte_cnt == 2'd1) next_state = `FSM_STAR_STM;
-            else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
+            if (BYTE_READY) begin
+                if (BYTE_ERROR_CODE != 2'b00) begin
+                    next_state = `FSM_RESET;
+                end
+                else if (BYTE_READ == 8'hFA || BYTE_READ == 8'hF4) begin
+                    next_state = `FSM_WAIT_SELFTST;
+                end
+                else begin
+                    next_state = `FSM_RESET;
+                end
+            end
+            else if (cnt_10ms == `CNT_NUM_10MS) begin
+                next_state = `FSM_RESET;
+            end
+        end
+        `FSM_WAIT_SELFTST: begin
+            if (BYTE_READY) begin
+                if (BYTE_ERROR_CODE != 2'b00) begin
+                    next_state = `FSM_RESET;
+                end
+                else if (BYTE_READ == 8'hAA) begin
+                    next_state = `FSM_WAIT_ID;
+                end
+                else begin
+                    next_state = `FSM_RESET;
+                end
+            end
+            else;
+        end
+        `FSM_WAIT_ID: begin
+            if (BYTE_READY) begin
+                if (BYTE_ERROR_CODE != 2'b00) begin
+                    next_state = `FSM_RESET;
+                end
+                else if (BYTE_READ == 8'h00) begin
+                    next_state = `FSM_STAR_STM;
+                end
+                else begin
+                    next_state = `FSM_RESET;
+                end
+            end
+            else;
         end
         `FSM_STAR_STM: begin
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK2;
         end
         `FSM_WAIT_ACK2: begin
-            if (BYTE_READY && (BYTE_READ == 8'hFA || BYTE_READ == 8'hF4)) begin
-                next_state = `FSM_STREAM_MOD;
+            if (BYTE_READY) begin
+                if (BYTE_ERROR_CODE != 2'b00) begin
+                    next_state = `FSM_RESET;
+                end
+                else if (BYTE_READ == 8'hFA || BYTE_READ == 8'hF4) begin
+                    next_state = `FSM_WAIT_SELFTST;
+                end
+                else begin
+                    next_state = `FSM_RESET;
+                end
             end
-            else if (cnt_1ms == `CNT_NUM_1MS) next_state = `FSM_RESET;
+            else if (cnt_10ms == `CNT_NUM_10MS) begin
+                next_state = `FSM_RESET;
+            end
         end
         `FSM_STREAM_MOD: begin
-            if (cnt_20s == `CNT_NUM_20S) next_state = `FSM_RESET;
+            // do nothing
         end
         default: next_state = `FSM_RESET;
     endcase
@@ -82,23 +134,23 @@ end
 //================= Counters =================//
 always_ff @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
-        cnt_1ms <= 16'd0;
+        cnt_10ms <= 19'd0;
     end
     else begin
-        cnt_1ms <= (cnt_1ms == `CNT_NUM_1MS) ? 16'd0 : cnt_1ms + 16'd1;
+        cnt_10ms <= (cnt_10ms == `CNT_NUM_10MS) ? 19'd0 : cnt_10ms + 19'd1;
     end
 end
 
-always_ff @(posedge CLK or negedge RESET) begin
-    if (!RESET) cnt_20s <= 15'd0;
-    else if (current_state == `FSM_STREAM_MOD) begin
-        if (BYTE_READY) cnt_20s <= 15'd0;
-        else if (cnt_1ms == `CNT_NUM_1MS) begin
-            cnt_20s <= (cnt_20s == `CNT_NUM_20S) ? 15'd0 : cnt_20s + 15'd1;
-        end
-    end
-    else cnt_20s <= 15'd0;
-end
+// always_ff @(posedge CLK or negedge RESET) begin
+//     if (!RESET) cnt_20s <= 15'd0;
+//     else if (current_state == `FSM_STREAM_MOD) begin
+//         if (BYTE_READY) cnt_20s <= 15'd0;
+//         else if (cnt_10ms == `CNT_NUM_10MS) begin
+//             cnt_20s <= (cnt_20s == `CNT_NUM_20S) ? 15'd0 : cnt_20s + 15'd1;
+//         end
+//     end
+//     else cnt_20s <= 15'd0;
+// end
 
 //================= Transmitter Control =================//
 always_ff @(posedge CLK or negedge RESET) begin
