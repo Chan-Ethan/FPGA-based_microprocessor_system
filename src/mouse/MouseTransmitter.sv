@@ -82,7 +82,9 @@ always_comb begin
             end
         end
         `FSM_STOP: begin
-            next_state = `FSM_IDLE;
+            if (ps2_clk_vld == 1'b1) begin
+                next_state = `FSM_IDLE;
+            end
         end
         default: 
             next_state = `FSM_IDLE;
