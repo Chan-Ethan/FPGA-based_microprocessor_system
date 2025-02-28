@@ -4,18 +4,18 @@ input RESET,
 input CLK,
 
 //Mouse IO - CLK
-(* mark_debug = "true" *)  input       CLK_MOUSE_IN,
-(* mark_debug = "true" *)  output reg  CLK_MOUSE_OUT_EN, // Allows for the control of the Clock line
+(* mark_debug = "true" *)  input        CLK_MOUSE_IN,
+(* mark_debug = "true" *)  output       CLK_MOUSE_OUT_EN, // Allows for the control of the Clock line
 
 //Mouse IO - DATA
-(* mark_debug = "true" *)  input       DATA_MOUSE_IN, 
-(* mark_debug = "true" *)  output reg  DATA_MOUSE_OUT,
-(* mark_debug = "true" *)  output reg  DATA_MOUSE_OUT_EN,
+(* mark_debug = "true" *)  input        DATA_MOUSE_IN, 
+(* mark_debug = "true" *)  output       DATA_MOUSE_OUT,
+(* mark_debug = "true" *)  output       DATA_MOUSE_OUT_EN,
 
 //Control
-input SEND_BYTE,
+input       SEND_BYTE,
 input [7:0] BYTE_TO_SEND,
-output reg BYTE_SENT
+output reg  BYTE_SENT
 );
 
 `define FSM_IDLE       6'b000001
@@ -128,37 +128,13 @@ always_ff @(posedge CLK or negedge RESET) begin
 end
 
 //================= Output Logic =================//
-always_comb begin
-    CLK_MOUSE_OUT_EN = 1'b0;
-    DATA_MOUSE_OUT_EN  = 1'b0;
-    DATA_MOUSE_OUT  = 1'b1;
+assign DATA_MOUSE_OUT = 
+    (current_state == `FSM_START)   ? 1'b0 :
+    (current_state == `FSM_DATA)    ? tx_data[0] :
+    (current_state == `FSM_PARITY)  ? parity_bit :
+    1'b1;
 
-    case (current_state)
-        `FSM_CLK_LOW: begin
-            CLK_MOUSE_OUT_EN = 1'b1;
-            DATA_MOUSE_OUT_EN = 1'b1;  
-            DATA_MOUSE_OUT = 1'b1; 
-        end
-        `FSM_START: begin
-            DATA_MOUSE_OUT_EN = 1'b1;  
-            DATA_MOUSE_OUT = 1'b0; 
-        end
-        `FSM_DATA: begin
-            DATA_MOUSE_OUT_EN = 1'b1;
-            DATA_MOUSE_OUT = tx_data[0];
-        end
-        `FSM_PARITY: begin
-            DATA_MOUSE_OUT_EN = 1'b1;
-            DATA_MOUSE_OUT = parity_bit;
-        end
-        `FSM_STOP: begin
-            DATA_MOUSE_OUT_EN = 1'b1;
-        end
-        default: begin
-            CLK_MOUSE_OUT_EN = 1'b0;
-            DATA_MOUSE_OUT_EN  = 1'b0;
-        end
-    endcase
-end
+assign CLK_MOUSE_OUT_EN = (current_state == `FSM_CLK_LOW) ? 1'b1 : 1'b0;
+assign DATA_MOUSE_OUT_EN = (current_state == `FSM_IDLE) ? 1'b0 : 1'b1;
 
 endmodule
