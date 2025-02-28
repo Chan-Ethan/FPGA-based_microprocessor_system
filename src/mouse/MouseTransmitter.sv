@@ -62,7 +62,7 @@ always_comb begin
             end
         end
         `FSM_CLK_LOW: begin
-            if (clk_cnt == `CNT_NUM) begin
+            if ((clk_cnt == `CNT_NUM) && (ps2_clk_vld == 1'b1)) begin
                 next_state = `FSM_START;
             end
         end
