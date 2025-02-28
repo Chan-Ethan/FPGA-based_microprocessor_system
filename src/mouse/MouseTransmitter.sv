@@ -32,7 +32,7 @@ output reg  BYTE_SENT
 (* mark_debug = "true" *) logic [5:0]         current_state, next_state;
 (* mark_debug = "true" *) logic [13:0]        clk_cnt;        // 200us counter (50MHz * 200us = 10_000 cycles)
 logic [2:0]         bit_cnt;        // 0-7: data bits
-logic [7:0]         tx_data;        // data to send
+(* mark_debug = "true" *) logic [7:0]         tx_data;        // data to send
 logic               parity_bit;     // odd parity
 
 // CLK_MOUSE_IN positive edge detection
@@ -138,5 +138,7 @@ assign DATA_MOUSE_OUT =
 
 assign CLK_MOUSE_OUT_EN = ((current_state == `FSM_CLK_LOW) && (clk_cnt < `CNT_NUM)) ? 1'b1 : 1'b0;
 assign DATA_MOUSE_OUT_EN = (current_state == `FSM_IDLE) ? 1'b0 : 1'b1;
+// assign CLK_MOUSE_OUT_EN = 1'b1;
+// assign DATA_MOUSE_OUT_EN = 1'b1;
 
 endmodule

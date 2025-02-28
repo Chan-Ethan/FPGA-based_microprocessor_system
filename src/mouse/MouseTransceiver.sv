@@ -31,6 +31,9 @@ wire        BYTE_READY;
 
 wire [7:0]  MOUSE_STATUS_8;
 
+(* mark_debug = "true" *) wire clk_enable, data_enable;
+(* mark_debug = "true" *) wire data_out;
+
 // L, R, X_sign, Y_sign
 assign MOUSE_STATUS = {MOUSE_STATUS_8[0], MOUSE_STATUS_8[1], MOUSE_STATUS_8[4], MOUSE_STATUS_8[5]};
 
@@ -87,9 +90,6 @@ MouseReceiver receiver(
 );
 
 //================= Tri-state Control =================//
-wire clk_enable, data_enable;
-wire data_out;
-
 // Tristate buffer control
 assign CLK_MOUSE = clk_enable ? 1'b0 : 1'bz;  // Transmitter drives low
 assign DATA_MOUSE = data_enable ? data_out : 1'bz;
