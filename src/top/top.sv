@@ -1,6 +1,6 @@
 module top(
     input           CLK100_IN       , // 100 MHz oscillator clock input, W5
-    input           HARD_RSTN       ,
+    input           HARD_RST        , // active-high reset input, W6
     
     // PS2 interface
     inout           PS2_CLK         ,
@@ -26,9 +26,9 @@ wire [7:0]  MOUSE_DY;
 // Reset synchronization logic
 logic HARD_RSTN_1dly, HARD_RSTN_2dly;
 always_ff @(posedge CLK100_IN) begin
-    HARD_RSTN_1dly <= ~HARD_RSTN;      // Sync reset input
-    HARD_RSTN_2dly <= HARD_RSTN_1dly;  // Metastability protection
-    rst_n <= HARD_RSTN_2dly;           // Generate active-low reset
+    HARD_RSTN_1dly <= ~HARD_RST;        // Sync reset input
+    HARD_RSTN_2dly <= HARD_RSTN_1dly;   // Metastability protection
+    rst_n <= HARD_RSTN_2dly;            // Generate active-low reset
 end
 
 // Clock wizard (50MHz system clock)
@@ -37,6 +37,26 @@ clk_wiz_0 clk_wiz_inst (
     .clk_out1   (clk_sys),   // 50MHz output
     .resetn     (rst_n),
     .locked     (LED0_LOCKED)
+);
+
+// microcontroller subsystem
+Processor Processor_inst (
+    .CLK                    (clk_sys    ),
+    .RESET                  (~rst_n     ),
+
+    //BUS Signals
+    .BUS_DATA               (),
+    .BUS_ADDR               (),
+    .BUS_WE                 (),
+
+    // ROM signals
+    .ROM_ADDRESS            (),
+    .ROM_DATA               (),
+
+    // INTERRUPT signals
+    .BUS_INTERRUPTS_RAISE   (),
+    .BUS_INTERRUPTS_ACK     (),
+    .STATE                  ()
 );
 
 // Mouse Transceiver subsystem
