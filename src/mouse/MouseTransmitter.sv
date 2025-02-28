@@ -134,7 +134,7 @@ assign DATA_MOUSE_OUT =
     (current_state == `FSM_PARITY)  ? parity_bit :
     1'b1;
 
-assign CLK_MOUSE_OUT_EN = (current_state == `FSM_CLK_LOW) ? 1'b1 : 1'b0;
+assign CLK_MOUSE_OUT_EN = ((current_state == `FSM_CLK_LOW) && (clk_cnt < `CNT_NUM)) ? 1'b1 : 1'b0;
 assign DATA_MOUSE_OUT_EN = (current_state == `FSM_IDLE) ? 1'b0 : 1'b1;
 
 endmodule
