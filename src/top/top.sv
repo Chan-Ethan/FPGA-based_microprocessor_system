@@ -40,24 +40,24 @@ clk_wiz_0 clk_wiz_inst (
 );
 
 // microcontroller subsystem
-Processor Processor_inst (
-    .CLK                    (clk_sys    ),
-    .RESET                  (~rst_n     ),
-
-    //BUS Signals
-    .BUS_DATA               (),
-    .BUS_ADDR               (),
-    .BUS_WE                 (),
-
-    // ROM signals
-    .ROM_ADDRESS            (),
-    .ROM_DATA               (),
-
-    // INTERRUPT signals
-    .BUS_INTERRUPTS_RAISE   (),
-    .BUS_INTERRUPTS_ACK     (),
-    .STATE                  ()
-);
+// Processor Processor_inst (
+//     .CLK                    (clk_sys    ),
+//     .RESET                  (~rst_n     ),
+// 
+//     //BUS Signals
+//     .BUS_DATA               (),
+//     .BUS_ADDR               (),
+//     .BUS_WE                 (),
+// 
+//     // ROM signals
+//     .ROM_ADDRESS            (),
+//     .ROM_DATA               (),
+// 
+//     // INTERRUPT signals
+//     .BUS_INTERRUPTS_RAISE   (),
+//     .BUS_INTERRUPTS_ACK     (),
+//     .STATE                  ()
+// );
 
 // Mouse Transceiver subsystem
 MouseTransceiver MouseTransceiver_inst (
