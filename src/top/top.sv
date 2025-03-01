@@ -53,10 +53,17 @@ clk_wiz_0 clk_wiz_inst (
     .locked     (LED0_LOCKED)
 );
 
+// sync reset to 50MHz clock domain
+logic    rst_n_sync;
+always_ff @(posedge clk_sys) begin
+    rst_n_sync <= rst_n;
+end
+
+
 // microcontroller subsystem
 Processor Processor_inst (
     .CLK                    (clk_sys                ),
-    .RESET                  (~rst_n                 ),
+    .RESET                  (~rst_n_sync          ),
 
     //BUS Signals
     .BUS_DATA               (BUS_DATA               ),
