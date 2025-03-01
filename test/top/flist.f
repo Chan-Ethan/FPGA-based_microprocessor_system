@@ -17,10 +17,17 @@
 // DUT
 ../../../src/seg7/seg7decoder.v
 ../../../src/seg7/seg7_control.sv
+
 ../../../src/mouse/MouseReceiver.sv
 ../../../src/mouse/MouseTransmitter.sv
 ../../../src/mouse/MouseMasterSM.sv
 ../../../src/mouse/MouseTransceiver.sv
+
+../../../src/mcu/ALU.v
+../../../src/mcu/RAM.v
+../../../src/mcu/ROM.v
+../../../src/mcu/Processor.v
+
 ../../../src/top/top.sv
 
 // UVM platform
