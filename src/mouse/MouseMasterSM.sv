@@ -20,7 +20,7 @@ input RESET,
 output reg SEND_INTERRUPT,
 
 // Debug signals
-output     [4:0] current_state
+output     [7:0] current_state
 );
 
 `define FSM_IDLE            8'b00000001
@@ -118,9 +118,9 @@ always_comb begin
                     next_state = `FSM_RESET;
                 end
             end
-            else if (cnt_10ms == `CNT_NUM_10MS) begin
-                next_state = `FSM_RESET;
-            end
+            // else if (cnt_10ms == `CNT_NUM_10MS) begin
+            //     next_state = `FSM_RESET;
+            // end
         end
         `FSM_STREAM_MOD: begin
             // do nothing
@@ -135,7 +135,7 @@ end
 
 // State Register
 always_ff @(posedge CLK or negedge RESET) begin
-    if (!RESET) current_state <= `FSM_RESET;
+    if (!RESET) current_state <= `FSM_IDLE;
     else current_state <= next_state;
 end
 

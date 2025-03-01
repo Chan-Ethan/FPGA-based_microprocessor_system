@@ -12,7 +12,7 @@ output [7:0]    MOUSE_DY,
 output          SEND_INTERRUPT,
 
 // debug signals
-output logic [4:0] current_state
+output logic [7:0] current_state
 );
 
 parameter [7:0] MouseLimitX = 160;

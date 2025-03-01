@@ -13,7 +13,7 @@ module top(
     // LED status indicators
     output          LED0_LOCKED     ,
     output [3:0]    MOUSE_STATUS_LED,  // L, R, X_sign, Y_sign
-    output [4:0]    MOUSE_STATE_LED    // Mouse state machine state
+    output [7:0]    MOUSE_STATE_LED    // Mouse state machine state
 );
 
 logic       clk_sys;    // 50MHz system clock

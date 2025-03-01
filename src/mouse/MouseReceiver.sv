@@ -21,12 +21,12 @@ module MouseReceiver(
 `define FSM_PARITY     5'b01000
 `define FSM_STOP       5'b10000
 
-logic [4:0] current_state, next_state;
+(* mark_debug = "true" *) logic [4:0] current_state, next_state;
 logic [2:0] bit_cnt;
 logic odd_parity_recv;
 logic odd_parity_calc;
 logic [2:0] ps2_clk_dly;
-logic ps2_clk_vld;
+(* mark_debug = "true" *) logic ps2_clk_vld;
 logic ps2_data_dly;
 reg odd_parity_err;
 reg stop_bit_err;
