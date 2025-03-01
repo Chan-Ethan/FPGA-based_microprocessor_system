@@ -24,9 +24,9 @@ logic   [7:0]   MOUSE_DX;
 logic   [7:0]   MOUSE_DY;
 
 // Data Bus
-logic   [7:0]   BUS_DATA;
-logic   [7:0]   BUS_ADDR;
-logic           BUS_WE  ;
+wire    [7:0]   BUS_DATA;
+wire    [7:0]   BUS_ADDR;
+wire            BUS_WE  ;
 
 // ROM signals
 logic   [7:0]   ROM_ADDRESS ;
