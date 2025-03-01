@@ -47,21 +47,18 @@ module top_tb (
     assign (weak0, weak1) PS2_CLK  = input_if.PS2_CLK ;
     assign (weak0, weak1) PS2_DATA = input_if.PS2_DATA;
     top top (
-        .CLK100_IN      (clk_100M           ),
-        .HARD_RSTN      (~rst_n             ), // tmp, connect to a high buttom
+        .CLK100_IN          (clk_100M           ),
+        .HARD_RST           (~rst_n             ), // tmp, connect to a high buttom
 
-        .PS2_CLK        (PS2_CLK            ),
-        .PS2_DATA       (PS2_DATA           ),
+        .PS2_CLK            (PS2_CLK            ),
+        .PS2_DATA           (PS2_DATA           ),
 
-        .SEG_SELECT_OUT (SEG_SELECT_OUT     ),
-        .HEX_OUT        (HEX_OUT            ),
+        .SEG_SELECT_OUT     (SEG_SELECT_OUT     ),
+        .HEX_OUT            (HEX_OUT            ),
 
-        .LED15_L        (                   ),
-        .LED14_R        (                   ),
-        .LED13_INIT_DONE(                   ),
-        .LED12_8_STATE  (                   ),
-        .LED0_LOCKED    (                   )
-        );
+        .LED0_LOCKED        (                   ),
+        .MOUSE_STATUS_LED   (                   )
+    );
 
     initial begin
         run_test();

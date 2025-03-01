@@ -13,8 +13,8 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             starting_phase.raise_objection(this);
         end
 
-        #2ms; // wait for DUT init
-        // and no ack for 2ms, wait UDT resend reset cmd
+        #4ms; // wait for DUT init
+        // and no ack for 4ms, wait UDT resend reset cmd
         // send ack transaction (For reset)
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
@@ -22,12 +22,19 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
         })
 
         #100us;
-        // send ID
+        // send Self Test transaction
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
             tr.cmd_byte == 8'hAA;
         })
 
+        // send ID transaction
+        // #100us;
+        // `uvm_do_with(tr, {
+        //     tr.pkt_type == CMD;
+        //     tr.cmd_byte == 8'h00;
+        // })
+// 
         #400us;
         // send ack transaction (For start stream mode)
         `uvm_do_with(tr, {

@@ -4,9 +4,9 @@ set_property IOSTANDARD LVCMOS33 [get_ports CLK100_IN]
 create_clock -period 10.000 -name clk100 -waveform {0.000 5.000} [get_ports CLK100_IN]
 
 ## Reset Constraints
-set_property PACKAGE_PIN U18 [get_ports HARD_RSTN]
-set_property IOSTANDARD LVCMOS33 [get_ports HARD_RSTN]
-## set_property PULLDOWN true [get_ports HARD_RSTN]
+set_property PACKAGE_PIN U18 [get_ports HARD_RST]
+set_property IOSTANDARD LVCMOS33 [get_ports HARD_RST]
+## set_property PULLDOWN true [get_ports HARD_RST]
 
 ## PS/2 Constraints
 set_property PACKAGE_PIN C17 [get_ports PS2_CLK]
@@ -35,21 +35,24 @@ set_property PACKAGE_PIN W7 [get_ports {HEX_OUT[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {HEX_OUT[*]}]
 
 ## LED Constraints
-set_property PACKAGE_PIN L1 [get_ports LED15_L]
-set_property IOSTANDARD LVCMOS33 [get_ports LED15_L]
+## LED15-12
+set_property PACKAGE_PIN L1 [get_ports {MOUSE_STATUS_LED[3]}]
+set_property PACKAGE_PIN P1 [get_ports {MOUSE_STATUS_LED[2]}]
+set_property PACKAGE_PIN N3 [get_ports {MOUSE_STATUS_LED[1]}]
+set_property PACKAGE_PIN P3 [get_ports {MOUSE_STATUS_LED[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {MOUSE_STATUS_LED[*]}]
 
-set_property PACKAGE_PIN P1 [get_ports LED14_R]
-set_property IOSTANDARD LVCMOS33 [get_ports LED14_R]
+## LED 8-1
+set_property PACKAGE_PIN V13 [get_ports {MOUSE_STATE_LED[7]}]
+set_property PACKAGE_PIN V14 [get_ports {MOUSE_STATE_LED[6]}]
+set_property PACKAGE_PIN U14 [get_ports {MOUSE_STATE_LED[5]}]
+set_property PACKAGE_PIN U15 [get_ports {MOUSE_STATE_LED[4]}]
+set_property PACKAGE_PIN W18 [get_ports {MOUSE_STATE_LED[3]}]
+set_property PACKAGE_PIN V19 [get_ports {MOUSE_STATE_LED[2]}]
+set_property PACKAGE_PIN U19 [get_ports {MOUSE_STATE_LED[1]}]
+set_property PACKAGE_PIN E19 [get_ports {MOUSE_STATE_LED[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {MOUSE_STATE_LED[*]}]
 
-set_property PACKAGE_PIN N3 [get_ports LED13_INIT_DONE]
-set_property IOSTANDARD LVCMOS33 [get_ports LED13_INIT_DONE]
-
-set_property PACKAGE_PIN P3 [get_ports {LED12_8_STATE[4]}]
-set_property PACKAGE_PIN U3 [get_ports {LED12_8_STATE[3]}]
-set_property PACKAGE_PIN W3 [get_ports {LED12_8_STATE[2]}]
-set_property PACKAGE_PIN V3 [get_ports {LED12_8_STATE[1]}]
-set_property PACKAGE_PIN V13 [get_ports {LED12_8_STATE[0]}]
-set_property IOSTANDARD LVCMOS33 [get_ports {LED12_8_STATE[*]}]
-
+## LED0
 set_property PACKAGE_PIN U16 [get_ports LED0_LOCKED]
 set_property IOSTANDARD LVCMOS33 [get_ports LED0_LOCKED]

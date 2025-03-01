@@ -17,10 +17,10 @@
 // DUT
 ../../../src/seg7/seg7decoder.v
 ../../../src/seg7/seg7_control.sv
-../../../src/ps2/ps2_rx.sv
-../../../src/ps2/ps2_tx.sv
-../../../src/ps2/ps2_control.sv
-../../../src/ps2/ps2_top.sv
+../../../src/mouse/MouseReceiver.sv
+../../../src/mouse/MouseTransmitter.sv
+../../../src/mouse/MouseMasterSM.sv
+../../../src/mouse/MouseTransceiver.sv
 ../../../src/top/top.sv
 
 // UVM platform
