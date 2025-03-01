@@ -237,6 +237,19 @@ end
 assign MOUSE_STATUS = pkt_buffer[7:0];
 assign MOUSE_DX = pkt_buffer[15:8];
 assign MOUSE_DY = pkt_buffer[23:16];
-assign SEND_INTERRUPT = (current_state == `FSM_STREAM_MOD) && BYTE_READY && (byte_cnt == `CNT_BYTES);
+
+always @(posedge CLK or negedge RESET) begin
+    if (!RESET) begin
+        SEND_INTERRUPT <= 1'b0;
+    end
+    else if ((current_state == `FSM_STREAM_MOD) && 
+             (BYTE_READY == 1'b1) && 
+             (byte_cnt == `CNT_BYTES)) begin
+        SEND_INTERRUPT <= 1'b1;
+    end
+    else begin
+        SEND_INTERRUPT <= 1'b0;
+    end
+end
 
 endmodule
