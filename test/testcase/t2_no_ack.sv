@@ -28,13 +28,13 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
             tr.cmd_byte == 8'hAA;
         })
 
-        #100us;
         // send ID transaction
-        `uvm_do_with(tr, {
-            tr.pkt_type == CMD;
-            tr.cmd_byte == 8'h00;
-        })
-
+        // #100us;
+        // `uvm_do_with(tr, {
+        //     tr.pkt_type == CMD;
+        //     tr.cmd_byte == 8'h00;
+        // })
+// 
         #400us;
         // send ack transaction (For start stream mode)
         `uvm_do_with(tr, {
