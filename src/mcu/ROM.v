@@ -12,7 +12,7 @@ module ROM(
     reg [7:0] rom [2**RAMAddrWidth-1:0];
     
     // Load program
-    initial $readmemh("Complete_Demo_ROM.txt", rom);
+    initial $readmemh("../../../program/Complete_Demo_ROM.txt", rom);
     
     //single port ram
     always@(posedge CLK)
