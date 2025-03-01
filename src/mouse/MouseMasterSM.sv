@@ -108,7 +108,7 @@ always_comb begin
                     next_state = `FSM_RESET;
                 end
                 else if (BYTE_READ == 8'hFA || BYTE_READ == 8'hF4) begin
-                    next_state = `FSM_WAIT_SELFTST;
+                    next_state = `FSM_STREAM_MOD;
                 end
                 else begin
                     next_state = `FSM_RESET;
@@ -120,6 +120,10 @@ always_comb begin
         end
         `FSM_STREAM_MOD: begin
             // do nothing
+            if ((BYTE_READY == 1'b1) && (BYTE_ERROR_CODE != 2'b00)) begin
+                next_state = `FSM_RESET;
+            end
+            else;
         end
         default: next_state = `FSM_RESET;
     endcase
