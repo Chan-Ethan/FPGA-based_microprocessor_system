@@ -3,24 +3,24 @@ input CLK,
 input RESET,
 
 //Transmitter Control
-(* mark_debug = "true" *) output reg SEND_BYTE,
-(* mark_debug = "true" *) output reg [7:0] BYTE_TO_SEND,
-(* mark_debug = "true" *) input BYTE_SENT,
+output reg          SEND_BYTE,
+output reg  [7:0]   BYTE_TO_SEND,
+input               BYTE_SENT,
 
 //Receiver Control
-(* mark_debug = "true" *) output reg READ_ENABLE,
-(* mark_debug = "true" *) input [7:0] BYTE_READ,
-(* mark_debug = "true" *) input [1:0] BYTE_ERROR_CODE,
-(* mark_debug = "true" *) input BYTE_READY,
+output reg          READ_ENABLE,
+input       [7:0]   BYTE_READ,
+input       [1:0]   BYTE_ERROR_CODE,
+input               BYTE_READY,
 
 //Data Registers
-(* mark_debug = "true" *) output reg [7:0] MOUSE_DX,
-(* mark_debug = "true" *) output reg [7:0] MOUSE_DY,
-(* mark_debug = "true" *) output reg [7:0] MOUSE_STATUS,
-output reg SEND_INTERRUPT,
+output reg  [7:0]   MOUSE_DX,
+output reg  [7:0]   MOUSE_DY,
+output reg  [7:0]   MOUSE_STATUS,
+output reg          SEND_INTERRUPT,
 
 // Debug signals
-output     [7:0] current_state
+output      [7:0]   current_state
 );
 
 `define FSM_IDLE            8'b00000001
@@ -34,19 +34,16 @@ output     [7:0] current_state
 
 `ifdef SIMULATION
     `define CNT_NUM_10MS    19'd49_999
-    `define CNT_NUM_20S     15'd39
 `else
     `define CNT_NUM_10MS    19'd499_999
-    `define CNT_NUM_20S     15'd1_999
 `endif
 
 `define CNT_BYTES       2'b10
 
-(* mark_debug = "true" *) logic [7:0]         current_state, next_state;
-(* mark_debug = "true" *) logic               waiting_wr_done;
-(* mark_debug = "true" *) logic [1:0]         byte_cnt;
+logic [7:0]         current_state, next_state;
+logic               waiting_wr_done;
+logic [1:0]         byte_cnt;
 logic [18:0]        cnt_10ms;
-// logic [14:0]        cnt_20s;
 logic [23:0]        pkt_buffer;
 
 // State Transition Logic
@@ -89,20 +86,6 @@ always_comb begin
             end
             else;
         end
-        // `FSM_WAIT_ID: begin
-        //     if (BYTE_READY) begin
-        //         if (BYTE_ERROR_CODE != 2'b00) begin
-        //             next_state = `FSM_RESET;
-        //         end
-        //         else if (BYTE_READ == 8'h00) begin
-        //             next_state = `FSM_STAR_STM;
-        //         end
-        //         else begin
-        //             next_state = `FSM_RESET;
-        //         end
-        //     end
-        //     else;
-        // end
         `FSM_STAR_STM: begin
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK2;
         end
@@ -118,12 +101,8 @@ always_comb begin
                     next_state = `FSM_RESET;
                 end
             end
-            // else if (cnt_10ms == `CNT_NUM_10MS) begin
-            //     next_state = `FSM_RESET;
-            // end
         end
         `FSM_STREAM_MOD: begin
-            // do nothing
             if ((BYTE_READY == 1'b1) && (BYTE_ERROR_CODE != 2'b00)) begin
                 next_state = `FSM_RESET;
             end
@@ -148,17 +127,6 @@ always_ff @(posedge CLK or negedge RESET) begin
         cnt_10ms <= (cnt_10ms == `CNT_NUM_10MS) ? 19'd0 : cnt_10ms + 19'd1;
     end
 end
-
-// always_ff @(posedge CLK or negedge RESET) begin
-//     if (!RESET) cnt_20s <= 15'd0;
-//     else if (current_state == `FSM_STREAM_MOD) begin
-//         if (BYTE_READY) cnt_20s <= 15'd0;
-//         else if (cnt_10ms == `CNT_NUM_10MS) begin
-//             cnt_20s <= (cnt_20s == `CNT_NUM_20S) ? 15'd0 : cnt_20s + 15'd1;
-//         end
-//     end
-//     else cnt_20s <= 15'd0;
-// end
 
 //================= Transmitter Control =================//
 always_ff @(posedge CLK or negedge RESET) begin

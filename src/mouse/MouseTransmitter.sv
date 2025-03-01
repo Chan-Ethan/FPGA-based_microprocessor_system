@@ -4,13 +4,13 @@ input RESET,
 input CLK,
 
 //Mouse IO - CLK
-(* mark_debug = "true" *)  input        CLK_MOUSE_IN,
-(* mark_debug = "true" *)  output       CLK_MOUSE_OUT_EN, // Allows for the control of the Clock line
+input        CLK_MOUSE_IN,
+output       CLK_MOUSE_OUT_EN, // Allows for the control of the Clock line
 
 //Mouse IO - DATA
-(* mark_debug = "true" *)  input        DATA_MOUSE_IN, 
-(* mark_debug = "true" *)  output       DATA_MOUSE_OUT,
-(* mark_debug = "true" *)  output       DATA_MOUSE_OUT_EN,
+input        DATA_MOUSE_IN, 
+output       DATA_MOUSE_OUT,
+output       DATA_MOUSE_OUT_EN,
 
 //Control
 input       SEND_BYTE,
@@ -29,15 +29,15 @@ output reg  BYTE_SENT
 `define CNT_NUM        14'd9999
 
 // FSM and control signals
-(* mark_debug = "true" *) logic [5:0]         current_state, next_state;
-(* mark_debug = "true" *) logic [13:0]        clk_cnt;        // 200us counter (50MHz * 200us = 10_000 cycles)
+logic [5:0]         current_state, next_state;
+logic [13:0]        clk_cnt;        // 200us counter (50MHz * 200us = 10_000 cycles)
 logic [2:0]         bit_cnt;        // 0-7: data bits
-(* mark_debug = "true" *) logic [7:0]         tx_data;        // data to send
+logic [7:0]         tx_data;        // data to send
 logic               parity_bit;     // odd parity
 
 // CLK_MOUSE_IN positive edge detection
 logic   [2:0]       ps2_clk_dly;
-(* mark_debug = "true" *) logic               ps2_clk_vld;
+logic               ps2_clk_vld;
 
 //================= CLK_MOUSE_IN positive edge detection =================//
 always_ff @(posedge CLK or negedge RESET) begin

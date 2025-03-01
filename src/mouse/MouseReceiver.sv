@@ -4,15 +4,15 @@ module MouseReceiver(
     input CLK,
     
     //Mouse IO - CLK
-    (* mark_debug = "true" *) input CLK_MOUSE_IN,
+    input CLK_MOUSE_IN,
     //Mouse IO - DATA
-    (* mark_debug = "true" *) input DATA_MOUSE_IN,
+    input DATA_MOUSE_IN,
 
     //Control
-    (* mark_debug = "true" *)  input               READ_ENABLE,
-    (* mark_debug = "true" *)  output reg [7:0]    BYTE_READ,
-    (* mark_debug = "true" *)  output reg [1:0]    BYTE_ERROR_CODE,
-    (* mark_debug = "true" *)  output reg          BYTE_READY
+    input               READ_ENABLE,
+    output reg [7:0]    BYTE_READ,
+    output reg [1:0]    BYTE_ERROR_CODE,
+    output reg          BYTE_READY
 );
 
 `define FSM_IDLE       5'b00001
@@ -21,12 +21,12 @@ module MouseReceiver(
 `define FSM_PARITY     5'b01000
 `define FSM_STOP       5'b10000
 
-(* mark_debug = "true" *) logic [4:0] current_state, next_state;
+logic [4:0] current_state, next_state;
 logic [2:0] bit_cnt;
 logic odd_parity_recv;
 logic odd_parity_calc;
 logic [2:0] ps2_clk_dly;
-(* mark_debug = "true" *) logic ps2_clk_vld;
+logic ps2_clk_vld;
 logic ps2_data_dly;
 reg odd_parity_err;
 reg stop_bit_err;
