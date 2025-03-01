@@ -1,263 +1,263 @@
 // WRITE FRAME BUFFER
-@0x00   0x00 // Read value to regA
-@0x01   0x00 // regA = HCounter
-@0x02   0x01 // Read value to regB
-@0x03   0x01 // regB = constant 159
-@0x04   0x96 // If HCounter = 159 or not?
-@0x05   0x0B // Yes, jump to address 0x0B
-@0x06   0x54 // Else, update A(=HCounter) +=1
-@0x07   0x02 // Write regA to
-@0x08   0x00 // regA = HCounter
-@0x09   0x07 // Goto address
-@0x0A   0x20 // To Write X Y and Pixel data
-@0x0B   0x01 // Read value to regB
-@0x0C   0x04 // regB = constant 119
-@0x0D   0x00 // Read value to regA
-@0x0E   0x03 // regA = VCounter
-@0x0F   0x96 // If VCounter = 119 or not?
-@0x10   0x1A // Yes, jump to address 0x1A
-@0x11   0x54 // No, A(=VCounter) +=1
-@0x12   0x02 // Write regA to
-@0x13   0x03 // regA = VCounter
-@0x14   0x00 // Read value to regA
-@0x15   0x02 // regA = constant 0
-@0x16   0x02 // Write regA to
-@0x17   0x00 // HCounter (= 0)
-@0x18   0x07 // Goto address
-@0x19   0x20 // To Write X Y and Pixel data
-@0x1A   0x00 // Read value to regA
-@0x1B   0x02 // regA = constant 0
-@0x1C   0x02 // Write regA to
-@0x1D   0x03 // VCounter = 0 (Finish scan, reset)
-@0x1E   0x02 // Write regA to
-@0x1F   0x00 // HCounter = 0
-@0x20   0x00 // Read value to regA
-@0x21   0x03 // regA = VCounter
-@0x22   0x01 // Read value to regB
-@0x23   0x12 // regB = constant 40
-@0x24   0x96 // Check if VCounter = 40
-@0x25   0x30 // Jump to address 0x30
-@0x26   0x01 // Read value to regB
-@0x27   0x13 // regB = constant 80
-@0x28   0x96 // Check if VCounter = 80
-@0x29   0x30 // Jump to address 0x30
-@0x2A   0x01 // Read value to regB
-@0x2B   0x02 // regB = constant 1
-@0x2C   0x03 // Write regB to
-@0x2D   0xB2 // Address 0xB2
-@0x2E   0x07 // Goto
-@0x2F   0x36 // Address 0x36
-@0x30   0x01 // Read value to regB
-@0x31   0x05 // regB = constant 0
-@0x32   0x03 // Write regB to
-@0x33   0xB2 // Address 0xB2
-@0x34   0x07 // Goto
-@0x35   0x4A // Address 0x4A
-@0x36   0x00 // Read value to regA
-@0x37   0x00 // regA = HCounter
-@0x38   0x01 // Read value to regB
-@0x39   0x10 // regB = constant 53
-@0x3A   0x96 // Check if HCounter = 53 or not?
-@0x3B   0x46 // Yes, jump to address 0x46
-@0x3C   0x01 // Else, read value to regB
-@0x3D   0x11 // regB = constant 107
-@0x3E   0x96 // Check if HCounter = 107 or not?
-@0x3F   0x46 // Yes, jump to address 0x46
-@0x40   0x01 // Else, Read value to regB
-@0x41   0x02 // regB = constant 1
-@0x42   0x03 // Write regB to
-@0x43   0xB2 // Address 0xB2
-@0x44   0x07 // Goto
-@0x45   0x4A // Address 0x4A
-@0x46   0x01 // Read value to regB
-@0x47   0x05 // regB = constant 0
-@0x48   0x03 // Write regB to
-@0x49   0xB2 // Address 0xB2
-@0x4A   0x00 // Read value to regA
-@0x4B   0x00 // regA = HCounter
-@0x4C   0x02 // Write A to
-@0x4D   0xB0 // Address 0xB0
-@0x4E   0x01 // Read value to regB
-@0x4F   0x03 // regB = VCounter
-@0x50   0x03 // Write regB to
-@0x51   0xB1 // Address 0xB1
-@0x52   0x01 // Load max HCounter to B
-@0x53   0x01
-@0x54   0xB6 // If curr HCounter less than max
-@0x55   0x00 // loop again
-@0x56   0x00 // Load VCounter to A
-@0x57   0x03
-@0x58   0x01 // Load max VCounter to B
-@0x59   0x04
-@0x5A   0xB6 // If curr VCounter less than max
-@0x5B   0x00 // loop again
+@00 00 // Read value to regA
+@01 00 // regA = HCounter
+@02 01 // Read value to regB
+@03 01 // regB = constant 159
+@04 96 // If HCounter = 159 or not?
+@05 0B // Yes, jump to address 0x0B
+@06 54 // Else, update A(=HCounter) +=1
+@07 02 // Write regA to
+@08 00 // regA = HCounter
+@09 07 // Goto address
+@0A 20 // To Write X Y and Pixel data
+@0B 01 // Read value to regB
+@0C 04 // regB = constant 119
+@0D 00 // Read value to regA
+@0E 03 // regA = VCounter
+@0F 96 // If VCounter = 119 or not?
+@10 1A // Yes, jump to address 0x1A
+@11 54 // No, A(=VCounter) +=1
+@12 02 // Write regA to
+@13 03 // regA = VCounter
+@14 00 // Read value to regA
+@15 02 // regA = constant 0
+@16 02 // Write regA to
+@17 00 // HCounter (= 0)
+@18 07 // Goto address
+@19 20 // To Write X Y and Pixel data
+@1A 00 // Read value to regA
+@1B 02 // regA = constant 0
+@1C 02 // Write regA to
+@1D 03 // VCounter = 0 (Finish scan, reset)
+@1E 02 // Write regA to
+@1F 00 // HCounter = 0
+@20 00 // Read value to regA
+@21 03 // regA = VCounter
+@22 01 // Read value to regB
+@23 12 // regB = constant 40
+@24 96 // Check if VCounter = 40
+@25 30 // Jump to address 0x30
+@26 01 // Read value to regB
+@27 13 // regB = constant 80
+@28 96 // Check if VCounter = 80
+@29 30 // Jump to address 0x30
+@2A 01 // Read value to regB
+@2B 02 // regB = constant 1
+@2C 03 // Write regB to
+@2D B2 // Address 0xB2
+@2E 07 // Goto
+@2F 36 // Address 0x36
+@30 01 // Read value to regB
+@31 05 // regB = constant 0
+@32 03 // Write regB to
+@33 B2 // Address 0xB2
+@34 07 // Goto
+@35 4A // Address 0x4A
+@36 00 // Read value to regA
+@37 00 // regA = HCounter
+@38 01 // Read value to regB
+@39 10 // regB = constant 53
+@3A 96 // Check if HCounter = 53 or not?
+@3B 46 // Yes, jump to address 0x46
+@3C 01 // Else, read value to regB
+@3D 11 // regB = constant 107
+@3E 96 // Check if HCounter = 107 or not?
+@3F 46 // Yes, jump to address 0x46
+@40 01 // Else, Read value to regB
+@41 02 // regB = constant 1
+@42 03 // Write regB to
+@43 B2 // Address 0xB2
+@44 07 // Goto
+@45 4A // Address 0x4A
+@46 01 // Read value to regB
+@47 05 // regB = constant 0
+@48 03 // Write regB to
+@49 B2 // Address 0xB2
+@4A 00 // Read value to regA
+@4B 00 // regA = HCounter
+@4C 02 // Write A to
+@4D B0 // Address 0xB0
+@4E 01 // Read value to regB
+@4F 03 // regB = VCounter
+@50 03 // Write regB to
+@51 B1 // Address 0xB1
+@52 01 // Load max HCounter to B
+@53 01
+@54 B6 // If curr HCounter less than max
+@55 00 // loop again
+@56 00 // Load VCounter to A
+@57 03
+@58 01 // Load max VCounter to B
+@59 04
+@5A B6 // If curr VCounter less than max
+@5B 00 // loop again
 
 
 // MOUSE INIT
-@0x5C   0x00 // Read mouse status byte from memory to A
-@0x5D   0xA0
-@0x5E   0x02 // Store mouse status byte to LED memory
-@0x5F   0xC0
-@0x60   0x00 // Read prev mouse X position
-@0x61   0x14
-@0x62   0x01 // Read prev mouse Y position
-@0x63   0x15
-@0x64   0x02 // Write prev mouse X to VGA
-@0x65   0xB0
-@0x66   0x03 // Write prev mouse Y to VGA
-@0x67   0xB1
-@0x68   0x00 // Load previous pixel value to reg A
-@0x69   0x16
-@0x6A   0x02 // Write prev pixel value from reg A to VGA memory high address
-@0x6B   0xB2
-@0x6C   0x00 // Read Mouse X byte from memory to A
-@0x6D   0xA1
-@0x6E   0x01 // Read Mouse Y byte from memory to B
-@0x6F   0xA2
-@0x70   0x02 // Save mouse X to RAM
-@0x71   0x14
-@0x72   0x03 // Save mouse Y to RAM
-@0x73   0x15
-@0x74   0x02 // Write Mouse X byte to 7-seg memory base address
-@0x75   0xD0
-@0x76   0x03 // Write Mouse Y byte to 7-seg memory high address
-@0x77   0xD1
-@0x78   0x02 // Write Mouse X byte to VGA memory base address
-@0x79   0xB0
-@0x7A   0x03 // Write Mouse Y byte to VGA memory middle address
-@0x7B   0xB1
-@0x7C   0x00 // Load previous pixel value
-@0x7D   0xB2
-@0x7E   0x02 // Save previous pixel value to RAM
-@0x7F   0x16
-@0x80   0x00 // Load a 1 to reg A
-@0x81   0x05
-@0x82   0x02 // Write a 1 from reg A to VGA memory high address
-@0x83   0xB2
-@0x84   0x08 // Go to IDLE and wait for interrupts
+@5C 00 // Read mouse status byte from memory to A
+@5D A0
+@5E 02 // Store mouse status byte to LED memory
+@5F C0
+@60 00 // Read prev mouse X position
+@61 14
+@62 01 // Read prev mouse Y position
+@63 15
+@64 02 // Write prev mouse X to VGA
+@65 B0
+@66 03 // Write prev mouse Y to VGA
+@67 B1
+@68 00 // Load previous pixel value to reg A
+@69 16
+@6A 02 // Write prev pixel value from reg A to VGA memory high address
+@6B B2
+@6C 00 // Read Mouse X byte from memory to A
+@6D A1
+@6E 01 // Read Mouse Y byte from memory to B
+@6F A2
+@70 02 // Save mouse X to RAM
+@71 14
+@72 03 // Save mouse Y to RAM
+@73 15
+@74 02 // Write Mouse X byte to 7-seg memory base address
+@75 D0
+@76 03 // Write Mouse Y byte to 7-seg memory high address
+@77 D1
+@78 02 // Write Mouse X byte to VGA memory base address
+@79 B0
+@7A 03 // Write Mouse Y byte to VGA memory middle address
+@7B B1
+@7C 00 // Load previous pixel value
+@7D B2
+@7E 02 // Save previous pixel value to RAM
+@7F 16
+@80 00 // Load a 1 to reg A
+@81 05
+@82 02 // Write a 1 from reg A to VGA memory high address
+@83 B2
+@84 08 // Go to IDLE and wait for interrupts
 
 
 // DETERMINE WHICH GRID SQUARE
-@0x85   0x00 // Load mouse X to reg A
-@0x86   0xA1
-@0x87   0x01 // Load 53 to reg B
-@0x88   0x10
-@0x89   0xB6 // If X is less than 53, branch
-@0x8A   0x91
-@0x8B   0x01 // Load 107 to reg B
-@0x8C   0x11
-@0x8D   0xB6 // If X is less than 107, branch
-@0x8E   0x9D
-@0x8F   0x07 // Jump to handling X in the right part of the screen
-@0x90   0xA9
+@85 00 // Load mouse X to reg A
+@86 A1
+@87 01 // Load 53 to reg B
+@88 10
+@89 B6 // If X is less than 53, branch
+@8A 91
+@8B 01 // Load 107 to reg B
+@8C 11
+@8D B6 // If X is less than 107, branch
+@8E 9D
+@8F 07 // Jump to handling X in the right part of the screen
+@90 A9
 
 // X less than 53
-@0x91   0x00 // Load mouse Y to reg A
-@0x92   0xA2
-@0x93   0x01 // Load 40 to reg B
-@0x94   0x12
-@0x95   0xB6 // If Y is less than 40, branch to bottom left
-@0x96   0xB5
-@0x97   0x01 // Load 80 to reg B
-@0x98   0x13
-@0x99   0xB6 // If Y is less than 80, branch to middle left
-@0x9A   0xCD
-@0x9B   0x07 // Jump to top left
-@0x9C   0xC1
+@91 00 // Load mouse Y to reg A
+@92 A2
+@93 01 // Load 40 to reg B
+@94 12
+@95 B6 // If Y is less than 40, branch to bottom left
+@96 B5
+@97 01 // Load 80 to reg B
+@98 13
+@99 B6 // If Y is less than 80, branch to middle left
+@9A CD
+@9B 07 // Jump to top left
+@9C C1
 
 // X between 53 and 107
-@0x9D   0x00 // Load mouse Y to reg A
-@0x9E   0xA2
-@0x9F   0x01 // Load 40 to reg B
-@0xA0   0x12
-@0xA1   0xB6 // If Y is less than 40, branch to bottom middle
-@0xA2   0xBD
-@0xA3   0x01 // Load 80 to reg B
-@0xA4   0x13
-@0xA5   0xB6 // If Y is less than 80, branch to middle middle
-@0xA6   0xD5
-@0xA7   0x07 // Jump to top middle
-@0xA8   0xC9
+@9D 00 // Load mouse Y to reg A
+@9E A2
+@9F 01 // Load 40 to reg B
+@A0 12
+@A1 B6 // If Y is less than 40, branch to bottom middle
+@A2 BD
+@A3 01 // Load 80 to reg B
+@A4 13
+@A5 B6 // If Y is less than 80, branch to middle middle
+@A6 D5
+@A7 07 // Jump to top middle
+@A8 C9
 
 // X over 107
-@0xA9   0x00 // Load mouse Y to reg A
-@0xAA   0xA2
-@0xAB   0x01 // Load 40 to reg B
-@0xAC   0x12
-@0xAD   0xB6 // If Y is less than 40, branch to bottom right
-@0xAE   0xB9
-@0xAF   0x01 // Load 80 to reg B
-@0xB0   0x13
-@0xB1   0xB6 // If Y is less than 80, branch to middle right
-@0xB2   0xD1
-@0xB3   0x07 // Jump to top right
-@0xB4   0xC5
+@A9 00 // Load mouse Y to reg A
+@AA A2
+@AB 01 // Load 40 to reg B
+@AC 12
+@AD B6 // If Y is less than 40, branch to bottom right
+@AE B9
+@AF 01 // Load 80 to reg B
+@B0 13
+@B1 B6 // If Y is less than 80, branch to middle right
+@B2 D1
+@B3 07 // Jump to top right
+@B4 C5
 
 
 // SELECT DIRECTION
 // Bottom left
-@0xB5   0x00 // Read command from RAM to reg A
-@0xB6   0x17
-@0xB7   0x07 // Jump to writing command to IR and LEDs
-@0xB8   0xD9
+@B5 00 // Read command from RAM to reg A
+@B6 17
+@B7 07 // Jump to writing command to IR and LEDs
+@B8 D9
 
 // Bottom right
-@0xB9   0x00 // Read command from RAM to reg A
-@0xBA   0x18
-@0xBB   0x07 // Jump to writing command to IR and LEDs
-@0xBC   0xD9
+@B9 00 // Read command from RAM to reg A
+@BA 18
+@BB 07 // Jump to writing command to IR and LEDs
+@BC D9
 
 // Bottom middle
-@0xBD   0x00 // Read command from RAM to reg A
-@0xBE   0x19
-@0xBF   0x07 // Jump to writing command to IR and LEDs
-@0xC0   0xD9
+@BD 00 // Read command from RAM to reg A
+@BE 19
+@BF 07 // Jump to writing command to IR and LEDs
+@C0 D9
 
 // Top left
-@0xC1   0x00 // Read command from RAM to reg A
-@0xC2   0x20
-@0xC3   0x07 // Jump to writing command to IR and LEDs
-@0xC4   0xD9
+@C1 00 // Read command from RAM to reg A
+@C2 20
+@C3 07 // Jump to writing command to IR and LEDs
+@C4 D9
 
 // Top right
-@0xC5   0x00 // Read command from RAM to reg A
-@0xC6   0x21
-@0xC7   0x07 // Jump to writing command to IR and LEDs
-@0xC8   0xD9
+@C5 00 // Read command from RAM to reg A
+@C6 21
+@C7 07 // Jump to writing command to IR and LEDs
+@C8 D9
 
 // Top middle
-@0xC9   0x00 // Read command from RAM to reg A
-@0xCA   0x22
-@0xCB   0x07 // Jump to writing command to IR and LEDs
-@0xCC   0xD9
+@C9 00 // Read command from RAM to reg A
+@CA 22
+@CB 07 // Jump to writing command to IR and LEDs
+@CC D9
 
 // Middle left
-@0xCD   0x00 // Read command from RAM to reg A
-@0xCE   0x23
-@0xCF   0x07 // Jump to writing command to IR and LEDs
-@0xD0   0xD9
+@CD 00 // Read command from RAM to reg A
+@CE 23
+@CF 07 // Jump to writing command to IR and LEDs
+@D0 D9
 
 // Middle right
-@0xD1   0x00 // Read command from RAM to reg A
-@0xD2   0x24
-@0xD3   0x07 // Jump to writing command to IR and LEDs
-@0xD4   0xD9
+@D1 00 // Read command from RAM to reg A
+@D2 24
+@D3 07 // Jump to writing command to IR and LEDs
+@D4 D9
 
 // Middle middle
-@0xD5   0x00 // Read command from RAM to reg A
-@0xD6   0x25
-@0xD7   0x07 // Jump to writing command to IR and LEDs
-@0xD8   0xD9
+@D5 00 // Read command from RAM to reg A
+@D6 25
+@D7 07 // Jump to writing command to IR and LEDs
+@D8 D9
 
 
 // WRITE COMMAND TO IR AND LEDS
-@0xD9   0x02 // Write command from reg A to IR memory
-@0xDA   0x90
-@0xDB   0x02 // Write command from reg A to LED memory high address
-@0xDC   0xC1
-@0xDD   0x08 // Go to IDLE
+@D9 02 // Write command from reg A to IR memory
+@DA 90
+@DB 02 // Write command from reg A to LED memory high address
+@DC C1
+@DD 08 // Go to IDLE
 
 
 // INTERRUPT JUMPS
-@0xFE   0x85 // Timer interrupt address
-@0xFF   0x5C // Mouse interrupt address
+@FE 85 // Timer interrupt address
+@FF 5C // Mouse interrupt address
