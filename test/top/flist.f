@@ -23,6 +23,9 @@
 ../../../src/mouse/MouseMasterSM.sv
 ../../../src/mouse/MouseTransceiver.sv
 
+../../../program/Complete_Demo_RAM.txt
+../../../program/Complete_Demo_ROM.txt
+
 ../../../src/mcu/ALU.v
 ../../../src/mcu/RAM.v
 ../../../src/mcu/ROM.v
