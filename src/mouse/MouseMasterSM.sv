@@ -237,7 +237,6 @@ end
 assign MOUSE_STATUS = pkt_buffer[7:0];
 assign MOUSE_DX = pkt_buffer[15:8];
 assign MOUSE_DY = pkt_buffer[23:16];
-// assign SEND_INTERRUPT = (current_state == `FSM_STREAM_MOD) && BYTE_READY && (byte_cnt == `CNT_BYTES);
-assign SEND_INTERRUPT = 1'b0;
+assign SEND_INTERRUPT = (current_state == `FSM_STREAM_MOD) && BYTE_READY && (byte_cnt == `CNT_BYTES);
 
 endmodule
