@@ -1,0 +1,17 @@
+// Read Mouse data repeatly and display it on Seven Segment Display
+@00 00 // Read mouse status from memory to A
+@01 A0
+@02 02 // Write mouse status to LEDs
+@03 C0
+@04 00 // Read mouse X position
+@05 14
+@06 01 // Read mouse Y position
+@07 15
+@08 02 // Write mouse X position to Seg7[3:2]
+@09 B0
+@0A 03 // Write mouse Y position to Seg7[1:0]
+@0B B1
+@0C 08 // Jump to IDLE and wait for interrupts
+
+// interrupt handler’s service routine
+@FF 00 // Mouse interrupt address
