@@ -4,9 +4,9 @@ set_property IOSTANDARD LVCMOS33 [get_ports CLK100_IN]
 create_clock -period 10.000 -name clk100 -waveform {0.000 5.000} [get_ports CLK100_IN]
 
 ## Reset Constraints
-set_property PACKAGE_PIN U18 [get_ports HARD_RSTN]
-set_property IOSTANDARD LVCMOS33 [get_ports HARD_RSTN]
-## set_property PULLDOWN true [get_ports HARD_RSTN]
+set_property PACKAGE_PIN U18 [get_ports HARD_RST]
+set_property IOSTANDARD LVCMOS33 [get_ports HARD_RST]
+## set_property PULLDOWN true [get_ports HARD_RST]
 
 ## PS/2 Constraints
 set_property PACKAGE_PIN C17 [get_ports PS2_CLK]

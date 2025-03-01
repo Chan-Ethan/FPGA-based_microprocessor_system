@@ -48,7 +48,7 @@ module top_tb (
     assign (weak0, weak1) PS2_DATA = input_if.PS2_DATA;
     top top (
         .CLK100_IN          (clk_100M           ),
-        .HARD_RSTN          (~rst_n             ), // tmp, connect to a high buttom
+        .HARD_RST           (~rst_n             ), // tmp, connect to a high buttom
 
         .PS2_CLK            (PS2_CLK            ),
         .PS2_DATA           (PS2_DATA           ),
