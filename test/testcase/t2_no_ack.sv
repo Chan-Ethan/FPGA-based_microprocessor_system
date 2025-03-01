@@ -22,10 +22,17 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
         })
 
         #100us;
-        // send ID
+        // send Self Test transaction
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
             tr.cmd_byte == 8'hAA;
+        })
+
+        #100us;
+        // send ID transaction
+        `uvm_do_with(tr, {
+            tr.pkt_type == CMD;
+            tr.cmd_byte == 8'h00;
         })
 
         #400us;
