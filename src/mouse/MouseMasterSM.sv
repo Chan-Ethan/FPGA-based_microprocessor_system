@@ -20,17 +20,16 @@ output reg  [7:0]   MOUSE_STATUS,
 output reg          SEND_INTERRUPT,
 
 // Debug signals
-output      [7:0]   current_state
+output      [6:0]   current_state
 );
 
-`define FSM_IDLE            8'b00000001
-`define FSM_RESET           8'b00000010
-`define FSM_WAIT_ACK        8'b00000100
-`define FSM_WAIT_SELFTST    8'b00001000
-`define FSM_WAIT_ID         8'b00010000
-`define FSM_STAR_STM        8'b00100000
-`define FSM_WAIT_ACK2       8'b01000000
-`define FSM_STREAM_MOD      8'b10000000
+`define FSM_IDLE            7'b0000001
+`define FSM_RESET           7'b0000010
+`define FSM_WAIT_ACK        7'b0000100
+`define FSM_WAIT_SELFTST    7'b0001000
+`define FSM_STAR_STM        7'b0010000
+`define FSM_WAIT_ACK2       7'b0100000
+`define FSM_STREAM_MOD      7'b1000000
 
 `ifdef SIMULATION
     `define CNT_NUM_10MS    19'd49_999
@@ -40,7 +39,7 @@ output      [7:0]   current_state
 
 `define CNT_BYTES       2'b10
 
-logic [7:0]         current_state, next_state;
+logic [6:0]         current_state, next_state;
 logic               waiting_wr_done;
 logic [1:0]         byte_cnt;
 logic [18:0]        cnt_10ms;

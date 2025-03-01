@@ -42,8 +42,7 @@ set_property PACKAGE_PIN N3 [get_ports {MOUSE_STATUS_LED[1]}]
 set_property PACKAGE_PIN P3 [get_ports {MOUSE_STATUS_LED[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {MOUSE_STATUS_LED[*]}]
 
-## LED 8-1
-set_property PACKAGE_PIN V13 [get_ports {MOUSE_STATE_LED[7]}]
+## LED 7-1
 set_property PACKAGE_PIN V14 [get_ports {MOUSE_STATE_LED[6]}]
 set_property PACKAGE_PIN U14 [get_ports {MOUSE_STATE_LED[5]}]
 set_property PACKAGE_PIN U15 [get_ports {MOUSE_STATE_LED[4]}]

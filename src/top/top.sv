@@ -13,15 +13,29 @@ module top(
     // LED status indicators
     output          LED0_LOCKED     ,
     output [3:0]    MOUSE_STATUS_LED,  // L, R, X_sign, Y_sign
-    output [7:0]    MOUSE_STATE_LED    // Mouse state machine state
+    output [6:0]    MOUSE_STATE_LED    // Mouse state machine state
 );
 
-logic       clk_sys;    // 50MHz system clock
-logic       rst_n;      // active-low reset
+logic           clk_sys;    // 50MHz system clock
+logic           rst_n;      // active-low reset
 
 // Mouse interface signals
-wire [7:0]  MOUSE_DX;
-wire [7:0]  MOUSE_DY;
+logic   [7:0]   MOUSE_DX;
+logic   [7:0]   MOUSE_DY;
+
+// Data Bus
+logic   [7:0]   BUS_DATA;
+logic   [7:0]   BUS_ADDR;
+logic           BUS_WE  ;
+
+// ROM signals
+logic   [7:0]   ROM_ADDRESS ;
+logic   [7:0]   ROM_DATA    ;
+
+// INTERRUPT signals
+logic   [1:0]   BUS_INTERRUPTS_RAISE;
+logic   [1:0]   BUS_INTERRUPTS_ACK  ;
+logic   [7:0]   STATE               ;
 
 // Reset synchronization logic
 logic HARD_RSTN_1dly, HARD_RSTN_2dly;
@@ -40,24 +54,39 @@ clk_wiz_0 clk_wiz_inst (
 );
 
 // microcontroller subsystem
-// Processor Processor_inst (
-//     .CLK                    (clk_sys    ),
-//     .RESET                  (~rst_n     ),
-// 
-//     //BUS Signals
-//     .BUS_DATA               (),
-//     .BUS_ADDR               (),
-//     .BUS_WE                 (),
-// 
-//     // ROM signals
-//     .ROM_ADDRESS            (),
-//     .ROM_DATA               (),
-// 
-//     // INTERRUPT signals
-//     .BUS_INTERRUPTS_RAISE   (),
-//     .BUS_INTERRUPTS_ACK     (),
-//     .STATE                  ()
-// );
+Processor Processor_inst (
+    .CLK                    (clk_sys                ),
+    .RESET                  (~rst_n                 ),
+
+    //BUS Signals
+    .BUS_DATA               (BUS_DATA               ),
+    .BUS_ADDR               (BUS_ADDR               ),
+    .BUS_WE                 (BUS_WE                 ),
+
+    // ROM signals
+    .ROM_ADDRESS            (ROM_ADDRESS            ),
+    .ROM_DATA               (ROM_DATA               ),
+
+    // INTERRUPT signals
+    .BUS_INTERRUPTS_RAISE   (BUS_INTERRUPTS_RAISE   ),
+    .BUS_INTERRUPTS_ACK     (BUS_INTERRUPTS_ACK     ),
+    .STATE                  (STATE                  )
+);
+
+// ROM connectted to the Processor directly
+ROM ROM_inst (
+    .CLK    (clk_sys    ),
+    .DATA   (ROM_DATA   ),
+    .ADDR   (ROM_ADDRESS)
+);
+
+// RAM connected to the Processor via data bus
+RAM RAM_inst (
+    .CLK        (clk_sys    ),
+    .BUS_DATA   (BUS_DATA   ),
+    .BUS_ADDR   (BUS_ADDR   ),
+    .BUS_WE     (BUS_WE     )
+);
 
 // Mouse Transceiver subsystem
 MouseTransceiver MouseTransceiver_inst (
