@@ -169,6 +169,7 @@ always @(posedge CLK or negedge RESET) begin
     end
 end
 
-assign BYTE_ERROR_CODE = {stop_bit_err, odd_parity_err};
+// assign BYTE_ERROR_CODE = {stop_bit_err, odd_parity_err};
+assign BYTE_ERROR_CODE = 2'b00;
 
 endmodule
