@@ -29,11 +29,30 @@ logic   [7:0]   MOUSE_STATUS;   // address 0xA0
 logic   [7:0]   MOUSE_POS_X;    // address 0xA1
 logic   [7:0]   MOUSE_POS_Y;    // address 0xA2
 
+logic           bus_rd_en;
+logic   [7:0]   bus_rd_data;
+
 //================= Data Bus Interface =================//
-// Read only, ingore BUS_WE signal
-assign BUS_DATA =   (BUS_ADDR == 8'hA0) ? MOUSE_STATUS : 
+always @(posedge CLK or negedge RESETN) begin
+    if (!RESETN) begin
+        bus_rd_en <= 1'b0;
+    end
+    else begin
+        bus_rd_en <= ((BUS_ADDR == 8'hA0) || 
+                      (BUS_ADDR == 8'hA1) || 
+                      (BUS_ADDR == 8'hA2)) && 
+                      (BUS_WE == 1'b0) ? 1'b1 : 1'b0;
+    end
+end
+
+always @(posedge CLK) begin
+    bus_rd_data <=  (BUS_ADDR == 8'hA0) ? MOUSE_STATUS : 
                     (BUS_ADDR == 8'hA1) ? MOUSE_POS_X  : 
-                    (BUS_ADDR == 8'hA2) ? MOUSE_POS_Y  : 8'bz;
+                    (BUS_ADDR == 8'hA2) ? MOUSE_POS_Y  : 8'b0;
+end
+
+// Read only, ingore BUS_WE signal
+assign BUS_DATA =  bus_rd_en ? bus_rd_data : 8'bZ;
 
 
 //================= Instantiate Mouse Transceiver =================//
