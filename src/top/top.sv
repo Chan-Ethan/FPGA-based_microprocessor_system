@@ -63,7 +63,7 @@ end
 // microcontroller subsystem
 Processor Processor_inst (
     .CLK                    (clk_sys                ),
-    .RESET                  (~rst_n_sync          ),
+    .RESET                  (~rst_n_sync            ),
 
     //BUS Signals
     .BUS_DATA               (BUS_DATA               ),
@@ -98,7 +98,7 @@ RAM RAM_inst (
 // Mouse subsystem
 MouseTop MouseTop_inst (
     .CLK            (clk_sys),
-    .RESET          (rst_n),
+    .RESETN         (rst_n),
     
     // Mouse PS/2 interface
     .CLK_MOUSE      (PS2_CLK),

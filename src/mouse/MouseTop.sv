@@ -72,7 +72,7 @@ MousePosCal MousePosCal_inst (
     .MOUSE_STATUS   (MOUSE_STATUS),
     .MOUSE_DX       (MOUSE_DX),
     .MOUSE_DY       (MOUSE_DY),
-    .SEND_INTERRUPT (SEND_INTERRUPT),
+    .INTERRUPT      (SEND_INTERRUPT),
 
     // Mouse position
     .MOUSE_POS_X    (MOUSE_POS_X),
