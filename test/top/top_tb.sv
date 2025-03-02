@@ -56,8 +56,7 @@ module top_tb (
         .SEG_SELECT_OUT     (SEG_SELECT_OUT     ),
         .HEX_OUT            (HEX_OUT            ),
 
-        .LED0_LOCKED        (                   ),
-        .MOUSE_STATUS_LED   (                   )
+        .LED                (                   )
     );
 
     initial begin
