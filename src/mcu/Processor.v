@@ -139,30 +139,30 @@ module Processor(
     reg [7:0] CurrState, NextState;
     always@(posedge CLK) begin
         if(RESET) begin
-            CurrState = 8'h00;
-            CurrProgCounter = 8'h00;
-            CurrProgCounterOffset = 2'h0;
-            CurrBusAddr = 8'hFF; //Initial instruction after reset.
-            CurrBusDataOut = 8'h00;
-            CurrBusDataOutWE = 1'b0;
-            CurrRegA = 8'h00;
-            CurrRegB = 8'h00;
-            CurrRegSelect = 1'b0;
-            CurrProgContext = 8'h00;
-            CurrInterruptAck = 2'b00;
+            CurrState <= 8'h00;
+            CurrProgCounter <= 8'h00;
+            CurrProgCounterOffset <= 2'h0;
+            CurrBusAddr <= 8'hFF; //Initial instruction after reset.
+            CurrBusDataOut <= 8'h00;
+            CurrBusDataOutWE <= 1'b0;
+            CurrRegA <= 8'h00;
+            CurrRegB <= 8'h00;
+            CurrRegSelect <= 1'b0;
+            CurrProgContext <= 8'h00;
+            CurrInterruptAck <= 2'b00;
         end 
         else begin
-            CurrState = NextState;
-            CurrProgCounter = NextProgCounter;
-            CurrProgCounterOffset = NextProgCounterOffset;
-            CurrBusAddr = NextBusAddr;
-            CurrBusDataOut = NextBusDataOut;
-            CurrBusDataOutWE = NextBusDataOutWE;
-            CurrRegA = NextRegA;
-            CurrRegB = NextRegB;
-            CurrRegSelect = NextRegSelect;
-            CurrProgContext = NextProgContext;
-            CurrInterruptAck = NextInterruptAck;
+            CurrState <= NextState;
+            CurrProgCounter <= NextProgCounter;
+            CurrProgCounterOffset <= NextProgCounterOffset;
+            CurrBusAddr <= NextBusAddr;
+            CurrBusDataOut <= NextBusDataOut;
+            CurrBusDataOutWE <= NextBusDataOutWE;
+            CurrRegA <= NextRegA;
+            CurrRegB <= NextRegB;
+            CurrRegSelect <= NextRegSelect;
+            CurrProgContext <= NextProgContext;
+            CurrInterruptAck <= NextInterruptAck;
         end
     end
     
@@ -247,7 +247,7 @@ module Processor(
             //Wait state - to give time for the mem address to be read. Reg select is set to 0
             READ_FROM_MEM_TO_A: begin
                 NextState = READ_FROM_MEM_0;
-                NextProgCounterOffset = 2'h1;
+                // NextProgCounterOffset = 2'h1;
                 NextRegSelect = 1'b0;
             end
             
@@ -255,7 +255,7 @@ module Processor(
             //Wait state - to give time for the mem address to be read. Reg select is set to 1
             READ_FROM_MEM_TO_B: begin
                 NextState = READ_FROM_MEM_0;
-                NextProgCounterOffset = 2'h1;
+                // NextProgCounterOffset = 2'h1;
                 NextRegSelect = 1'b1;
             end
             
@@ -308,6 +308,7 @@ module Processor(
             WRITE_TO_MEM_0: begin
                 NextState = CHOOSE_OPP;
                 NextBusAddr = ProgMemoryOut;
+                NextProgCounterOffset = 2'h1;
                 if(!NextRegSelect)
                     NextBusDataOut = CurrRegA;
                 else

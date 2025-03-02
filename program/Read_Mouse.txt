@@ -4,9 +4,9 @@
 @02 02 // Write mouse status to LEDs
 @03 C0
 @04 00 // Read mouse X position
-@05 14
+@05 A1
 @06 01 // Read mouse Y position
-@07 15
+@07 A2
 @08 02 // Write mouse X position to Seg7[3:2]
 @09 B0
 @0A 03 // Write mouse Y position to Seg7[1:0]
