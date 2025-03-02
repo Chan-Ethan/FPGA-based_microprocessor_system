@@ -22,6 +22,9 @@ module MouseTop(
     output logic [6:0] current_state
 );
 
+logic   [7:0]   MOUSE_DX;
+logic   [7:0]   MOUSE_DY;
+
 logic   [7:0]   MOUSE_STATUS;   // address 0xA0
 logic   [7:0]   MOUSE_POS_X;    // address 0xA1
 logic   [7:0]   MOUSE_POS_Y;    // address 0xA2
