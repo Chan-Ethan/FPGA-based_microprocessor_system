@@ -8,7 +8,7 @@ module MousePosCal(
     // Mouse data information
     input   [7:0]       MOUSE_STATUS,   // YV, XV, YS, XS, 1, 0, R, L
     input   [7:0]       MOUSE_DX,
-    input   [7:0]       MOUSE_DY
+    input   [7:0]       MOUSE_DY,
 
     input               INTERRUPT,
 
