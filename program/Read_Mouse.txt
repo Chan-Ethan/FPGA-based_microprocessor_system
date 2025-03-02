@@ -8,9 +8,9 @@
 @06 01 // Read mouse Y position
 @07 A2
 @08 02 // Write mouse X position to Seg7[3:2]
-@09 B0
+@09 D0
 @0A 03 // Write mouse Y position to Seg7[1:0]
-@0B B1
+@0B D1
 @0C 08 // Jump to IDLE and wait for interrupts
 
 // interrupt handler’s service routine
