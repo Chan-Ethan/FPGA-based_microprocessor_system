@@ -65,7 +65,7 @@ Processor Processor_inst (
     .CLK                    (clk_sys                ),
     .RESET                  (~rst_n_sync            ),
 
-    //BUS Signals
+    //IO - Data Bus
     .BUS_DATA               (BUS_DATA               ),
     .BUS_ADDR               (BUS_ADDR               ),
     .BUS_WE                 (BUS_WE                 ),
@@ -104,7 +104,7 @@ MouseTop MouseTop_inst (
     .CLK_MOUSE      (PS2_CLK),
     .DATA_MOUSE     (PS2_DATA),
 
-    //BUS Signals
+    //IO - Data Bus
     .BUS_DATA       (BUS_DATA       ),
     .BUS_ADDR       (BUS_ADDR       ),
     .BUS_WE         (BUS_WE         ),
@@ -121,9 +121,10 @@ seg7_control seg7_control_inst (
     .clk_sys        (clk_sys),
     .rst_n          (rst_n),
     
-    // Mouse coordinates
-    .MOUSE_DX       (MOUSE_DX),
-    .MOUSE_DY       (MOUSE_DY),
+    //IO - Data Bus
+    .BUS_DATA       (BUS_DATA       ),
+    .BUS_ADDR       (BUS_ADDR       ),
+    .BUS_WE         (BUS_WE         ),
     
     // Display outputs
     .SEG_SELECT_OUT (SEG_SELECT_OUT),

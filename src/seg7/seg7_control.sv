@@ -1,10 +1,11 @@
 module seg7_control(
-    input                   clk_sys         , // 50MHz system clock
-    input                   rst_n           , // reset signal
+    input           clk_sys         , // 50MHz system clock
+    input           rst_n           , // reset signal
     
-    // from MouseTransceiver
-    (* mark_debug = "true" *) input [7:0]   MOUSE_DX    ,
-    (* mark_debug = "true" *) input [7:0]   MOUSE_DY    ,   
+    //IO - Data Bus
+    inout   [7:0]   BUS_DATA,
+    input   [7:0]   BUS_ADDR,
+    input           BUS_WE,
 
     // seven segment display
     output  reg [3:0]       SEG_SELECT_OUT  ,
@@ -28,10 +29,24 @@ logic   [3:0]   bin;
 logic           clk_200hz;  // 200Hz signal, for 7-segment display refresh
 logic   [17:0]  clk_200hz_cnt;
 
-logic           clk_1hz;    // 1Hz signal, for display content update
-logic   [7:0]   clk_1hz_cnt;
-logic           data_update_rdy; // ready to update the display content (every 1 second)
+logic   [7:0]   MOUSE_POS_X;
+logic   [7:0]   MOUSE_POS_Y;
 
+//================= Data Bus Interface =================//
+// write only, update MOUSE_POS_X and MOUSE_POS_Y
+always @(posedge clk_sys or negedge rst_n) begin
+    if (!rst_n) begin
+        MOUSE_POS_X <= 8'd0;
+        MOUSE_POS_Y <= 8'd0;
+    end
+    else if (BUS_WE) begin
+        case (BUS_ADDR)
+            8'hD0: MOUSE_POS_X <= BUS_DATA;
+            8'hD1: MOUSE_POS_Y <= BUS_DATA;
+            default;
+        endcase
+    end
+end
 
 //================= 200Hz signal generation =================//
 always @(posedge clk_sys or negedge rst_n) begin
@@ -62,37 +77,6 @@ always @(posedge clk_sys or negedge rst_n) begin
     end
 end
 
-//================= 1Hz signal generation =================//
-always @(posedge clk_sys or negedge rst_n) begin
-    if (!rst_n) begin
-        clk_1hz_cnt <= 8'b0;
-    end
-    else if (clk_200hz == 1'b1) begin
-        if (clk_1hz_cnt == `CNT_NUM_1HZ) begin
-            clk_1hz_cnt <= 8'b0;
-        end
-        else begin
-            clk_1hz_cnt <= clk_1hz_cnt + 8'd1;
-        end
-    end
-    else;
-end
-
-always @(posedge clk_sys or negedge rst_n) begin
-    if (!rst_n) begin
-        clk_1hz <= 1'b0;
-    end
-    else if (clk_200hz == 1'b1) begin
-        if (clk_1hz_cnt == `CNT_NUM_1HZ) begin
-            clk_1hz <= 1'b1;
-        end
-        else begin
-            clk_1hz <= 1'b0;
-        end
-    end
-    else;
-end
-
 //================= 7-segment display control =================//
 // traverse 4 seven segment
 always @(posedge clk_sys or negedge rst_n) begin
@@ -115,10 +99,10 @@ always @(posedge clk_sys or negedge rst_n) begin
     end
     else begin
         case (seg_select)
-            2'b00: bin <= MOUSE_DY[3:0];
-            2'b01: bin <= MOUSE_DY[7:4];
-            2'b10: bin <= MOUSE_DX[3:0];
-            2'b11: bin <= MOUSE_DX[7:4];
+            2'b00: bin <= MOUSE_POS_Y[3:0];
+            2'b01: bin <= MOUSE_POS_Y[7:4];
+            2'b10: bin <= MOUSE_POS_X[3:0];
+            2'b11: bin <= MOUSE_POS_X[7:4];
             default;
         endcase
     end
