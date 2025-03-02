@@ -6,10 +6,12 @@ input           CLK,
 inout           CLK_MOUSE,
 inout           DATA_MOUSE,
 // Mouse data information
-output [3:0]    MOUSE_STATUS,
+output [7:0]    MOUSE_STATUS,   // YV, XV, YS, XS, 1, 0, R, L
 output [7:0]    MOUSE_DX,
 output [7:0]    MOUSE_DY,
+
 output          SEND_INTERRUPT,
+input           INTERRUPT_ACK,
 
 // debug signals
 output logic [6:0] current_state
@@ -29,13 +31,8 @@ wire [7:0]  BYTE_READ;
 wire [1:0]  BYTE_ERROR_CODE;
 wire        BYTE_READY;
 
-wire [7:0]  MOUSE_STATUS_8;
-
 (* mark_debug = "true" *) wire clk_enable, data_enable;
 (* mark_debug = "true" *) wire data_out;
-
-// L, R, X_sign, Y_sign
-assign MOUSE_STATUS = {MOUSE_STATUS_8[0], MOUSE_STATUS_8[1], MOUSE_STATUS_8[4], MOUSE_STATUS_8[5]};
 
 // Instantiate Master State Machine
 MouseMasterSM master_sm(
@@ -53,9 +50,12 @@ MouseMasterSM master_sm(
     // Data Output
     .MOUSE_DX       (MOUSE_DX),     
     .MOUSE_DY       (MOUSE_DY),     
-    .MOUSE_STATUS   (MOUSE_STATUS_8),     
-    .SEND_INTERRUPT (SEND_INTERRUPT),
+    .MOUSE_STATUS   (MOUSE_STATUS),     
 
+    .SEND_INTERRUPT (SEND_INTERRUPT),
+    .INTERRUPT_ACK  (INTERRUPT_ACK),
+    
+    // Debug signals
     .current_state  (current_state)
 );
 

@@ -17,7 +17,9 @@ input               BYTE_READY,
 output reg  [7:0]   MOUSE_DX,
 output reg  [7:0]   MOUSE_DY,
 output reg  [7:0]   MOUSE_STATUS,
+
 output reg          SEND_INTERRUPT,
+input               INTERRUPT_ACK,
 
 // Debug signals
 output      [6:0]   current_state
@@ -214,9 +216,10 @@ always @(posedge CLK or negedge RESET) begin
              (byte_cnt == `CNT_BYTES)) begin
         SEND_INTERRUPT <= 1'b1;
     end
-    else begin
+    else if (INTERRUPT_ACK == 1'b1) begin
         SEND_INTERRUPT <= 1'b0;
     end
+    else;
 end
 
 endmodule

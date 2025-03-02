@@ -22,6 +22,8 @@
 ../../../src/mouse/MouseTransmitter.sv
 ../../../src/mouse/MouseMasterSM.sv
 ../../../src/mouse/MouseTransceiver.sv
+../../../src/mouse/MousePosCal.sv
+../../../src/mouse/MouseTop.sv
 
 ../../../src/mcu/ALU.v
 ../../../src/mcu/RAM.v

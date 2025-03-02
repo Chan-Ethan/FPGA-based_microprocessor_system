@@ -95,20 +95,23 @@ RAM RAM_inst (
     .BUS_WE     (BUS_WE     )
 );
 
-// Mouse Transceiver subsystem
-MouseTransceiver MouseTransceiver_inst (
-    .RESET          (rst_n),
+// Mouse subsystem
+MouseTop MouseTop_inst (
     .CLK            (clk_sys),
+    .RESET          (rst_n),
     
-    // PS/2 interface
+    // Mouse PS/2 interface
     .CLK_MOUSE      (PS2_CLK),
     .DATA_MOUSE     (PS2_DATA),
+
+    //BUS Signals
+    .BUS_DATA       (BUS_DATA       ),
+    .BUS_ADDR       (BUS_ADDR       ),
+    .BUS_WE         (BUS_WE         ),
     
-    // Mouse data output
-    .MOUSE_STATUS   (MOUSE_STATUS_LED),
-    .MOUSE_DX       (MOUSE_DX),
-    .MOUSE_DY       (MOUSE_DY),
-    .SEND_INTERRUPT (),
+    // interrupt signals
+    .SEND_INTERRUPT (BUS_INTERRUPTS_RAISE[0]),
+    .INTERRUPT_ACK  (BUS_INTERRUPTS_ACK[0]  ),
 
     .current_state  (MOUSE_STATE_LED)
 );
