@@ -28,19 +28,9 @@ logic   [7:0]   MOUSE_POS_Y;    // address 0xA2
 
 //================= Data Bus Interface =================//
 // Read only, ingore BUS_WE signal
-always_ff @(posedge CLK or negedge RESETN) begin
-    if (!RESETN) begin
-        BUS_DATA <= 8'bz;
-    end
-    else begin
-        case (BUS_ADDR)
-            8'hA0: BUS_DATA <= MOUSE_STATUS;
-            8'hA1: BUS_DATA <= MOUSE_POS_X;
-            8'hA2: BUS_DATA <= MOUSE_POS_Y;
-            default: BUS_DATA <= 8'bz;
-        endcase
-    end
-end
+assign BUS_DATA =   (BUS_ADDR == 8'hA0) ? MOUSE_STATUS : 
+                    (BUS_ADDR == 8'hA1) ? MOUSE_POS_X  : 
+                    (BUS_ADDR == 8'hA2) ? MOUSE_POS_Y  : 8'bz;
 
 
 //================= Instantiate Mouse Transceiver =================//
