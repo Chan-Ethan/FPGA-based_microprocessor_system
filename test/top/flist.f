@@ -25,6 +25,8 @@
 ../../../src/mouse/MousePosCal.sv
 ../../../src/mouse/MouseTop.sv
 
+../../../src/led/led_ctrl.sv
+
 ../../../src/mcu/ALU.v
 ../../../src/mcu/RAM.v
 ../../../src/mcu/ROM.v
