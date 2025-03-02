@@ -23,7 +23,7 @@ module MousePosCal(
 logic   [7:0]   next_pos_x, next_pos_y;
 logic           interrupt_1dly; // 1 cycle delay of INTERRUPT
 logic           pos_update;     // update mouse position at posedge of INTERRUPT
-
+logic           pos_update_1dly;
 
 always @(posedge CLK) begin
     interrupt_1dly <= INTERRUPT;
@@ -37,6 +37,10 @@ always @(posedge CLK or negedge RESET) begin
     else begin
         pos_update <= (interrupt_1dly == 1'b0) && (INTERRUPT == 1'b1);
     end
+end
+
+always @(posedge CLK) begin
+    pos_update_1dly <= pos_update;
 end
 
 // calculate the mouse position
@@ -60,7 +64,7 @@ always @(posedge CLK or negedge RESET) begin
         MOUSE_POS_X <= 8'd0;
         MOUSE_POS_Y <= 8'd0;
     end
-    else begin
+    else if (pos_update_1dly == 1'b1) begin
         if (next_pos_x > `MOUSE_X_MAX) begin
             MOUSE_POS_X <= (MOUSE_STATUS[4] == 1'b0) ? `MOUSE_X_MAX : 8'd0;
         end
@@ -75,6 +79,7 @@ always @(posedge CLK or negedge RESET) begin
             MOUSE_POS_Y <= next_pos_y;
         end
     end
+    else;
 end
 
 endmodule
