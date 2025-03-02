@@ -42,6 +42,28 @@ class ps2_transaction extends uvm_sequence_item;
         soft cmd_byte == 8'hFF;
     }
 
+    constraint c_x_mov {
+        if (x_sign == 1'b1) begin
+            // mouse move left
+            soft x_mov inside {[8'h80:8'hFF], 8'h00};
+        end
+        else begin
+            // mouse move right
+            soft x_mov inside {[8'h00:8'h7F], 8'h00};
+        end
+    }
+
+    constraint c_y_mov {
+        if (y_sign == 1'b1) begin
+            // mouse move up
+            soft y_mov inside {[8'h00:8'h7F], 8'h00};
+        end
+        else begin
+            // mouse move down
+            soft y_mov inside {[8'h80:8'hFF], 8'h00};
+        end
+    }
+
     function new(string name = "my_transaction");
         super.new(name);
     endfunction
