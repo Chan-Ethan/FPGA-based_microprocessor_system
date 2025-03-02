@@ -46,7 +46,7 @@ end
 //================= Instantiate Mouse Transceiver =================//
 MouseTransceiver MouseTransceiver_inst (
     .CLK            (CLK),
-    .RESETN         (RESETN),
+    .RESET          (RESETN),
     
     // PS/2 interface
     .CLK_MOUSE      (CLK_MOUSE),
@@ -66,7 +66,7 @@ MouseTransceiver MouseTransceiver_inst (
 //================= Instantiate Mouse Position Calculator =================//
 MousePosCal MousePosCal_inst (
     .CLK            (CLK),
-    .RESETN         (RESETN),
+    .RESET          (RESETN),
 
     // Mouse data information
     .MOUSE_STATUS   (MOUSE_STATUS),
