@@ -10,10 +10,8 @@ module top(
     output reg [3:0] SEG_SELECT_OUT ,
     output reg [7:0] HEX_OUT        ,
     
-    // LED status indicators
-    output          LED0_LOCKED     ,
-    output [3:0]    MOUSE_STATUS_LED,  // L, R, X_sign, Y_sign
-    output [6:0]    MOUSE_STATE_LED    // Mouse state machine state
+    // LED output
+    output reg [15:0] LED           
 );
 
 logic           clk_sys;    // 50MHz system clock
@@ -37,6 +35,9 @@ logic   [1:0]   BUS_INTERRUPTS_RAISE;
 logic   [1:0]   BUS_INTERRUPTS_ACK  ;
 logic   [7:0]   STATE               ;
 
+logic           LOCKED              ;
+logic   [6:0]   current_state       ;
+
 // Reset synchronization logic
 logic HARD_RSTN_1dly, HARD_RSTN_2dly;
 always_ff @(posedge CLK100_IN) begin
@@ -50,7 +51,7 @@ clk_wiz_0 clk_wiz_inst (
     .clk_in1    (CLK100_IN),
     .clk_out1   (clk_sys),   // 50MHz output
     .resetn     (rst_n),
-    .locked     (LED0_LOCKED)
+    .locked     (LOCKED)
 );
 
 // sync reset to 50MHz clock domain
@@ -113,7 +114,7 @@ MouseTop MouseTop_inst (
     .SEND_INTERRUPT (BUS_INTERRUPTS_RAISE[0]),
     .INTERRUPT_ACK  (BUS_INTERRUPTS_ACK[0]  ),
 
-    .current_state  (MOUSE_STATE_LED)
+    .current_state  (current_state  )
 );
 
 // Seven-segment display controller
@@ -129,6 +130,24 @@ seg7_control seg7_control_inst (
     // Display outputs
     .SEG_SELECT_OUT (SEG_SELECT_OUT),
     .HEX_OUT        (HEX_OUT)
+);
+
+// LED controller
+led_ctrl led_ctrl_inst (
+    .CLK            (clk_sys),
+    .RESETN         (rst_n),
+    
+    //IO - Data Bus
+    .BUS_DATA       (BUS_DATA       ),
+    .BUS_ADDR       (BUS_ADDR       ),
+    .BUS_WE         (BUS_WE         ),
+    
+    // input signals
+    .LOCKED         (LOCKED         ),
+    .current_state  (current_state  ),
+    
+    // LED output
+    .LED            (LED            )
 );
 
 endmodule
