@@ -48,7 +48,7 @@ task my_model::main_phase(uvm_phase phase);
         end
         else begin
             `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
-            
+            mouse_tr.print();
             // simulate Processor's mosue interrupt handler’s service routine
             bus_read(8'hA0); // Read mouse status from memory to A
             bus_write(8'hC0, mouse_tr.byte0); // write mouse status to LEDs
@@ -76,6 +76,8 @@ function void my_model::bus_write(bit [7:0] addr, bit [7:0] data);
     bus_tr.WE = 1;
     bus_tr.ADDR = addr;
     bus_tr.DATA = data;
+    `uvm_info("my_model", "write a bus transaction:", UVM_LOW)
+    bus_tr.print();
     ap.write(bus_tr);
 endfunction
 
