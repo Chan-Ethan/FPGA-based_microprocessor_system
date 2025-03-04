@@ -2,9 +2,10 @@
 `define MY_SCOREBOARD_SV
 
 class my_scoreboard extends uvm_scoreboard;
-    my_transaction exp_q[$];
-    uvm_blocking_get_port #(my_transaction) exp_port; // expected tr port
-    uvm_blocking_get_port #(my_transaction) act_port; // actual tr port
+    bus_transaction exp_q[$]; // expected transaction queue
+
+    uvm_blocking_get_port #(bus_transaction) exp_port; // expected tr port
+    uvm_blocking_get_port #(bus_transaction) act_port; // actual tr port
 
     `uvm_component_utils(my_scoreboard)
 
@@ -27,7 +28,7 @@ function void my_scoreboard::build_phase(uvm_phase phase);
 endfunction
 
 task my_scoreboard::main_phase(uvm_phase phase);
-    my_transaction exp_tr, act_tr, tmp_tr;
+    bus_transaction exp_tr, act_tr, tmp_tr;
     bit result;
 
     super.main_phase(phase);
@@ -46,19 +47,19 @@ task my_scoreboard::main_phase(uvm_phase phase);
                 tmp_tr = exp_q.pop_front();
                 result = act_tr.compare(tmp_tr); // compare two transactions
                 if (result) begin
-                    `uvm_info("CMP_PASS", "transaction matched", UVM_LOW)
+                    `uvm_info("CMP_PASS", "BUS operation matched", UVM_LOW)
                 end
                 else begin
-                    `uvm_error("CMP_FAIL", "transaction mismatched")
-                    $display("the expected transaction is:");
+                    `uvm_error("CMP_FAIL", "BUS operation mismatched")
+                    $display("the expected BUS operation is:");
                     tmp_tr.print();
-                    $display("the actual transaction is:");
+                    $display("the actual BUS operation is:");
                     act_tr.print();
                 end
             end
             else begin
-                `uvm_error("UNEXP_PKT", "received from DUT but no expected transaction")
-                $display("the unexpected transaction is:");
+                `uvm_error("UNEXP_PKT", "detected unexpected BUS operation!")
+                $display("the unexpected BUS operation is:");
                 act_tr.print();
             end
         end

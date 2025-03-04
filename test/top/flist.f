@@ -51,8 +51,8 @@
 // ../../bus/bus_driver.sv
 ../../bus/bus_agent.sv
  
-// ../../model/my_model.sv
-// ../../scoreboard/my_scoreboard.sv
+../../model/my_model.sv
+../../scoreboard/my_scoreboard.sv
 ../../env/Env.sv
 ../../top/base_test.sv
 ../../top/top_tb.sv
