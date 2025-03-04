@@ -32,7 +32,7 @@ task bus_monitor::main_phase(uvm_phase phase);
 
 	while (1) begin
 		@(posedge vif.clk);
-		if (vif.BUS_ADDR != 8'hz) begin
+		if (vif.BUS_ADDR != 8'hFF) begin
 			tr = new("tr");
 			tr.ADDR = vif.BUS_ADDR;
 			tr.WE = vif.BUS_WE;
@@ -49,7 +49,6 @@ task bus_monitor::main_phase(uvm_phase phase);
 			tr.print();
 			ap.write(tr);
 		end
-		
 	end
 endtask
 
