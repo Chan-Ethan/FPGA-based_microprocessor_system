@@ -4,21 +4,20 @@
 class Env extends uvm_env;
     ps2_agent i_agt;
     bus_agent bus_agt;
-    // my_agent o_agt;
-    // my_model mdl;
-    // my_scoreboard scb;
+    my_model mdl;
+    my_scoreboard scb;
 
-    // uvm_tlm_analysis_fifo #(my_transaction) agt_mdl_fifo;
-    // uvm_tlm_analysis_fifo #(my_transaction) mdl_scb_fifo;
-    // uvm_tlm_analysis_fifo #(my_transaction) oagt_scb_fifo;
+    uvm_tlm_analysis_fifo #(ps2_transaction) mouse_mdl_fifo;
+    uvm_tlm_analysis_fifo #(bus_transaction) mdl_scb_fifo;
+    uvm_tlm_analysis_fifo #(bus_transaction) bus_scb_fifo;
 
     function new(string name = "Env", uvm_component parent = null);
         super.new(name, parent);
         `uvm_info("Env", "Env is created", UVM_MEDIUM)
 
-        // agt_mdl_fifo = new("agt_mdl_fifo", this);
-        // mdl_scb_fifo = new("mdl_scb_fifo", this);
-        // oagt_scb_fifo = new("oagt_scb_fifo", this);
+        mouse_mdl_fifo = new("mouse_mdl_fifo", this);
+        mdl_scb_fifo = new("mdl_scb_fifo", this);
+        bus_scb_fifo = new("bus_scb_fifo", this);
     endfunction
 
     extern virtual function void build_phase(uvm_phase phase);
@@ -34,13 +33,12 @@ function void Env::build_phase(uvm_phase phase);
     
     i_agt = ps2_agent::type_id::create("i_agt", this);
     bus_agt = bus_agent::type_id::create("bus_agt", this);
-    // o_agt = my_agent::type_id::create("o_agt", this);
+
     i_agt.is_active = UVM_ACTIVE;
     bus_agt.is_active = UVM_PASSIVE;
-    // o_agt.is_active = UVM_PASSIVE;
 
-    // mdl = my_model::type_id::create("mdl", this);
-    // scb = my_scoreboard::type_id::create("scb", this);
+    mdl = my_model::type_id::create("mdl", this);
+    scb = my_scoreboard::type_id::create("scb", this);
 
     // set default sequence for my_sequencer
     // uvm_config_db #(uvm_object_wrapper)::set(this,
@@ -53,14 +51,14 @@ function void Env::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     `uvm_info("Env", "Env connect_phase", UVM_MEDIUM)
     
-    // i_agt.ap.connect(agt_mdl_fifo.analysis_export);
-    // mdl.port.connect(agt_mdl_fifo.blocking_get_export);
+    i_agt.ap.connect(mouse_mdl_fifo.analysis_export);
+    mdl.mouse_port.connect(mouse_mdl_fifo.blocking_get_export);
 
-    // mdl.ap.connect(mdl_scb_fifo.analysis_export);
-    // scb.exp_port.connect(mdl_scb_fifo.blocking_get_export);
-    
-    // o_agt.ap.connect(oagt_scb_fifo.analysis_export);
-    // scb.act_port.connect(oagt_scb_fifo.blocking_get_export);
+    bus_agt.ap.connect(mdl_scb_fifo.analysis_export);
+    scb.act_port.connect(mdl_scb_fifo.blocking_get_export);
+
+    mdl.ap.connect(bus_scb_fifo.analysis_export);
+    scb.exp_port.connect(bus_scb_fifo.blocking_get_export);
 endfunction
 
 `endif // ENV_SV
