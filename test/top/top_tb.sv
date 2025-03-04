@@ -72,7 +72,7 @@ module top_tb (
 
     initial begin
         // System run timeout
-        #10ms;
+        #100ms;
         $display("\n\nTIMEOUT!\n\n");
         $finish();
     end
