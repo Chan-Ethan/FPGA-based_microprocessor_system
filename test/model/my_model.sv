@@ -28,7 +28,6 @@ endfunction
 
 task my_model::main_phase(uvm_phase phase);
     ps2_transaction mouse_tr;
-    bus_transaction bus_tr;
 
     super.main_phase(phase);
 
@@ -50,8 +49,6 @@ task my_model::main_phase(uvm_phase phase);
             bus_write(8'hD0, mouse_tr.x_mov); // Write mouse X position to Seg7[3:2]
             bus_write(8'hD1, mouse_tr.y_mov); // Write mouse Y position to Seg7[1:0]
         end
-        new_tr.print();
-        ap.write(new_tr);
     end
 endtask
 
