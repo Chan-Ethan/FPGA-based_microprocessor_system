@@ -7,7 +7,12 @@ class bus_transaction extends uvm_sequence_item;
     rand bit        WE  ;
 
     `uvm_object_utils_begin(bus_transaction)
-        `uvm_field_int(DATA , UVM_ALL_ON)
+        if (WE == 1'b1) begin
+            `uvm_field_int(DATA , UVM_ALL_ON)
+        end
+        else begin
+            `uvm_field_int(DATA , UVM_ALL_ON | UVM_NOPACK)
+        end
         `uvm_field_int(ADDR , UVM_ALL_ON)
         `uvm_field_int(WE   , UVM_ALL_ON)
     `uvm_object_utils_end
