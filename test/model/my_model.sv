@@ -22,7 +22,7 @@ function void my_model::build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("my_model", "my_model build_phase", UVM_MEDIUM)
     
-    mouse_port = new("port", this);
+    mouse_port = new("mouse_port", this);
     ap = new("ap", this);
 endfunction
 
@@ -32,7 +32,7 @@ task my_model::main_phase(uvm_phase phase);
     super.main_phase(phase);
 
     while (1) begin
-        port.get(mouse_tr);
+        mouse_port.get(mouse_tr);
         `uvm_info("my_model", "get a mouse transaction", UVM_LOW)
         if (mouse_tr.pkt_type == CMD) begin
             `uvm_info("my_model", "mouse transaction is CMD", UVM_LOW)
