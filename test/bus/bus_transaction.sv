@@ -24,7 +24,8 @@ class bus_transaction extends uvm_sequence_item;
 
     function bit do_compare(uvm_object rhs, uvm_comparer comparer);
         bus_transaction rhs_t;
-
+        `uvm_info("xxxxxxx", "do_compare() is call", UVM_MEDIUM)
+        
         // type check
         if (!$cast(rhs_t, rhs)) begin
             `uvm_error("COMPARE", "Type mismatch in do_compare()")
