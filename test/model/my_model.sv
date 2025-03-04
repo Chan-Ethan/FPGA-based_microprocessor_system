@@ -14,8 +14,8 @@ class my_model extends uvm_component;
 
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual task main_phase(uvm_phase phase);
-    extern virtual void bus_read(bit [7:0] addr);
-    extern virtual void bus_write(bit [7:0] addr, bit [7:0] data);
+    extern virtual function void bus_read(bit [7:0] addr);
+    extern virtual function void bus_write(bit [7:0] addr, bit [7:0] data);
 endclass
 
 function void my_model::build_phase(uvm_phase phase);
