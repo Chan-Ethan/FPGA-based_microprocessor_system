@@ -42,6 +42,14 @@
 // ../../ps2/ps2_monitor.sv
 ../../ps2/ps2_driver.sv
 ../../ps2/ps2_agent.sv
+
+../../bus/bus_if.sv
+../../bus/bus_transaction.sv
+../../bus/bus_sequence.sv
+../../bus/bus_sequencer.sv
+ ../../bus/bus_monitor.sv
+// ../../bus/bus_driver.sv
+../../bus/bus_agent.sv
  
 // ../../model/my_model.sv
 // ../../scoreboard/my_scoreboard.sv

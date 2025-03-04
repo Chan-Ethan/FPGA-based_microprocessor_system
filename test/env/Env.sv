@@ -3,6 +3,7 @@
 
 class Env extends uvm_env;
     ps2_agent i_agt;
+    bus_agent bus_agt;
     // my_agent o_agt;
     // my_model mdl;
     // my_scoreboard scb;
@@ -32,8 +33,10 @@ function void Env::build_phase(uvm_phase phase);
     `uvm_info("Env", "Env build_phase", UVM_MEDIUM)
     
     i_agt = ps2_agent::type_id::create("i_agt", this);
+    bus_agt = bus_agent::type_id::create("bus_agt", this);
     // o_agt = my_agent::type_id::create("o_agt", this);
     i_agt.is_active = UVM_ACTIVE;
+    bus_agt.is_active = UVM_PASSIVE;
     // o_agt.is_active = UVM_PASSIVE;
 
     // mdl = my_model::type_id::create("mdl", this);

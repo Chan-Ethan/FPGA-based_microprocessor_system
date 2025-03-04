@@ -12,6 +12,7 @@ module top_tb (
     wire            PS2_DATA        ;
 
     ps2_if   input_if(clk_50M, rst_n);
+    bus_if   bus_if(clk_50M, rst_n);
     // ps2_if   output_if(clk, rst_n);
 
     initial begin    
@@ -46,6 +47,11 @@ module top_tb (
 
     assign (weak0, weak1) PS2_CLK  = input_if.PS2_CLK ;
     assign (weak0, weak1) PS2_DATA = input_if.PS2_DATA;
+
+    assign bus_if.BUS_DATA = top.BUS_DATA;
+    assign bus_if.BUS_ADDR = top.BUS_ADDR;
+    assign bus_if.BUS_WE   = top.BUS_WE  ;
+
     top top (
         .CLK100_IN          (clk_100M           ),
         .HARD_RST           (~rst_n             ), // tmp, connect to a high buttom
@@ -73,6 +79,7 @@ module top_tb (
 
     initial begin
         uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.drv", "vif", input_if);
+        uvm_config_db#(virtual bus_if)::set(null, "uvm_test_top.env.bus_agt.mon", "vif", bus_if);
     //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.// mon", "vif", input_if);
     //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.o_agt.// mon", "vif", output_if);
     end
