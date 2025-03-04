@@ -14,7 +14,6 @@ class bus_monitor extends uvm_monitor;
 
 	extern virtual function void build_phase(uvm_phase phase);
   	extern virtual task main_phase(uvm_phase phase);
-	extern virtual task collect_one_pkt(bus_transaction tr);
 endclass
 
 function void bus_monitor::build_phase(uvm_phase phase);
