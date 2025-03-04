@@ -45,10 +45,11 @@ task bus_monitor::main_phase(uvm_phase phase);
 				@(posedge vif.clk);
 				tr.DATA = vif.BUS_DATA;
 			end
+			`uvm_info("GET_BUS_OP", "get a bus transaction", UVM_LOW)
+			tr.print();
+			ap.write(tr);
 		end
-		`uvm_info("GET_BUS_OP", "get a bus transaction", UVM_LOW)
-		tr.print();
-		ap.write(tr);
+		
 	end
 endtask
 
