@@ -16,6 +16,7 @@ class my_scoreboard extends uvm_scoreboard;
 
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual task main_phase(uvm_phase phase);
+    extern virtual function void check_phase(uvm_phase phase);
 endclass
 
 function void my_scoreboard::build_phase(uvm_phase phase);
@@ -65,5 +66,19 @@ task my_scoreboard::main_phase(uvm_phase phase);
         end
     join
 endtask
+
+function void my_scoreboard::check_phase(uvm_phase phase);
+    super.check_phase(phase);
+    `uvm_info("my_scoreboard", "my_scoreboard check_phase", UVM_MEDIUM)
+
+    // check if all expected transactions are consumed
+    if (exp_q.size() > 0) begin
+        `uvm_error("EXP_TR_LEFT", "expected transactions are left!")
+        foreach (exp_q[i]) begin
+            $display("the left expected BUS operation is:");
+            exp_q[i].print();
+        end
+    end
+endfunction
 
 `endif // MY_SCOREBOARD_SV
