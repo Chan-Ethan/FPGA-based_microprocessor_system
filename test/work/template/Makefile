@@ -51,3 +51,4 @@ clean:
 
 all: clean compile sim
 all2: all wave
+rerun: compile sim

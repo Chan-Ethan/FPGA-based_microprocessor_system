@@ -55,12 +55,12 @@ class ps2_transaction extends uvm_sequence_item;
 
     constraint c_y_mov {
         if (y_sign == 1'b1) {
-            // mouse move up
-            soft y_mov inside {[8'h00:8'h7F], 8'h00};
-        }
-        else {
             // mouse move down
             soft y_mov inside {[8'h80:8'hFF], 8'h00};
+        }
+        else {
+            // mouse move up
+            soft y_mov inside {[8'h00:8'h7F], 8'h00};
         }
     }
 
