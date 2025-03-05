@@ -66,6 +66,7 @@ always @(posedge CLK or negedge RESET) begin
     end
     else if (pos_update_1dly == 1'b1) begin
         if (next_pos_x > `MOUSE_X_MAX) begin
+            // x_sign = 0, mouse move right
             MOUSE_POS_X <= (MOUSE_STATUS[4] == 1'b0) ? `MOUSE_X_MAX : 8'd0;
         end
         else begin
@@ -73,6 +74,7 @@ always @(posedge CLK or negedge RESET) begin
         end
 
         if (next_pos_y > `MOUSE_Y_MAX) begin
+            // y_sign = 0, mouse move up
             MOUSE_POS_Y <= (MOUSE_STATUS[5] == 1'b0) ? `MOUSE_Y_MAX : 8'd0;
         end
         else begin
