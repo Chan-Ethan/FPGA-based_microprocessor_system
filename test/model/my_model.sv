@@ -14,8 +14,7 @@ class my_model extends uvm_component;
 
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual task main_phase(uvm_phase phase);
-    extern virtual function void bus_read(bit [7:0] addr);
-    extern virtual function void bus_write(bit [7:0] addr, bit [7:0] data);
+    extern virtual function void bus_op(bit [7:0] addr, bit [7:0] data, bit we);
 endclass
 
 function void my_model::build_phase(uvm_phase phase);
@@ -32,12 +31,12 @@ task my_model::main_phase(uvm_phase phase);
     super.main_phase(phase);
 
     // Processor’s init (read Mouse data)
-    bus_read (8'hA0, 8'h00); // Read mouse status from memory to A
-    bus_write(8'hC0, 8'h00); // write mouse status to LEDs
-    bus_read (8'hA1, 8'h00); // Read mouse X position
-    bus_read (8'hA2, 8'h00); // Read mouse Y position
-    bus_write(8'hD0, 8'h00); // Write mouse X position to Seg7[3:2]
-    bus_write(8'hD1, 8'h00); // Write mouse Y position to Seg7[1:0]
+    bus_op(8'hA0, 8'h00, 1'b0); // Read mouse status from memory to A
+    bus_op(8'hC0, 8'h00, 1'b1); // write mouse status to LEDs
+    bus_op(8'hA1, 8'h00, 1'b0); // Read mouse X position
+    bus_op(8'hA2, 8'h00, 1'b0); // Read mouse Y position
+    bus_op(8'hD0, 8'h00, 1'b1); // Write mouse X position to Seg7[3:2]
+    bus_op(8'hD1, 8'h00, 1'b1); // Write mouse Y position to Seg7[1:0]
 
     while (1) begin
         mouse_port.get(mouse_tr);
@@ -50,34 +49,25 @@ task my_model::main_phase(uvm_phase phase);
             `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
             mouse_tr.print();
             // simulate Processor's mosue interrupt handler’s service routine
-            bus_read (8'hA0, mouse_tr.byte0); // Read mouse status from memory to A
-            bus_write(8'hC0, mouse_tr.byte0); // write mouse status to LEDs
-            bus_read (8'hA1, mouse_tr.x_mov); // Read mouse X position
-            bus_read (8'hA2, mouse_tr.y_mov); // Read mouse Y position
-            bus_write(8'hD0, mouse_tr.x_mov); // Write mouse X position to Seg7[3:2]
-            bus_write(8'hD1, mouse_tr.y_mov); // Write mouse Y position to Seg7[1:0]
+            bus_op(8'hA0, mouse_tr.byte0, 1'b0); // Read mouse status from memory to A
+            bus_op(8'hC0, mouse_tr.byte0, 1'b1); // write mouse status to LEDs
+            bus_op(8'hA1, mouse_tr.x_mov, 1'b0); // Read mouse X position
+            bus_op(8'hA2, mouse_tr.y_mov, 1'b0); // Read mouse Y position
+            bus_op(8'hD0, mouse_tr.x_mov, 1'b1); // Write mouse X position to Seg7[3:2]
+            bus_op(8'hD1, mouse_tr.y_mov, 1'b1); // Write mouse Y position to Seg7[1:0]
         end
     end
 endtask
 
-function void my_model::bus_read(bit [7:0] addr);
+// Bus operates in two modes: read and write
+// when WE = 0, input data is the expected returned data from the peripherals
+function void my_model::bus_op(bit [7:0] addr, bit [7:0] data, bit we);
     bus_transaction bus_tr;
 
     bus_tr = new("bus_tr");
-    bus_tr.WE = 0;
-    bus_tr.ADDR = addr;
-    ap.write(bus_tr);
-endfunction
-
-function void my_model::bus_write(bit [7:0] addr, bit [7:0] data);
-    bus_transaction bus_tr;
-
-    bus_tr = new("bus_tr");
-    bus_tr.WE = 1;
+    bus_tr.WE = we;
     bus_tr.ADDR = addr;
     bus_tr.DATA = data;
-    `uvm_info("my_model", "write a bus transaction:", UVM_LOW)
-    bus_tr.print();
     ap.write(bus_tr);
 endfunction
 
