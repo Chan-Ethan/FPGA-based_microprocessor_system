@@ -32,10 +32,10 @@ task my_model::main_phase(uvm_phase phase);
     super.main_phase(phase);
 
     // Processor’s init (read Mouse data)
-    bus_read(8'hA0); // Read mouse status from memory to A
+    bus_read (8'hA0, 8'h00); // Read mouse status from memory to A
     bus_write(8'hC0, 8'h00); // write mouse status to LEDs
-    bus_read(8'hA1); // Read mouse X position
-    bus_read(8'hA2); // Read mouse Y position
+    bus_read (8'hA1, 8'h00); // Read mouse X position
+    bus_read (8'hA2, 8'h00); // Read mouse Y position
     bus_write(8'hD0, 8'h00); // Write mouse X position to Seg7[3:2]
     bus_write(8'hD1, 8'h00); // Write mouse Y position to Seg7[1:0]
 
@@ -50,10 +50,10 @@ task my_model::main_phase(uvm_phase phase);
             `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
             mouse_tr.print();
             // simulate Processor's mosue interrupt handler’s service routine
-            bus_read(8'hA0); // Read mouse status from memory to A
+            bus_read (8'hA0, mouse_tr.byte0); // Read mouse status from memory to A
             bus_write(8'hC0, mouse_tr.byte0); // write mouse status to LEDs
-            bus_read(8'hA1); // Read mouse X position
-            bus_read(8'hA2); // Read mouse Y position
+            bus_read (8'hA1, mouse_tr.x_mov); // Read mouse X position
+            bus_read (8'hA2, mouse_tr.y_mov); // Read mouse Y position
             bus_write(8'hD0, mouse_tr.x_mov); // Write mouse X position to Seg7[3:2]
             bus_write(8'hD1, mouse_tr.y_mov); // Write mouse Y position to Seg7[1:0]
         end
