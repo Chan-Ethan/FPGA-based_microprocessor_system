@@ -1,6 +1,9 @@
 `ifndef MY_MODEL_SV
 `define MY_MODEL_SV
 
+`include "global_events_pkg.svh"
+import global_events_pkg::*;
+
 parameter MOUSE_X_MAX = 8'd160;
 parameter MOUSE_Y_MAX = 8'd120;
 
@@ -52,7 +55,11 @@ task my_model::main_phase(uvm_phase phase);
         `uvm_info("my_model", "get a mouse transaction", UVM_LOW)
         if (mouse_tr.pkt_type == CMD) begin
             `uvm_info("my_model", "mouse transaction is CMD", UVM_LOW)
-            // do nothing
+            if (mouse_tr.cmd_byte == 8'hFF)
+                -> reset_e; // get a reset command
+            else if (mouse_tr.cmd_byte == 8'hF4)
+                -> start_stream_e; // get a start stream command
+            // else do nothing for other command
         end
         else begin
             `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)

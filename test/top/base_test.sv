@@ -1,7 +1,11 @@
 `ifndef BASE_TEST_SV
 `define BASE_TEST_SV
 
+`include "global_events_pkg.svh"
+
 class base_test extends uvm_test;
+    import global_events_pkg::*;
+
     Env env;
 
     `uvm_component_utils(base_test)
