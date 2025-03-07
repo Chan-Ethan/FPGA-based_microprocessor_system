@@ -17,12 +17,12 @@ class virt_sequence extends uvm_sequence;
 
         #4ms; // wait for DUT init
         // and no ack for 4ms, wait UDT resend reset cmd
-        nego_seq.start(this);
+        nego_seq.start(sqr);
         
         // send 20 data transactions
         # 100us;
         repeat (20) begin
-            `uvm_do_with(tr, {
+            `uvm_do_on_with(tr, sqr, {
                 tr.pkt_type == DATA;
             })
             #200us;
