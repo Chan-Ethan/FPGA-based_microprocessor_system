@@ -84,7 +84,7 @@ always @(posedge CLK or negedge RESETN) begin
     else;
 end
 
-always @(negedge clk) begin
+always @(negedge CLK) begin
     if (!RESETN) begin
         sw_sync <= 16'b0;
     end
