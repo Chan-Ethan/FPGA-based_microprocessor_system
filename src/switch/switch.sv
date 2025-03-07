@@ -98,11 +98,11 @@ always @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         SEND_INTERRUPT <= 1'b0;
     end
-    else if ((SW_q1 == SW_q1) & (sw_sync != SW_q1)) begin
-        SEND_INTERRUPT <= 1'b1;
-    end
     else if (INTERRUPT_ACK == 1'b1) begin
         SEND_INTERRUPT <= 1'b0;
+    end
+    else if ((SW_q1 == SW_q2) & (sw_sync != SW_q1)) begin
+        SEND_INTERRUPT <= 1'b1;
     end
     else;
 end

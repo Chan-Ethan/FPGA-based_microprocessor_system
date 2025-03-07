@@ -211,13 +211,13 @@ always @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
         SEND_INTERRUPT <= 1'b0;
     end
+    else if (INTERRUPT_ACK == 1'b1) begin
+        SEND_INTERRUPT <= 1'b0;
+    end
     else if ((current_state == `FSM_STREAM_MOD) && 
              (BYTE_READY == 1'b1) && 
              (byte_cnt == `CNT_BYTES)) begin
         SEND_INTERRUPT <= 1'b1;
-    end
-    else if (INTERRUPT_ACK == 1'b1) begin
-        SEND_INTERRUPT <= 1'b0;
     end
     else;
 end
