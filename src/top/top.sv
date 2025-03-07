@@ -121,8 +121,8 @@ Timer Timer_inst (
     .BUS_WE     (BUS_WE     ),
 
     // interrupt signals
-    .SEND_INTERRUPT (BUS_INTERRUPTS_RAISE[1]),
-    .INTERRUPT_ACK  (BUS_INTERRUPTS_ACK[1]  )
+    .BUS_INTERRUPT_RAISE(BUS_INTERRUPTS_RAISE[1]),
+    .BUS_INTERRUPT_ACK  (BUS_INTERRUPTS_ACK[1]  )
 );
 
 // Seven-segment display controller
