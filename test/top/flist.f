@@ -35,6 +35,8 @@
 ../../../src/top/top.sv
 
 // UVM platform
+../../top/global_events_pkg.svh
+
 ../../ps2/ps2_if.sv
 ../../ps2/ps2_transaction.sv
 ../../ps2/ps2_sequence.sv
