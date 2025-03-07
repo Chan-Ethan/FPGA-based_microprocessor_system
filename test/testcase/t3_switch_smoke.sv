@@ -10,22 +10,8 @@ class virt_sequence extends uvm_sequence;
 
     virtual task body();
         int wait_time;
-
-        #500us; // wait for DUT init
-        // send 10 switch transactions
-        repeat (10) begin
-            `uvm_do_on_with(tr, sqr, {
-                tr.pkt_type == SWITCH;
-            })
-            
-        end
-
-
-        // and no ack for 4ms, wait UDT resend reset cmd
-        nego_seq = ps2_nego_sequence::type_id::create("nego_seq");
-        nego_seq.start(sqr);
         
-        // send 20 data transactions
+        // send 20 switch transactions
         # 100us;
         repeat (20) begin
             `uvm_do(tr)
