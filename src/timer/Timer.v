@@ -10,6 +10,12 @@ module Timer(
     input BUS_INTERRUPT_ACK
     );
     
+    `ifdef SIMULATION
+        parameter [31:0] DownCountNum = 32'd499; // 500 cycles to get 10us
+    `else
+        parameter [31:0] DownCountNum = 32'd49999; // 50,000 cycles to get 1ms
+    `endif
+
     parameter [7:0] TimerBaseAddr = 8'hF0; // Timer Base Address in the Memory Map
     parameter InitialIterruptRate = 100; // Default interrupt rate leading to 1 interrupt every 100 ms
     parameter InitialIterruptEnable = 1'b1; // By default the Interrupt is Enabled
@@ -51,7 +57,7 @@ module Timer(
         if(RESET)
             DownCounter <= 0;
         else begin
-            if(DownCounter == 32'd49999)
+            if(DownCounter == DownCountNum)
                 DownCounter <= 0;
             else
                 DownCounter <= DownCounter + 1'b1;
