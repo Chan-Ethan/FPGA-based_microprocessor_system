@@ -111,13 +111,13 @@ MouseTop MouseTop_inst (
 );
 
 // Timer connected to the Processor via data bus
-Timer Timer_inst (
-    .CLK        (clk_sys    ),
-    .RESET      (~rst_n),
-    .BUS_DATA   (BUS_DATA   ),
-    .BUS_ADDR   (BUS_ADDR   ),
-    .BUS_WE     (BUS_WE     )
-);
+// Timer Timer_inst (
+//     .CLK        (clk_sys    ),
+//     .RESET      (~rst_n),
+//     .BUS_DATA   (BUS_DATA   ),
+//     .BUS_ADDR   (BUS_ADDR   ),
+//     .BUS_WE     (BUS_WE     )
+// );
 
 // Seven-segment display controller
 seg7_control seg7_control_inst (
