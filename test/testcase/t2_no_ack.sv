@@ -17,6 +17,7 @@ class virt_sequence extends uvm_sequence;
 
         #4ms; // wait for DUT init
         // and no ack for 4ms, wait UDT resend reset cmd
+        nego_seq = ps2_nego_sequence::type_id::create("nego_seq");
         nego_seq.start(sqr);
         
         // send 20 data transactions
