@@ -39,7 +39,7 @@
 
 ../../ps2/ps2_if.sv
 ../../ps2/ps2_transaction.sv
-../../ps2/ps2_sequence.sv
+../../ps2/ps2_nego_sequence.sv
 ../../ps2/ps2_sequencer.sv
 // ../../ps2/ps2_monitor.sv
 ../../ps2/ps2_driver.sv
