@@ -15,7 +15,7 @@ module switch (
     input           BUS_WE,
 
     // interrupt signals
-    output          SEND_INTERRUPT,
+    output reg      SEND_INTERRUPT,
     input           INTERRUPT_ACK
 );
 
