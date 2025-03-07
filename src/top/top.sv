@@ -54,17 +54,10 @@ clk_wiz_0 clk_wiz_inst (
     .locked     (LOCKED)
 );
 
-// sync reset to 50MHz clock domain
-logic    rst_n_sync;
-always_ff @(posedge clk_sys) begin
-    rst_n_sync <= rst_n;
-end
-
-
 // microcontroller subsystem
 Processor Processor_inst (
     .CLK                    (clk_sys                ),
-    .RESET                  (~rst_n_sync            ),
+    .RESET                  (~rst_n                 ),
 
     //IO - Data Bus
     .BUS_DATA               (BUS_DATA               ),
@@ -115,6 +108,15 @@ MouseTop MouseTop_inst (
     .INTERRUPT_ACK  (BUS_INTERRUPTS_ACK[0]  ),
 
     .current_state  (current_state  )
+);
+
+// Timer connected to the Processor via data bus
+Timer Timer_inst (
+    .CLK        (clk_sys    ),
+    .RESET      (~rst_n),
+    .BUS_DATA   (BUS_DATA   ),
+    .BUS_ADDR   (BUS_ADDR   ),
+    .BUS_WE     (BUS_WE     )
 );
 
 // Seven-segment display controller
