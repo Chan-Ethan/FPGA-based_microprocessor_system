@@ -20,10 +20,8 @@ class ps2_nego_sequence extends uvm_sequence #(ps2_transaction);
             tr.pkt_type == CMD;
             tr.cmd_byte == 8'hF4;
         })
-
-        // waiting for Self Test cmd
-        // @(start_stream_e);
-        #300us;
+        
+        #100us;
         // send Self Test transaction
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
@@ -37,7 +35,8 @@ class ps2_nego_sequence extends uvm_sequence #(ps2_transaction);
         //     tr.cmd_byte == 8'h00;
         // })
 
-        #100us;
+        // @(start_stream_e);
+        #300us;
         // send ack transaction (For start stream mode)
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
