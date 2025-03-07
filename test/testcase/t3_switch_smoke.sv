@@ -10,12 +10,12 @@ class virt_sequence extends uvm_sequence;
 
     virtual task body();
         int wait_time;
-        
+
         // send 20 switch transactions
         # 100us;
         repeat (20) begin
             `uvm_do(tr)
-            wait_time = $urandom_range(50, 200);
+            wait_time = $urandom_range(100, 300);
             repeat (wait_time) #1us;
         end
         #100us;

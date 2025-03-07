@@ -13,6 +13,13 @@
 @0B D1
 @0C 08 // Jump to IDLE and wait for interrupts
 
+// Read Slide Switch data
+@0D 00 // Read slide switch data [15:8] to A
+@0E E0
+@0F 01 // Read slide switch data [7:0] to B
+@10 E1
+
 // interrupt handler’s service routine
+@FD 0D // Switches interrupt address
 @FE 0C // Timer interrupt address
 @FF 00 // Mouse interrupt address

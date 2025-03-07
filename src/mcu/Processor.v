@@ -1,4 +1,7 @@
-module Processor(
+module Processor # (
+    parameter INTERRUPT_WIDTH = 3
+)
+(
     //Standard Signals
     input CLK,
     input RESET,
@@ -10,8 +13,8 @@ module Processor(
     output [7:0] ROM_ADDRESS,
     input [7:0] ROM_DATA,
     // INTERRUPT signals
-    input [1:0] BUS_INTERRUPTS_RAISE,
-    output [1:0] BUS_INTERRUPTS_ACK,
+    input [INTERRUPT_WIDTH-1:0] BUS_INTERRUPTS_RAISE,
+    output [INTERRUPT_WIDTH-1:0] BUS_INTERRUPTS_ACK,
     output [7:0] STATE
     );
     
@@ -39,7 +42,7 @@ module Processor(
     reg [7:0] CurrProgContext, NextProgContext;
     
     //Dedicated Interrupt output lines - one for each interrupt line
-    reg [1:0] CurrInterruptAck, NextInterruptAck;
+    reg [INTERRUPT_WIDTH-1:0] CurrInterruptAck, NextInterruptAck;
     assign BUS_INTERRUPTS_ACK = CurrInterruptAck;
     
     //Instantiate program memory here
@@ -181,7 +184,7 @@ module Processor(
         NextRegB = CurrRegB;
         NextRegSelect = CurrRegSelect;
         NextProgContext = CurrProgContext;
-        NextInterruptAck = 2'b00;
+        NextInterruptAck = 3'b000;
         
         //Case statement to describe each state
         case (CurrState)
@@ -191,17 +194,22 @@ module Processor(
                 if(BUS_INTERRUPTS_RAISE[0]) begin // Interrupt Request A.
                     NextState = GET_THREAD_START_ADDR_0;
                     NextProgCounter = 8'hFF;
-                    NextInterruptAck = 2'b01;
+                    NextInterruptAck = 3'b001;
                 end 
                 else if(BUS_INTERRUPTS_RAISE[1]) begin //Interrupt Request B.
                     NextState = GET_THREAD_START_ADDR_0;
                     NextProgCounter = 8'hFE;
-                    NextInterruptAck = 2'b10;
+                    NextInterruptAck = 3'b010;
+                end
+                else if(BUS_INTERRUPTS_RAISE[2]) begin //Interrupt Request C.
+                    NextState = GET_THREAD_START_ADDR_0;
+                    NextProgCounter = 8'hFD;
+                    NextInterruptAck = 3'b100;
                 end 
                 else begin
                     NextState = IDLE;
                     NextProgCounter = 8'hFF; //Nothing has happened.
-                    NextInterruptAck = 2'b00;
+                    NextInterruptAck = 3'b000;
                 end
             end
             
