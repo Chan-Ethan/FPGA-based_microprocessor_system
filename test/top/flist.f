@@ -34,6 +34,8 @@
 
 ../../../src/timer/Timer.v
 
+../../../src/switch/switch.sv
+
 ../../../src/top/top.sv
 
 // UVM platform

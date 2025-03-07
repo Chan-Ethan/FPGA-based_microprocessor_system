@@ -31,8 +31,8 @@ logic   [7:0]   ROM_ADDRESS ;
 logic   [7:0]   ROM_DATA    ;
 
 // INTERRUPT signals
-logic   [1:0]   BUS_INTERRUPTS_RAISE;
-logic   [1:0]   BUS_INTERRUPTS_ACK  ;
+logic   [2:0]   BUS_INTERRUPTS_RAISE;
+logic   [2:0]   BUS_INTERRUPTS_ACK  ;
 logic   [7:0]   STATE               ;
 
 logic           LOCKED              ;
@@ -138,6 +138,24 @@ seg7_control seg7_control_inst (
     // Display outputs
     .SEG_SELECT_OUT (SEG_SELECT_OUT),
     .HEX_OUT        (HEX_OUT)
+);
+
+// Slide switch controller
+switch switch_inst (
+    .CLK                (clk_sys        ),
+    .RESETN             (rst_n          ),
+    
+    // IO - Data Bus
+    .SW                 (SW             ),
+
+    // IO - Data Bus
+    .BUS_DATA           (BUS_DATA       ),
+    .BUS_ADDR           (BUS_ADDR       ),
+    .BUS_WE             (BUS_WE         ),
+    
+    // interrupt signals
+    .SEND_INTERRUPT     (BUS_INTERRUPTS_RAISE[2]),
+    .INTERRUPT_ACK      (BUS_INTERRUPTS_ACK[2]  )
 );
 
 // LED controller
