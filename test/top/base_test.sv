@@ -1,7 +1,7 @@
 `ifndef BASE_TEST_SV
 `define BASE_TEST_SV
 
-`include "global_events_pkg.svh"
+// `include "global_events_pkg.svh"
 
 class base_test extends uvm_test;
     import global_events_pkg::*;
@@ -61,6 +61,8 @@ task base_test::main_phase(uvm_phase phase);
 endtask
 
 task base_test::mouse_negotiation();
+    ps2_transaction tr;
+
     // waiting for reset cmd
     @(reset_e);
     // send ack transaction (For reset)

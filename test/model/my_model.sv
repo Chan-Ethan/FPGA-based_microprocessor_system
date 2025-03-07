@@ -1,7 +1,7 @@
 `ifndef MY_MODEL_SV
 `define MY_MODEL_SV
 
-`include "global_events_pkg.svh"
+// `include "global_events_pkg.svh"
 import global_events_pkg::*;
 
 parameter MOUSE_X_MAX = 8'd160;
