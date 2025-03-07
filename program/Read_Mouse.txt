@@ -18,6 +18,7 @@
 @0E E0
 @0F 01 // Read slide switch data [7:0] to B
 @10 E1
+@0C 08 // Jump to IDLE and wait for interrupts
 
 // interrupt handler’s service routine
 @FD 0D // Switches interrupt address
