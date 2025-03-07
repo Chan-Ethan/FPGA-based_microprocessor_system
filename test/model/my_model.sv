@@ -32,6 +32,7 @@ function void my_model::build_phase(uvm_phase phase);
     `uvm_info("my_model", "my_model build_phase", UVM_MEDIUM)
     
     mouse_port = new("mouse_port", this);
+    sw_port = new("sw_port", this);
     ap = new("ap", this);
 
     mouse_pos_x = 8'd0;
