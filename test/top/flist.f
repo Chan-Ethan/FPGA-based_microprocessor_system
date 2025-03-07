@@ -32,6 +32,8 @@
 ../../../src/mcu/ROM.v
 ../../../src/mcu/Processor.v
 
+../../../src/timer/Timer.v
+
 ../../../src/top/top.sv
 
 // UVM platform

@@ -14,4 +14,5 @@
 @0C 08 // Jump to IDLE and wait for interrupts
 
 // interrupt handler’s service routine
+@FE 0C // Timer interrupt address
 @FF 00 // Mouse interrupt address

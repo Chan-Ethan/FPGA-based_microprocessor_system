@@ -59,7 +59,7 @@ Processor Processor_inst (
     .CLK                    (clk_sys                ),
     .RESET                  (~rst_n                 ),
 
-    //IO - Data Bus
+    // IO - Data Bus
     .BUS_DATA               (BUS_DATA               ),
     .BUS_ADDR               (BUS_ADDR               ),
     .BUS_WE                 (BUS_WE                 ),
@@ -98,7 +98,7 @@ MouseTop MouseTop_inst (
     .CLK_MOUSE      (PS2_CLK),
     .DATA_MOUSE     (PS2_DATA),
 
-    //IO - Data Bus
+    // IO - Data Bus
     .BUS_DATA       (BUS_DATA       ),
     .BUS_ADDR       (BUS_ADDR       ),
     .BUS_WE         (BUS_WE         ),
@@ -111,20 +111,26 @@ MouseTop MouseTop_inst (
 );
 
 // Timer connected to the Processor via data bus
-// Timer Timer_inst (
-//     .CLK        (clk_sys    ),
-//     .RESET      (~rst_n),
-//     .BUS_DATA   (BUS_DATA   ),
-//     .BUS_ADDR   (BUS_ADDR   ),
-//     .BUS_WE     (BUS_WE     )
-// );
+Timer Timer_inst (
+    .CLK        (clk_sys    ),
+    .RESET      (~rst_n     ),
+
+    // IO - Data Bus
+    .BUS_DATA   (BUS_DATA   ),
+    .BUS_ADDR   (BUS_ADDR   ),
+    .BUS_WE     (BUS_WE     ),
+
+    // interrupt signals
+    .SEND_INTERRUPT (BUS_INTERRUPTS_RAISE[1]),
+    .INTERRUPT_ACK  (BUS_INTERRUPTS_ACK[1]  )
+);
 
 // Seven-segment display controller
 seg7_control seg7_control_inst (
     .clk_sys        (clk_sys),
     .rst_n          (rst_n),
     
-    //IO - Data Bus
+    // IO - Data Bus
     .BUS_DATA       (BUS_DATA       ),
     .BUS_ADDR       (BUS_ADDR       ),
     .BUS_WE         (BUS_WE         ),
