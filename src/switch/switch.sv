@@ -89,7 +89,7 @@ always @(negedge CLK) begin
         sw_sync <= 16'b0;
     end
     else begin
-        sw_sync <= (SW_q1 == SW_q2) ? SW_q1 : 16'b0;
+        sw_sync <= (SW_q1 == SW_q2) ? SW_q1 : sw_sync;
     end
 end
 
