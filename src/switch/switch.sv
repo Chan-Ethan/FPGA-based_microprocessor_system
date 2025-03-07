@@ -84,12 +84,12 @@ always @(posedge CLK or negedge RESETN) begin
     else;
 end
 
-always @(negedge CLK) begin
+always @(posedge CLK) begin
     if (!RESETN) begin
         sw_sync <= 16'b0;
     end
     else begin
-        sw_sync <= (SW_q1 == SW_q2) ? SW_q1 : sw_sync;
+        sw_sync <= (SW_q1 == SW_q2) ? SW_q2 : sw_sync;
     end
 end
 
@@ -101,7 +101,7 @@ always @(posedge CLK or negedge RESETN) begin
     else if (INTERRUPT_ACK == 1'b1) begin
         SEND_INTERRUPT <= 1'b0;
     end
-    else if ((SW_q1 == SW_q2) & (sw_sync != SW_q1)) begin
+    else if ((SW_q1 == SW_q2) & (sw_sync != SW_q2)) begin
         SEND_INTERRUPT <= 1'b1;
     end
     else;
