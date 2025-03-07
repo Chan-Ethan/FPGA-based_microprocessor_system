@@ -62,7 +62,7 @@ module top_tb (
         .SEG_SELECT_OUT     (SEG_SELECT_OUT     ),
         .HEX_OUT            (HEX_OUT            ),
 
-        .SW                 (sw_if.SW           ),
+        .SW                 (sw_if.sw           ),
 
         .LED                (                   )
     );
