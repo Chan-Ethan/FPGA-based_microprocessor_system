@@ -17,7 +17,6 @@ class base_test extends uvm_test;
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual function void report_phase(uvm_phase phase);
     extern virtual task main_phase(uvm_phase phase);
-    extern virtual task mouse_negotiation();
 endclass
 
 function void base_test::build_phase(uvm_phase phase);
@@ -58,40 +57,6 @@ task base_test::main_phase(uvm_phase phase);
     #1ms;
 
     phase.drop_objection(this);
-endtask
-
-task base_test::mouse_negotiation();
-    ps2_transaction tr;
-
-    // waiting for reset cmd
-    @(reset_e);
-    // send ack transaction (For reset)
-    `uvm_do_with(tr, {
-        tr.pkt_type == CMD;
-        tr.cmd_byte == 8'hF4;
-    })
-
-    // waiting for Self Test cmd
-    @(start_stream_e);
-    // send Self Test transaction
-    `uvm_do_with(tr, {
-        tr.pkt_type == CMD;
-        tr.cmd_byte == 8'hAA;
-    })
-
-    // send ID transaction
-    // #100us;
-    // `uvm_do_with(tr, {
-    //     tr.pkt_type == CMD;
-    //     tr.cmd_byte == 8'h00;
-    // })
-
-    #100us;
-    // send ack transaction (For start stream mode)
-    `uvm_do_with(tr, {
-        tr.pkt_type == CMD;
-        tr.cmd_byte == 8'hF4;
-    })
 endtask
 
 `endif // BASE_TEST_SV

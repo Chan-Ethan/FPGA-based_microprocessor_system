@@ -1,21 +1,23 @@
 // construct a new sequence: Generates timed transaction
-class new_sequence extends uvm_sequence #(ps2_transaction);
+class virt_sequence extends uvm_sequence;
+    ps2_nego_sequence nego_seq;
+    ps2_sequencer sqr;
     ps2_transaction tr;
 
-    `uvm_object_utils(new_sequence)
+    `uvm_object_utils(virt_sequence)
 
-    function new(string name = "new_sequence");
+    function new(string name = "virt_sequence");
         super.new(name);
     endfunction
 
     virtual task body();
-        if (starting_phase != null) begin
-            starting_phase.raise_objection(this);
-        end
+        // if (starting_phase != null) begin
+        //     starting_phase.raise_objection(this);
+        // end
 
         #4ms; // wait for DUT init
         // and no ack for 4ms, wait UDT resend reset cmd
-        mouse_negotiation();
+        nego_seq.start(this);
         
         // send 20 data transactions
         # 100us;
@@ -28,9 +30,9 @@ class new_sequence extends uvm_sequence #(ps2_transaction);
         #100us;
 
         // send tr finished, drop objection
-        if (starting_phase != null) begin
-            starting_phase.drop_objection(this);
-        end
+        // if (starting_phase != null) begin
+        //     starting_phase.drop_objection(this);
+        // end
     endtask
 endclass
 
@@ -43,6 +45,7 @@ class t2_no_ack extends base_test;
     endfunction
 
     extern virtual function void build_phase(uvm_phase phase);
+    extern virtual task main_phase(uvm_phase phase);
 endclass
 
 // Build phase: Set default sequence for target sequencer
@@ -50,8 +53,25 @@ function void t2_no_ack::build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("t2_no_ack", "t2_no_ack build_phase", UVM_MEDIUM)
 
-    uvm_config_db #(uvm_object_wrapper)::set(this,
-        "env.i_agt.sqr.main_phase", 
-        "default_sequence", 
-        new_sequence::type_id::get());
+    // uvm_config_db #(uvm_object_wrapper)::set(this,
+    //     "env.i_agt.sqr.main_phase", 
+    //     "default_sequence", 
+    //     virt_sequence::type_id::get());
 endfunction
+
+// Main phase: Start the test
+task t2_no_ack::main_phase(uvm_phase phase);
+    virt_sequence vseq;
+
+    super.main_phase(phase);
+    `uvm_info("t2_no_ack", "t2_no_ack main_phase", UVM_MEDIUM)
+
+    phase.raise_objection(this);
+
+    // Start the sequence
+    vseq = virt_sequence::type_id::create("vseq");
+    vseq.sqr = env.i_agt.sqr;
+    vseq.start(null);
+
+    phase.drop_objection(this);
+endtask
