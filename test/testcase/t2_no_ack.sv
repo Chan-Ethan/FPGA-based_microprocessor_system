@@ -4,8 +4,10 @@ class virt_sequence extends uvm_sequence;
     ps2_sequencer sqr;
     ps2_transaction tr;
 
+    import global_events_pkg::*;
+    
     `uvm_object_utils(virt_sequence)
-
+    
     function new(string name = "virt_sequence");
         super.new(name);
     endfunction
