@@ -6,10 +6,13 @@ module top(
     inout           PS2_CLK         ,
     inout           PS2_DATA        ,
     
+    // Slide switches input
+    input   [15:0]  SW              ,
+
     // seven segment display
     output reg [3:0] SEG_SELECT_OUT ,
     output reg [7:0] HEX_OUT        ,
-    
+
     // LED output
     output reg [15:0] LED           
 );

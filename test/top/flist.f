@@ -56,6 +56,12 @@
  ../../bus/bus_monitor.sv
 // ../../bus/bus_driver.sv
 ../../bus/bus_agent.sv
+
+../../switch/sw_if.sv
+../../switch/sw_transaction.sv
+../../switch/sw_sequencer.sv
+../../switch/sw_driver.sv
+../../switch/sw_agent.sv
  
 ../../model/my_model.sv
 ../../scoreboard/my_scoreboard.sv

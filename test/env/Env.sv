@@ -4,10 +4,12 @@
 class Env extends uvm_env;
     ps2_agent i_agt;
     bus_agent bus_agt;
+    sw_agent sw_agt;
     my_model mdl;
     my_scoreboard scb;
 
     uvm_tlm_analysis_fifo #(ps2_transaction) mouse_mdl_fifo;
+    uvm_tlm_analysis_fifo #(sw_transaction) sw_mdl_fifo;
     uvm_tlm_analysis_fifo #(bus_transaction) mdl_scb_fifo;
     uvm_tlm_analysis_fifo #(bus_transaction) bus_scb_fifo;
 
@@ -16,6 +18,7 @@ class Env extends uvm_env;
         `uvm_info("Env", "Env is created", UVM_MEDIUM)
 
         mouse_mdl_fifo = new("mouse_mdl_fifo", this);
+        sw_mdl_fifo = new("sw_mdl_fifo", this);
         mdl_scb_fifo = new("mdl_scb_fifo", this);
         bus_scb_fifo = new("bus_scb_fifo", this);
     endfunction
@@ -33,9 +36,11 @@ function void Env::build_phase(uvm_phase phase);
     
     i_agt = ps2_agent::type_id::create("i_agt", this);
     bus_agt = bus_agent::type_id::create("bus_agt", this);
+    sw_agt = sw_agent::type_id::create("sw_agt", this);
 
     i_agt.is_active = UVM_ACTIVE;
     bus_agt.is_active = UVM_PASSIVE;
+    sw_agt.is_active = UVM_ACTIVE;
 
     mdl = my_model::type_id::create("mdl", this);
     scb = my_scoreboard::type_id::create("scb", this);
@@ -53,6 +58,9 @@ function void Env::connect_phase(uvm_phase phase);
     
     i_agt.ap.connect(mouse_mdl_fifo.analysis_export);
     mdl.mouse_port.connect(mouse_mdl_fifo.blocking_get_export);
+
+    sw_agt.ap.connect(sw_mdl_fifo.analysis_export);
+    mdl.sw_port.connect(sw_mdl_fifo.blocking_get_export);
 
     bus_agt.ap.connect(mdl_scb_fifo.analysis_export);
     scb.act_port.connect(mdl_scb_fifo.blocking_get_export);

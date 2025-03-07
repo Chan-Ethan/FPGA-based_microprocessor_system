@@ -13,7 +13,7 @@ module top_tb (
 
     ps2_if   input_if(clk_50M, rst_n);
     bus_if   bus_if(clk_50M, rst_n);
-    // ps2_if   output_if(clk, rst_n);
+    sw_if    sw_if(clk_50M, rst_n);
 
     initial begin    
         clk_100M = 1'b0;
@@ -62,6 +62,8 @@ module top_tb (
         .SEG_SELECT_OUT     (SEG_SELECT_OUT     ),
         .HEX_OUT            (HEX_OUT            ),
 
+        .SW                 (sw_if.SW           ),
+
         .LED                (                   )
     );
 
@@ -80,6 +82,7 @@ module top_tb (
     initial begin
         uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.drv", "vif", input_if);
         uvm_config_db#(virtual bus_if)::set(null, "uvm_test_top.env.bus_agt.mon", "vif", bus_if);
+        uvm_config_db#(virtual sw_if)::set(null, "uvm_test_top.env.sw_agt.drv", "vif", sw_if);
     //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.i_agt.// mon", "vif", input_if);
     //     uvm_config_db#(virtual ps2_if)::set(null, "uvm_test_top.env.o_agt.// mon", "vif", output_if);
     end

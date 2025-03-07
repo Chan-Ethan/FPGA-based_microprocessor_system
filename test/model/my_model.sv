@@ -9,6 +9,7 @@ parameter MOUSE_Y_MAX = 8'd120;
 
 class my_model extends uvm_component;
     uvm_blocking_get_port #(ps2_transaction) mouse_port; // from ps2_agent
+    uvm_blocking_get_port #(sw_transaction) sw_port; // from sw_agent
     uvm_analysis_port #(bus_transaction) ap; // to my_scoreboard
 
     bit [7:0] mouse_pos_x, mouse_pos_y;
@@ -39,6 +40,7 @@ endfunction
 
 task my_model::main_phase(uvm_phase phase);
     ps2_transaction mouse_tr;
+    sw_transaction sw_tr;
 
     super.main_phase(phase);
 
@@ -50,29 +52,41 @@ task my_model::main_phase(uvm_phase phase);
     bus_op(8'hD0, 8'h00, 1'b1); // Write mouse X position to Seg7[3:2]
     bus_op(8'hD1, 8'h00, 1'b1); // Write mouse Y position to Seg7[1:0]
 
-    while (1) begin
-        mouse_port.get(mouse_tr);
-        `uvm_info("my_model", "get a mouse transaction", UVM_LOW)
-        if (mouse_tr.pkt_type == CMD) begin
-            `uvm_info("my_model", "mouse transaction is CMD", UVM_LOW)
-            if (mouse_tr.cmd_byte == 8'hFF)
-                -> reset_e; // get a reset command
-            else if (mouse_tr.cmd_byte == 8'hF4)
-                -> start_stream_e; // get a start stream command
-            // else do nothing for other command
+    fork
+        // Mouse processing loop
+        while (1) begin
+            mouse_port.get(mouse_tr);
+            `uvm_info("my_model", "get a mouse transaction", UVM_LOW)
+            if (mouse_tr.pkt_type == CMD) begin
+                `uvm_info("my_model", "mouse transaction is CMD", UVM_LOW)
+                if (mouse_tr.cmd_byte == 8'hFF)
+                    -> reset_e; // get a reset command
+                else if (mouse_tr.cmd_byte == 8'hF4)
+                    -> start_stream_e; // get a start stream command
+                // else do nothing for other command
+            end
+            else begin
+                `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
+                cal_mouse_pos(mouse_tr); // calculate mouse position
+                // simulate Processor's mosue interrupt handler’s service routine
+                bus_op(8'hA0, mouse_tr.byte0, 1'b0); // Read mouse status to A
+                bus_op(8'hC0, mouse_tr.byte0, 1'b1); // write mouse status to LEDs
+                bus_op(8'hA1, mouse_pos_x,    1'b0); // Read mouse X position
+                bus_op(8'hA2, mouse_pos_y,    1'b0); // Read mouse Y position
+                bus_op(8'hD0, mouse_pos_x,    1'b1); // Write mouse X position to Seg7[3:2]
+                bus_op(8'hD1, mouse_pos_y,    1'b1); // Write mouse Y position to Seg7[1:0]
+            end
         end
-        else begin
-            `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
-            cal_mouse_pos(mouse_tr); // calculate mouse position
-            // simulate Processor's mosue interrupt handler’s service routine
-            bus_op(8'hA0, mouse_tr.byte0, 1'b0); // Read mouse status from memory to A
-            bus_op(8'hC0, mouse_tr.byte0, 1'b1); // write mouse status to LEDs
-            bus_op(8'hA1, mouse_pos_x,    1'b0); // Read mouse X position
-            bus_op(8'hA2, mouse_pos_y,    1'b0); // Read mouse Y position
-            bus_op(8'hD0, mouse_pos_x,    1'b1); // Write mouse X position to Seg7[3:2]
-            bus_op(8'hD1, mouse_pos_y,    1'b1); // Write mouse Y position to Seg7[1:0]
+
+        // Switch processing loop
+        while (1) begin
+            sw_port.get(sw_tr);
+            `uvm_info("my_model", "get a switch transaction", UVM_LOW)
+            // simulate Processor's switch interrupt handler’s service routine
+            // bus_op(8'hE0, sw_tr.sw_data[15:8], 1'b0); // Read SW[15:8] to A
+            // bus_op(8'hE1, sw_tr.sw_data[7:0],  1'b0); // Read SW[7:0] to B
         end
-    end
+    join
 endtask
 
 // Bus operates in two modes: read and write
