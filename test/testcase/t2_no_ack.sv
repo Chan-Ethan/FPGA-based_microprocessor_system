@@ -3,8 +3,6 @@ class virt_sequence extends uvm_sequence;
     ps2_nego_sequence nego_seq;
     ps2_sequencer sqr;
     ps2_transaction tr;
-
-    import global_events_pkg::*;
     
     `uvm_object_utils(virt_sequence)
     
