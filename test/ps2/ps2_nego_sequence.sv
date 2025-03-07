@@ -14,7 +14,7 @@ class ps2_nego_sequence extends uvm_sequence #(ps2_transaction);
     virtual task body();
         // waiting for reset cmd
         // @(reset_e);
-        #1ms;
+        #500us;
         // send ack transaction (For reset)
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
@@ -23,7 +23,7 @@ class ps2_nego_sequence extends uvm_sequence #(ps2_transaction);
 
         // waiting for Self Test cmd
         // @(start_stream_e);
-        #100us;
+        #300us;
         // send Self Test transaction
         `uvm_do_with(tr, {
             tr.pkt_type == CMD;
