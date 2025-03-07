@@ -1,25 +1,79 @@
-// Read Mouse data repeatly and display it on Seven Segment Display
-@00 00 // Read mouse status from memory to A
-@01 A0
-@02 02 // Write mouse status to LEDs
-@03 C0
-@04 00 // Read mouse X position
-@05 A1
-@06 01 // Read mouse Y position
-@07 A2
-@08 02 // Write mouse X position to Seg7[3:2]
-@09 D0
-@0A 03 // Write mouse Y position to Seg7[1:0]
-@0B D1
-@0C 08 // Jump to IDLE and wait for interrupts
+// Mouse interrupt handler’s service routine
+// if MODE == 0x00, Read Mouse data repeatly and display it on Seven Segment Display
+@00 00 // A <- Mem[0x00]
+@01 00
+@02 01 // B <- Mem[0x20]
+@03 20
+@04 96 // Jump to 0x07 if (A == B)
+@05 07
+// else do nothing
+@06 08 // Jump to IDLE and wait for interrupts
+@07 00 // A <- mouse status
+@08 A0
+@09 02 // LEDs <- A
+@0A C0
+@0B 00 // A <- mouse X position
+@0C A1
+@10 01 // B <- mouse Y position
+@11 A2
+@12 02 // Seg7[3:2] <- A
+@13 D0
+@14 03 // Seg7[1:0] <- B
+@15 D1
+@16 08 // Jump to IDLE and wait for interrupts
 
-// Read Slide Switch data
-@0D 00 // Read slide switch data [15:8] to A
-@0E E0
-@0F 01 // Read slide switch data [7:0] to B
-@10 E1
-@11 08 // Jump to IDLE and wait for interrupts
+// ============================================================
+// Slide Switch interrupt handler’s service routine
+// read sw[15:8] to set mode
+@20 00 // A <- sw[15:8]
+@21 E0
+// if (sw[15:8] == 8'b80) Seg7[1:0] <- sw[7:0] (MODE 1)
+@22 01 // B <- Mem[0x01]
+@23 01
+@24 96 // Jump to if (A == B)
+@25 30
+// else if (sw[15:8] == 8'b40) display 0123 4567 8900 on Seg7 (MODE 2)
+@26 01 // B <- Mem[0x02]
+@27 02
+@28 96 // Jump to if (A == B)
+@29 3B
+// else set MODE = 0 (Display Mouse position)
+@2A 01 // B <- Mem[0x00]
+@2B 00
+@2C 03 // Mem[0x04] <- B, Save mode variable 
+@2D 04
+@2F 08 // IDLE
 
+// MODE 1
+@30 02 // Mem[0x04] <- A, Save mode variable 
+@31 04
+@32 00 // A <- Men[0x00]
+@33 00
+@34 01 // B <- sw[7:0]
+@35 E1
+@36 02 // Seg7[3:2] <- A
+@37 D0
+@38 03 // Seg7[1:0] <- B
+@39 D1
+@3A 08 // IDLE
+
+// MODE 2
+@3B 02 // Mem[0x04] <- A, Save mode variable 
+@3C 04
+@3D 00 // A <- Men[0x10]
+@3E 10
+@3F 01 // B <- Men[0x11]
+@40 11
+@41 02 // Seg7[3:2] <- A
+@42 D0
+@43 03 // Seg7[1:0] <- B
+@44 D1
+@45 08 // IDLE
+
+// ============================================================
+
+
+// ============================================================
 // interrupt handler’s service routine
 @FD 0D // Switches interrupt address
 @FE 0C // Timer interrupt address
