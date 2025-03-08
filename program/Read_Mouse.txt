@@ -14,13 +14,13 @@
 @0A C0
 @0B 00 // A <- mouse X position
 @0C A1
-@10 01 // B <- mouse Y position
-@11 A2
-@12 02 // Seg7[3:2] <- A
-@13 D0
-@14 03 // Seg7[1:0] <- B
-@15 D1
-@16 08 // Jump to IDLE and wait for interrupts
+@0D 01 // B <- mouse Y position
+@0E A2
+@0F 02 // Seg7[3:2] <- A
+@10 D0
+@11 03 // Seg7[1:0] <- B
+@12 D1
+@13 08 // Jump to IDLE and wait for interrupts
 
 // ============================================================
 // Slide Switch interrupt handler’s service routine
