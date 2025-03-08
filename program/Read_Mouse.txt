@@ -42,7 +42,8 @@
 @2B 00
 @2C 03 // Mem[0x20] <- B, Save mode variable 
 @2D 20
-@2E 08 // IDLE
+@2E 07 // Jump to 07 (Mouse)
+@2F 07
 
 // MODE 1
 @30 02 // Mem[0x20] <- A, Save mode variable 
