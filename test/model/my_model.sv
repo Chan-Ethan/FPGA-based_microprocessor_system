@@ -40,6 +40,9 @@ function void my_model::build_phase(uvm_phase phase);
 endfunction
 
 task my_model::main_phase(uvm_phase phase);
+    semaphore sem = new(1);
+    uvm_event high_prio_event = new();
+
     ps2_transaction mouse_tr;
     sw_transaction sw_tr;
     int mode;
@@ -55,9 +58,12 @@ task my_model::main_phase(uvm_phase phase);
     bus_op(8'hD1, 8'h00, 1'b1); // Write mouse Y position to Seg7[1:0]
 
     fork
-        // Mouse processing loop
         while (1) begin
+            // Mouse processing
             mouse_port.get(mouse_tr);
+            high_prio_event.trigger();  // high priority event
+            sem.get(1); // get semaphore
+
             `uvm_info("my_model", "get a mouse transaction", UVM_LOW)
             if (mouse_tr.pkt_type == CMD) begin
                 `uvm_info("my_model", "mouse transaction is CMD", UVM_LOW)
@@ -80,11 +86,17 @@ task my_model::main_phase(uvm_phase phase);
                     bus_op(8'hD1, mouse_pos_y,    1'b1); // Write mouse Y position to Seg7[1:0]
                 end
             end
-        end
 
-        // Switch processing loop
+            sem.put(1); // release semaphore
+        end
+        
         while (1) begin
+            // if (!high_prio_event.is_triggered()) begin  // 无高优先级请求时执行
+            // Switch processing
             sw_port.get(sw_tr);
+            while (high_prio_event.is_triggered()) #1;  // waiting for mouse processing
+            sem.get(1); // get semaphore
+
             `uvm_info("my_model", "get a switch transaction", UVM_LOW)
             // simulate Processor's switch interrupt handler’s service routine
             if (sw_tr.slide_switch[15:8] == 8'h80) begin
@@ -111,7 +123,8 @@ task my_model::main_phase(uvm_phase phase);
                 // MODE 0: Display Mouse
                 mode = 0;
             end
-                
+
+            sem.put(1); // release semaphore
         end
     join
 endtask
