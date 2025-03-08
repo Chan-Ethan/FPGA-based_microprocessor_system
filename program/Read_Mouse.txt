@@ -71,10 +71,11 @@
 @45 08 // IDLE
 
 // ============================================================
-
+// Timer interrupt handler’s service routine
+@60 08 // IDLE
 
 // ============================================================
 // interrupt handler’s service routine
 @FD 20 // Switches interrupt address
-@FE 16 // Timer interrupt address
+@FE 60 // Timer interrupt address
 @FF 00 // Mouse interrupt address
