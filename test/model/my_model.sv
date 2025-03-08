@@ -50,6 +50,8 @@ task my_model::main_phase(uvm_phase phase);
     super.main_phase(phase);
 
     // Processor’s init (read Mouse data)
+    bus_op(8'h00, 8'h00, 1'b0); // Read 00 from memory to A
+    bus_op(8'h20, 8'h00, 1'b0); // Read 20 from memory to B
     bus_op(8'hA0, 8'h00, 1'b0); // Read mouse status from memory to A
     bus_op(8'hC0, 8'h00, 1'b1); // write mouse status to LEDs
     bus_op(8'hA1, 8'h00, 1'b0); // Read mouse X position
@@ -76,6 +78,8 @@ task my_model::main_phase(uvm_phase phase);
             else begin
                 `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
                 cal_mouse_pos(mouse_tr); // calculate mouse position
+                bus_op(8'h00, 8'h00, 1'b0); // Read 00 from memory to A
+                bus_op(8'h20, 8'h00, 1'b0); // Read 20 from memory to B
                 if (mode == 0) begin
                     // simulate Processor's mosue interrupt handler’s service routine
                     bus_op(8'hA0, mouse_tr.byte0, 1'b0); // Read mouse status to A
