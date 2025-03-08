@@ -7,7 +7,7 @@
 @04 96 // Jump to 0x07 if (A == B)
 @05 07
 // else do nothing
-@06 08 // Jump to IDLE and wait for interrupts
+@06 08 // Jump to IDLE if MODE != 00
 @07 00 // A <- mouse status
 @08 A0
 @09 02 // LEDs <- A
@@ -75,6 +75,6 @@
 
 // ============================================================
 // interrupt handler’s service routine
-@FD 0D // Switches interrupt address
+@FD 20 // Switches interrupt address
 @FE 0C // Timer interrupt address
 @FF 00 // Mouse interrupt address
