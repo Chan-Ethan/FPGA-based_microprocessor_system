@@ -91,10 +91,12 @@ task my_model::main_phase(uvm_phase phase);
         end
         
         while (1) begin
-            // if (!high_prio_event.is_triggered()) begin  // 无高优先级请求时执行
             // Switch processing
             sw_port.get(sw_tr);
-            while (high_prio_event.is_triggered()) #1;  // waiting for mouse processing
+            if (high_prio_event.is_on()) begin
+                #1;  // waiting for mouse processing
+                high_prio_event.reset();
+            end
             sem.get(1); // get semaphore
 
             `uvm_info("my_model", "get a switch transaction", UVM_LOW)
