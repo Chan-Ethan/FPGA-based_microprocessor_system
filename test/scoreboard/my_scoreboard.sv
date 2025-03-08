@@ -38,12 +38,14 @@ task my_scoreboard::main_phase(uvm_phase phase);
         // collect expected transactions
         while (1) begin
             exp_port.get(exp_tr);
+            `uvm_info("EXP_PKT", "expected BUS operation received", UVM_LOW)
             exp_q.push_back(exp_tr);
         end
 
         // collect actual transactions and compare
         while (1) begin
             act_port.get(act_tr);
+            `uvm_info("ACT_PKT", "actual BUS operation received", UVM_LOW)
             if (exp_q.size() > 0) begin
                 tmp_tr = exp_q.pop_front();
                 result = act_tr.compare(tmp_tr); // compare two transactions
