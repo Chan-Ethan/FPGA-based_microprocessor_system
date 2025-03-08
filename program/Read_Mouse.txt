@@ -30,12 +30,12 @@
 // if (sw[15:8] == 8'b80) Seg7[1:0] <- sw[7:0] (MODE 1)
 @22 01 // B <- Mem[0x01]
 @23 01
-@24 96 // Jump to if (A == B)
+@24 96 // Jump to MODE 1 if (A == B)
 @25 30
 // else if (sw[15:8] == 8'b40) display 0123 4567 8900 on Seg7 (MODE 2)
 @26 01 // B <- Mem[0x02]
 @27 02
-@28 96 // Jump to if (A == B)
+@28 96 // Jump to MODE 2 if (A == B)
 @29 3B
 // else set MODE = 0 (Display Mouse position)
 @2A 01 // B <- Mem[0x00]
@@ -76,5 +76,5 @@
 // ============================================================
 // interrupt handler’s service routine
 @FD 20 // Switches interrupt address
-@FE 0C // Timer interrupt address
+@FE 16 // Timer interrupt address
 @FF 00 // Mouse interrupt address
