@@ -1,9 +1,9 @@
 @00 00 // constant 00
 @01 80 // constant for MODE 1
 @02 40 // constant for MODE 2
-@03 05 // for loop counter compare
-@04 00 // save loop counter
-@05 10 // save MODE 2 display data addr
+@03 F0 // MODE 1 LED display content
+@04 0F // MODE 2 LED display content
+@05
 @06 
 @07 
 @08 
@@ -11,8 +11,5 @@
 @0A
 @10 01
 @11 23
-@12 45
-@13 67
-@14 89
 
 @20 00 // save MODE: 0x00 - display mouse position; 0x80 - display sw[7:0]; 0x40 - display 0~9
