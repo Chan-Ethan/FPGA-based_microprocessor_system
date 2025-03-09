@@ -60,7 +60,6 @@ function run_case() {
 function clean_tmp_file() {
     find . -maxdepth 1 -type d ! -name "template" ! -name "run" ! -name "." -exec rm -rf {} \;
     echo "clean all temp files"
-    exit
 }
 
 #----------------------------------------------------
