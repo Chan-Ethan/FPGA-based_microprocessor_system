@@ -84,9 +84,11 @@ task ps2_driver::drive_one_pkt(ps2_transaction tr);
 		@(posedge vif.PS2_CLK);
 	end
 
-	while (top_tb.top.Processor_inst.BUS_INTERRUPTS_RAISE[0] == 1'b0) begin
-		@(posedge vif.clk);
+	if (tr.pkt_type == DATA) begin
+		while (top_tb.top.Processor_inst.BUS_INTERRUPTS_RAISE[0] == 1'b0)
+			@(posedge vif.clk);
 	end
+	
 	`uvm_info("SNED_PKT1", "drive one pkt done:", UVM_LOW)
     tr.print();
 endtask
