@@ -45,7 +45,7 @@ task my_model::main_phase(uvm_phase phase);
 
     ps2_transaction mouse_tr;
     sw_transaction sw_tr;
-    int mode;
+    bit [7:0] mode;
 
     super.main_phase(phase);
 
@@ -80,8 +80,8 @@ task my_model::main_phase(uvm_phase phase);
                 cal_mouse_pos(mouse_tr); // calculate mouse position
                 mouse_byte0 = mouse_tr.byte0; // save mouse status
                 bus_op(8'h00, 8'h00, 1'b0); // Read 00 from memory to A
-                bus_op(8'h20, 8'h00, 1'b0); // Read 20 from memory to B
-                if (mode == 0) begin
+                bus_op(8'h20, mode, 1'b0); // Read 20 from memory to B
+                if (mode == 8'h00) begin
                     // simulate Processor's mosue interrupt handler’s service routine
                     bus_op(8'hA0, mouse_byte0, 1'b0); // Read mouse status to A
                     bus_op(8'hC0, mouse_byte0, 1'b1); // write mouse status to LEDs
@@ -109,7 +109,7 @@ task my_model::main_phase(uvm_phase phase);
             bus_op(8'hE0, sw_tr.slide_switch[15:8], 1'b0); // Read sw[15:8] to A
             bus_op(8'h01, 8'h80, 1'b0); // Read Men[0x01] to B
             if (sw_tr.slide_switch[15:8] == 8'h80) begin
-                mode = 1;
+                mode = sw_tr.slide_switch[15:8];
                 // MODE 1: Display sw[7:0] on Seg7[1:0]
                 bus_op(8'h20, sw_tr.slide_switch[15:8], 1'b1); // Write sw[15:8] to Men[0x20] (save mode)
                 bus_op(8'h00, 8'h00, 1'b0); // Read 0x00 from memory to A
@@ -119,8 +119,12 @@ task my_model::main_phase(uvm_phase phase);
                 bus_op(8'h03, 8'hF0, 1'b0); // Read 0x03 from memory to A
                 bus_op(8'hC0, 8'hF0, 1'b1); // write 0xF0 to LEDs
             end
-            else if (sw_tr.slide_switch[15:8] == 8'h40) begin
-                mode = 2;
+            else begin
+                bus_op(8'h02, 8'h40, 1'b0); // Read Men[0x02] to B
+            end
+            
+            if (sw_tr.slide_switch[15:8] == 8'h40) begin
+                mode = sw_tr.slide_switch[15:8];
                 // MODE 2: Display 0123
                 bus_op(8'h20, sw_tr.slide_switch[15:8], 1'b1); // Write sw[15:8] to Men[0x20] (save mode)
                 bus_op(8'h10, 8'h01, 1'b0); // Read 0x10 from memory to A
@@ -132,7 +136,7 @@ task my_model::main_phase(uvm_phase phase);
             end
             else begin
                 // MODE 0: Display Mouse
-                mode = 0;
+                mode = 8'h00;
                 bus_op(8'h00, 8'h00, 1'b0); // Read 0xx0 from memory to B
                 bus_op(8'h20, 8'h00, 1'b1); // Write 0x00 to Men[0x20] (save mode)
 
