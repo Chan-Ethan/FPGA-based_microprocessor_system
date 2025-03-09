@@ -2,6 +2,7 @@
 
 // Virtual sequence to coordinate both mouse and switch sequences
 class virt_sequence extends uvm_sequence;
+    ps2_nego_sequence nego_seq;
     ps2_sequencer ps2_sqr;
     sw_sequencer sw_sqr;
 
