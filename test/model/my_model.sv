@@ -127,8 +127,8 @@ task my_model::main_phase(uvm_phase phase);
                     bus_op(8'h20, sw_tr.slide_switch[15:8], 1'b1); // Write sw[15:8] to Men[0x20] (save mode)
                     bus_op(8'h10, 8'h01, 1'b0); // Read 0x10 from memory to A
                     bus_op(8'h11, 8'h23, 1'b0); // Read 0x11 from memory to B
-                    bus_op(8'hD0, mouse_pos_x,    1'b1); // Write 0x01 to Seg7[3:2]
-                    bus_op(8'hD1, mouse_pos_y,    1'b1); // Write 0x23 to Seg7[1:0]
+                    bus_op(8'hD0, 8'h01, 1'b1); // Write 0x01 to Seg7[3:2]
+                    bus_op(8'hD1, 8'h23, 1'b1); // Write 0x23 to Seg7[1:0]
                     bus_op(8'h04, 8'h0F, 1'b0); // Read 0x04 from memory to A
                     bus_op(8'hC0, 8'h0F, 1'b1); // write 0xF0 to LEDs
                 end
