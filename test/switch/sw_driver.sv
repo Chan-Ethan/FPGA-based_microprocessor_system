@@ -36,12 +36,13 @@ task sw_driver::main_phase(uvm_phase phase);
 	// change slide switch value when get a tr
 	while (1) begin
 		seq_item_port.get_next_item(req);
+		`uvm_info("CHANGE_SW0", "begin to send a sw_transaction:", UVM_HIGH)
 		vif.sw = req.slide_switch;
 		while (top_tb.top.Processor_inst.BUS_INTERRUPTS_RAISE[2] == 1'b0) begin
 			@(posedge vif.clk);
 		end
         ap.write(req); // send pkt to model
-		`uvm_info("CHANGE_SW", "Sent a sw_transaction:", UVM_MEDIUM)
+		`uvm_info("CHANGE_SW1", "Sent a sw_transaction:", UVM_LOW)
 		req.print();
 		seq_item_port.item_done();
 	end	
