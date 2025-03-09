@@ -162,6 +162,7 @@ function void my_model::bus_op(bit [7:0] addr, bit [7:0] data, bit we);
     bus_tr.WE = we;
     bus_tr.ADDR = addr;
     bus_tr.DATA = data;
+    `uvm_info("MDL_BUS_OP", $sformatf("bus operation: addr=%h, data=%h, we=%b", addr, data, we), UVM_LOW)
     ap.write(bus_tr);
 endfunction
 
