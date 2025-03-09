@@ -60,8 +60,6 @@ endclass
 class virt_sequence extends uvm_sequence;
     mouse_sequence mouse_seq;
     switch_sequence sw_seq;
-    ps2_sequencer ps2_sqr;
-    sw_sequencer sw_sqr;
     
     `uvm_object_utils(virt_sequence)
     
@@ -73,12 +71,12 @@ class virt_sequence extends uvm_sequence;
         mouse_seq = mouse_sequence::type_id::create("mouse_seq");
         sw_seq = switch_sequence::type_id::create("sw_seq");
         
-        mouse_seq.sqr = ps2_sqr;
+        mouse_seq.sqr = env.i_agt.sqr;
         
         // Run both sequences in parallel
         fork
             mouse_seq.start(null);
-            sw_seq.start(sw_sqr);
+            sw_seq.start(env.sw_agt.sqr;);
         join
     endtask
 endclass
