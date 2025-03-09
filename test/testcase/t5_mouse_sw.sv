@@ -1,65 +1,12 @@
 // Mixing mouse and switch testing
-class mouse_sequence extends uvm_sequence;
-    ps2_nego_sequence nego_seq;
-    ps2_sequencer sqr;
-    ps2_transaction tr;
-    
-    `uvm_object_utils(mouse_sequence)
-    
-    function new(string name = "mouse_sequence");
-        super.new(name);
-    endfunction
-
-    virtual task body();
-        #500us; // wait for DUT init
-        nego_seq = ps2_nego_sequence::type_id::create("nego_seq");
-        nego_seq.start(sqr);
-        
-        // send data transactions
-        # 100us;
-        repeat (30) begin
-            `uvm_do_on_with(tr, sqr, {
-                tr.pkt_type == DATA;
-            })
-            #200us;
-        end
-        #100us;
-    endtask
-endclass
-
-// Switch sequence: Handles slide switch inputs
-class switch_sequence extends uvm_sequence;
-    sw_transaction tr;
-    
-    `uvm_object_utils(switch_sequence)
-    
-    function new(string name = "switch_sequence");
-        super.new(name);
-    endfunction
-
-    virtual task body();
-        int wait_time;
-
-        // send switch transactions
-        # 100us;
-        repeat (25) begin
-            `uvm_do_with(tr, {
-                // Configure different switch modes
-                tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
-            })
-            wait_time = $urandom_range(150, 350);
-            repeat (wait_time) #1us;
-        end
-        #100us;
-    endtask
-endclass
 
 // Virtual sequence to coordinate both mouse and switch sequences
 class virt_sequence extends uvm_sequence;
-    mouse_sequence mouse_seq;
-    switch_sequence sw_seq;
     ps2_sequencer ps2_sqr;
     sw_sequencer sw_sqr;
+
+    ps2_transaction ps2_tr;
+    sw_transaction sw_tr;
     
     `uvm_object_utils(virt_sequence)
     
@@ -68,16 +15,24 @@ class virt_sequence extends uvm_sequence;
     endfunction
 
     virtual task body();
-        mouse_seq = mouse_sequence::type_id::create("mouse_seq");
-        sw_seq = switch_sequence::type_id::create("sw_seq");
+        #500us; // wait for DUT init
+        nego_seq = ps2_nego_sequence::type_id::create("nego_seq");
+        nego_seq.start(ps2_sqr);
         
-        mouse_seq.sqr = ps2_sqr;
-        
-        // Run both sequences in parallel
-        fork
-            mouse_seq.start(null);
-            sw_seq.start(sw_sqr);
-        join
+        // send mosue tr and switch tr alternatively
+        # 100us;
+        repeat (30) begin
+            `uvm_do_on_with(ps2_tr, ps2_sqr, {
+                ps2_tr.pkt_type == DATA;
+            })
+            #100us;
+
+            `uvm_do_on_with(sw_tr, sw_sqr, {
+                // Configure different switch modes
+                sw_tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
+            })
+            #100us;
+        end
     endtask
 endclass
 
@@ -116,7 +71,7 @@ task t5_mouse_sw::main_phase(uvm_phase phase);
     vseq.start(null);
 
     // Allow some extra time for test completion
-    #1ms;
+    #200us;
     
     phase.drop_objection(this);
 endtask
