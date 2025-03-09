@@ -12,7 +12,7 @@ class my_model extends uvm_component;
     uvm_blocking_get_port #(sw_transaction) sw_port; // from sw_agent
     uvm_analysis_port #(bus_transaction) ap; // to my_scoreboard
 
-    bit [7:0] mouse_pos_x, mouse_pos_y;
+    bit [7:0] mouse_pos_x, mouse_pos_y, mouse_byte0;
 
     `uvm_component_utils(my_model)
 
@@ -78,16 +78,17 @@ task my_model::main_phase(uvm_phase phase);
             else begin
                 `uvm_info("my_model", "mouse transaction is DATA", UVM_LOW)
                 cal_mouse_pos(mouse_tr); // calculate mouse position
+                mouse_byte0 = mouse_tr.byte0; // save mouse status
                 bus_op(8'h00, 8'h00, 1'b0); // Read 00 from memory to A
                 bus_op(8'h20, 8'h00, 1'b0); // Read 20 from memory to B
                 if (mode == 0) begin
                     // simulate Processor's mosue interrupt handler’s service routine
-                    bus_op(8'hA0, mouse_tr.byte0, 1'b0); // Read mouse status to A
-                    bus_op(8'hC0, mouse_tr.byte0, 1'b1); // write mouse status to LEDs
-                    bus_op(8'hA1, mouse_pos_x,    1'b0); // Read mouse X position
-                    bus_op(8'hA2, mouse_pos_y,    1'b0); // Read mouse Y position
-                    bus_op(8'hD0, mouse_pos_x,    1'b1); // Write mouse X position to Seg7[3:2]
-                    bus_op(8'hD1, mouse_pos_y,    1'b1); // Write mouse Y position to Seg7[1:0]
+                    bus_op(8'hA0, mouse_byte0, 1'b0); // Read mouse status to A
+                    bus_op(8'hC0, mouse_byte0, 1'b1); // write mouse status to LEDs
+                    bus_op(8'hA1, mouse_pos_x, 1'b0); // Read mouse X position
+                    bus_op(8'hA2, mouse_pos_y, 1'b0); // Read mouse Y position
+                    bus_op(8'hD0, mouse_pos_x, 1'b1); // Write mouse X position to Seg7[3:2]
+                    bus_op(8'hD1, mouse_pos_y, 1'b1); // Write mouse Y position to Seg7[1:0]
                 end
             end
 
@@ -135,12 +136,12 @@ task my_model::main_phase(uvm_phase phase);
                 bus_op(8'h00, 8'h00, 1'b0); // Read 0xx0 from memory to B
                 bus_op(8'h20, 8'h00, 1'b1); // Write 0x00 to Men[0x20] (save mode)
 
-                bus_op(8'hA0, mouse_tr.byte0, 1'b0); // Read mouse status to A
-                bus_op(8'hC0, mouse_tr.byte0, 1'b1); // write mouse status to LEDs
-                bus_op(8'hA1, mouse_pos_x,    1'b0); // Read mouse X position
-                bus_op(8'hA2, mouse_pos_y,    1'b0); // Read mouse Y position
-                bus_op(8'hD0, mouse_pos_x,    1'b1); // Write mouse X position to Seg7[3:2]
-                bus_op(8'hD1, mouse_pos_y,    1'b1); // Write mouse Y position to Seg7[1:0]
+                bus_op(8'hA0, mouse_byte0, 1'b0); // Read mouse status to A
+                bus_op(8'hC0, mouse_byte0, 1'b1); // write mouse status to LEDs
+                bus_op(8'hA1, mouse_pos_x, 1'b0); // Read mouse X position
+                bus_op(8'hA2, mouse_pos_y, 1'b0); // Read mouse Y position
+                bus_op(8'hD0, mouse_pos_x, 1'b1); // Write mouse X position to Seg7[3:2]
+                bus_op(8'hD1, mouse_pos_y, 1'b1); // Write mouse Y position to Seg7[1:0]
             end
 
             sem.put(1); // release semaphore
