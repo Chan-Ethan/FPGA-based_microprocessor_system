@@ -38,6 +38,8 @@ task sw_driver::main_phase(uvm_phase phase);
 		seq_item_port.get_next_item(req);
 		vif.sw = req.slide_switch;
         ap.write(req); // send pkt to model
+		`uvm_info("CHANGE_SW", "Sent a sw_transaction:", UVM_MEDIUM)
+		req.print();
 		seq_item_port.item_done();
 	end	
 endtask
