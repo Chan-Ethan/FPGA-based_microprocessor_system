@@ -58,8 +58,9 @@ function run_case() {
 # notes: delete fsdb/vdb/log tmp files,not dir
 #---------------------------------------------------
 function clean_tmp_file() {
-    find . -maxdepth 1 -type d ! -name "a" ! -name "b" ! -name "." -exec rm -rf {} \;
+    find . -maxdepth 1 -type d ! -name "template" ! -name "run" ! -name "." -exec rm -rf {} \;
     echo "clean all temp files"
+    exit
 }
 
 #----------------------------------------------------
