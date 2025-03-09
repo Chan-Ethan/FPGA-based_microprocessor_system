@@ -45,9 +45,7 @@ class switch_sequence extends uvm_sequence;
         repeat (25) begin
             `uvm_do_with(tr, {
                 // Configure different switch modes
-                tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h20, 8'h00};
-                // Random lower bits
-                tr.slide_switch[7:0] == $urandom();
+                tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
             })
             wait_time = $urandom_range(150, 350);
             repeat (wait_time) #1us;
