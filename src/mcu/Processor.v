@@ -316,7 +316,7 @@ module Processor # (
             WRITE_TO_MEM_0: begin
                 NextState = CHOOSE_OPP;
                 NextBusAddr = ProgMemoryOut;
-                NextProgCounterOffset = 2'h1;
+                // NextProgCounterOffset = 2'h1;
                 if(!NextRegSelect)
                     NextBusDataOut = CurrRegA;
                 else
