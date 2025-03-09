@@ -121,33 +121,32 @@ task my_model::main_phase(uvm_phase phase);
             end
             else begin
                 bus_op(8'h02, 8'h40, 1'b0); // Read Men[0x02] to B
+                if (sw_tr.slide_switch[15:8] == 8'h40) begin
+                    mode = sw_tr.slide_switch[15:8];
+                    // MODE 2: Display 0123
+                    bus_op(8'h20, sw_tr.slide_switch[15:8], 1'b1); // Write sw[15:8] to Men[0x20] (save mode)
+                    bus_op(8'h10, 8'h01, 1'b0); // Read 0x10 from memory to A
+                    bus_op(8'h11, 8'h23, 1'b0); // Read 0x11 from memory to B
+                    bus_op(8'hD0, mouse_pos_x,    1'b1); // Write 0x01 to Seg7[3:2]
+                    bus_op(8'hD1, mouse_pos_y,    1'b1); // Write 0x23 to Seg7[1:0]
+                    bus_op(8'h04, 8'h0F, 1'b0); // Read 0x04 from memory to A
+                    bus_op(8'hC0, 8'h0F, 1'b1); // write 0xF0 to LEDs
+                end
+                else begin
+                    // MODE 0: Display Mouse
+                    mode = 8'h00;
+                    bus_op(8'h00, 8'h00, 1'b0); // Read 0xx0 from memory to B
+                    bus_op(8'h20, 8'h00, 1'b1); // Write 0x00 to Men[0x20] (save mode)
+
+                    bus_op(8'hA0, mouse_byte0, 1'b0); // Read mouse status to A
+                    bus_op(8'hC0, mouse_byte0, 1'b1); // write mouse status to LEDs
+                    bus_op(8'hA1, mouse_pos_x, 1'b0); // Read mouse X position
+                    bus_op(8'hA2, mouse_pos_y, 1'b0); // Read mouse Y position
+                    bus_op(8'hD0, mouse_pos_x, 1'b1); // Write mouse X position to Seg7[3:2]
+                    bus_op(8'hD1, mouse_pos_y, 1'b1); // Write mouse Y position to Seg7[1:0]
+                end
             end
             
-            if (sw_tr.slide_switch[15:8] == 8'h40) begin
-                mode = sw_tr.slide_switch[15:8];
-                // MODE 2: Display 0123
-                bus_op(8'h20, sw_tr.slide_switch[15:8], 1'b1); // Write sw[15:8] to Men[0x20] (save mode)
-                bus_op(8'h10, 8'h01, 1'b0); // Read 0x10 from memory to A
-                bus_op(8'h11, 8'h23, 1'b0); // Read 0x11 from memory to B
-                bus_op(8'hD0, mouse_pos_x,    1'b1); // Write 0x01 to Seg7[3:2]
-                bus_op(8'hD1, mouse_pos_y,    1'b1); // Write 0x23 to Seg7[1:0]
-                bus_op(8'h04, 8'h0F, 1'b0); // Read 0x04 from memory to A
-                bus_op(8'hC0, 8'h0F, 1'b1); // write 0xF0 to LEDs
-            end
-            else begin
-                // MODE 0: Display Mouse
-                mode = 8'h00;
-                bus_op(8'h00, 8'h00, 1'b0); // Read 0xx0 from memory to B
-                bus_op(8'h20, 8'h00, 1'b1); // Write 0x00 to Men[0x20] (save mode)
-
-                bus_op(8'hA0, mouse_byte0, 1'b0); // Read mouse status to A
-                bus_op(8'hC0, mouse_byte0, 1'b1); // write mouse status to LEDs
-                bus_op(8'hA1, mouse_pos_x, 1'b0); // Read mouse X position
-                bus_op(8'hA2, mouse_pos_y, 1'b0); // Read mouse Y position
-                bus_op(8'hD0, mouse_pos_x, 1'b1); // Write mouse X position to Seg7[3:2]
-                bus_op(8'hD1, mouse_pos_y, 1'b1); // Write mouse Y position to Seg7[1:0]
-            end
-
             sem.put(1); // release semaphore
         end
     join
