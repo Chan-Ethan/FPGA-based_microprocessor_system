@@ -76,7 +76,7 @@ class virt_sequence extends uvm_sequence;
         // Run both sequences in parallel
         fork
             mouse_seq.start(null);
-            sw_seq.start(env.sw_agt.sqr;);
+            sw_seq.start(env.sw_agt.sqr);
         join
     endtask
 endclass
