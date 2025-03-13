@@ -72,6 +72,7 @@ end
 
 
 //================= Synchronize Switches =================//
+// SW_q1 and SW_q2 are used for switch debouncing and signal synchronization
 always @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         SW_q1 <= 16'b0;
@@ -94,6 +95,7 @@ always @(posedge CLK) begin
 end
 
 //================= Interrupt Generation =================//
+// Generate interrupt when the switches are stable
 always @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         SEND_INTERRUPT <= 1'b0;

@@ -52,12 +52,15 @@ always_comb begin
     next_state = current_state;
     case (current_state)
         `FSM_IDLE: begin
+            // Wait for the first byte to be sent and mouse initialization
             if (cnt_10ms == `CNT_NUM_10MS) next_state = `FSM_RESET;
         end
         `FSM_RESET: begin
+            // send reset command
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK;
         end
         `FSM_WAIT_ACK: begin
+            // wait for the ack from mouse
             if (BYTE_READY) begin
                 if (BYTE_ERROR_CODE != 2'b00) begin
                     next_state = `FSM_RESET;
@@ -74,6 +77,7 @@ always_comb begin
             end
         end
         `FSM_WAIT_SELFTST: begin
+            // wait for the self test packet from mouse
             if (BYTE_READY) begin
                 if (BYTE_ERROR_CODE != 2'b00) begin
                     next_state = `FSM_RESET;
@@ -88,9 +92,11 @@ always_comb begin
             else;
         end
         `FSM_STAR_STM: begin
+            // send start streaming mode command
             if (BYTE_SENT) next_state = `FSM_WAIT_ACK2;
         end
         `FSM_WAIT_ACK2: begin
+            // wait for the ack from mouse
             if (BYTE_READY) begin
                 if (BYTE_ERROR_CODE != 2'b00) begin
                     next_state = `FSM_RESET;
@@ -104,7 +110,9 @@ always_comb begin
             end
         end
         `FSM_STREAM_MOD: begin
+            // keep receiving data from mouse
             if ((BYTE_READY == 1'b1) && (BYTE_ERROR_CODE != 2'b00)) begin
+                // if error packet received, reset
                 next_state = `FSM_RESET;
             end
             else;

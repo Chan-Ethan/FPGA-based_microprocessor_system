@@ -255,7 +255,6 @@ module Processor # (
             //Wait state - to give time for the mem address to be read. Reg select is set to 0
             READ_FROM_MEM_TO_A: begin
                 NextState = READ_FROM_MEM_0;
-                // NextProgCounterOffset = 2'h1;
                 NextRegSelect = 1'b0;
             end
             
@@ -263,7 +262,6 @@ module Processor # (
             //Wait state - to give time for the mem address to be read. Reg select is set to 1
             READ_FROM_MEM_TO_B: begin
                 NextState = READ_FROM_MEM_0;
-                // NextProgCounterOffset = 2'h1;
                 NextRegSelect = 1'b1;
             end
             
@@ -316,7 +314,6 @@ module Processor # (
             WRITE_TO_MEM_0: begin
                 NextState = CHOOSE_OPP;
                 NextBusAddr = ProgMemoryOut;
-                // NextProgCounterOffset = 2'h1;
                 if(!NextRegSelect)
                     NextBusDataOut = CurrRegA;
                 else

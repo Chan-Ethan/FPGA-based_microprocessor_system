@@ -57,31 +57,37 @@ always_comb begin
     next_state = current_state;
     case (current_state)
         `FSM_IDLE: begin
+            // wait for SEND_BYTE from Master state machine
             if (SEND_BYTE) begin
                 next_state = `FSM_CLK_LOW;
             end
         end
         `FSM_CLK_LOW: begin
+            // pull CLK low for 200us
             if ((clk_cnt == `CNT_NUM) && (ps2_clk_vld == 1'b1)) begin
                 next_state = `FSM_START;
             end
         end
         `FSM_START: begin
+            // send start bit
             if (ps2_clk_vld == 1'b1)  begin
                 next_state = `FSM_DATA;
             end
         end
         `FSM_DATA: begin
+            // send data bits
             if ((bit_cnt == 3'd7) && (ps2_clk_vld == 1'b1)) begin
                 next_state = `FSM_PARITY;
             end
         end
         `FSM_PARITY: begin
+            // send parity bit
             if (ps2_clk_vld == 1'b1) begin
                 next_state = `FSM_STOP;
             end
         end
         `FSM_STOP: begin
+            // send stop bit
             if (ps2_clk_vld == 1'b1) begin
                 next_state = `FSM_IDLE;
             end

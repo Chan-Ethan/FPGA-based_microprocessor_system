@@ -49,6 +49,7 @@ always @(posedge clk_sys or negedge rst_n) begin
 end
 
 //================= 200Hz signal generation =================//
+// generate 200Hz signal for 7-segment display refresh
 always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         clk_200hz_cnt <= 26'b0;
@@ -78,7 +79,8 @@ always @(posedge clk_sys or negedge rst_n) begin
 end
 
 //================= 7-segment display control =================//
-// traverse 4 seven segment
+// traverse 4 seven segment display
+// refresh rate: 200Hz / 4 = 50Hz
 always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         seg_select <= 2'b00;
@@ -93,6 +95,11 @@ always @(posedge clk_sys) begin
     seg_select_in <= seg_select;
 end
 
+// select the correct 4-bit binary number to display
+// 0: lower 4 bits of MOUSE_POS_Y
+// 1: upper 4 bits of MOUSE_POS_Y
+// 2: lower 4 bits of MOUSE_POS_X
+// 3: upper 4 bits of MOUSE_POS_X
 always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
         bin <= 4'b0000;
