@@ -25,6 +25,12 @@
 ../../../src/mouse/MousePosCal.sv
 ../../../src/mouse/MouseTop.sv
 
+../../../src/vga/counter.v
+../../../src/vga/Clock_Divider.v
+../../../src/vga/Frame_Buffer.v
+../../../src/vga/VGA_Sig_Gen.v
+../../../src/vga/VGA_Bus_Peripheral.v
+../src/
 ../../../src/led/led_ctrl.sv
 
 ../../../src/mcu/ALU.v
@@ -62,12 +68,6 @@
 ../../switch/sw_sequencer.sv
 ../../switch/sw_driver.sv
 ../../switch/sw_agent.sv
-
-../../vga/counter.v
-../../vga/Clock_Divider.v
-../../vga/Frame_Buffer.v
-../../vga/VGA_Sig_Gen.v
-../../vga/VGA_Bus_Peripheral.v
  
 ../../model/my_model.sv
 ../../scoreboard/my_scoreboard.sv
