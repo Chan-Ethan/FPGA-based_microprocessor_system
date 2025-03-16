@@ -1,7 +1,7 @@
-class t1_do_nothing extends base_test;
-    `uvm_component_utils(t1_do_nothing)
+class t0_do_nothing extends base_test;
+    `uvm_component_utils(t0_do_nothing)
 
-    function new(string name = "t1_do_nothing", uvm_component parent = null);
+    function new(string name = "t0_do_nothing", uvm_component parent = null);
         super.new(name, parent);
     endfunction
 
@@ -10,15 +10,15 @@ class t1_do_nothing extends base_test;
 endclass
 
 // Build phase: Set default sequence for target sequencer
-function void t1_do_nothing::build_phase(uvm_phase phase);
+function void t0_do_nothing::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info("t1_do_nothing", "t1_do_nothing build_phase", UVM_MEDIUM)
+    `uvm_info("t0_do_nothing", "t0_do_nothing build_phase", UVM_MEDIUM)
 endfunction
 
 // Main phase: Start the test
-task t1_do_nothing::main_phase(uvm_phase phase);
+task t0_do_nothing::main_phase(uvm_phase phase);
     super.main_phase(phase);
-    `uvm_info("t1_do_nothing", "t1_do_nothing main_phase", UVM_MEDIUM)
+    `uvm_info("t0_do_nothing", "t0_do_nothing main_phase", UVM_MEDIUM)
 
     phase.raise_objection(this);
 
