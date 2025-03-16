@@ -201,7 +201,7 @@ VGA_Bus VGA_Bus_inst (
     // VGA Output
     .VGA_COLOUR     (VGA_COLOUR     ),
     .VGA_HS         (VGA_HS         ),
-    .VGA_VS         (VGA_VS         ),
+    .VGA_VS         (VGA_VS         )
 );
 
 endmodule
