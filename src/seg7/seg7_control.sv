@@ -1,5 +1,5 @@
 module seg7_control(
-    input           clk_sys         , // 50MHz system clock
+    input           clk_sys         , // 100MHz system clock
     input           rst_n           , // reset signal
     
     //IO - Data Bus
@@ -14,11 +14,9 @@ module seg7_control(
 
 `ifdef SIMULATION
     // use smaller number for faster simulation
-    `define CNT_NUM_200HZ 26'd499
-    `define CNT_NUM_1HZ   8'd49
+    `define CNT_NUM_200HZ 19'd499
 `else
-    `define CNT_NUM_200HZ 26'd249999
-    `define CNT_NUM_1HZ   8'd199
+    `define CNT_NUM_200HZ 19'd499999
 `endif
 
 logic   [1:0]   seg_select;
@@ -27,7 +25,7 @@ logic   [1:0]   seg_select_dly;
 logic   [3:0]   bin;
 
 logic           clk_200hz;  // 200Hz signal, for 7-segment display refresh
-logic   [17:0]  clk_200hz_cnt;
+logic   [18:0]  clk_200hz_cnt;
 
 logic   [7:0]   MOUSE_POS_X;
 logic   [7:0]   MOUSE_POS_Y;
@@ -52,14 +50,14 @@ end
 // generate 200Hz signal for 7-segment display refresh
 always @(posedge clk_sys or negedge rst_n) begin
     if (!rst_n) begin
-        clk_200hz_cnt <= 26'b0;
+        clk_200hz_cnt <= 19'b0;
     end
     else begin
         if (clk_200hz_cnt == `CNT_NUM_200HZ) begin
-            clk_200hz_cnt <= 26'b0;
+            clk_200hz_cnt <= 19'b0;
         end
         else begin
-            clk_200hz_cnt <= clk_200hz_cnt + 26'd1;
+            clk_200hz_cnt <= clk_200hz_cnt + 19'd1;
         end
     end
 end

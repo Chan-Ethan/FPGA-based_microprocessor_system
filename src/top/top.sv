@@ -17,7 +17,7 @@ module top(
     output reg [15:0] LED           
 );
 
-logic           clk_sys;    // 50MHz system clock
+logic           clk_sys;    // 100MHz system clock
 logic           rst_n;      // active-low reset
 
 // Mouse interface signals
@@ -49,10 +49,10 @@ always_ff @(posedge CLK100_IN) begin
     rst_n <= HARD_RSTN_2dly;            // Generate active-low reset
 end
 
-// Clock wizard (50MHz system clock)
+// Clock wizard (100MHz system clock)
 clk_wiz_0 clk_wiz_inst (
     .clk_in1    (CLK100_IN),
-    .clk_out1   (clk_sys),   // 50MHz output
+    .clk_out1   (clk_sys),   // 100MHz output
     .resetn     (rst_n),
     .locked     (LOCKED)
 );

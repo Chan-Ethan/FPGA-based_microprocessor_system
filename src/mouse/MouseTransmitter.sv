@@ -26,11 +26,11 @@ output reg  BYTE_SENT
 `define FSM_STOP       6'b100000
 
 // count for 200us
-`define CNT_NUM        14'd9999
+`define CNT_NUM        15'd19999
 
 // FSM and control signals
 logic [5:0]         current_state, next_state;
-logic [13:0]        clk_cnt;        // 200us counter (50MHz * 200us = 10_000 cycles)
+logic [14:0]        clk_cnt;        // 200us counter (100MHz * 200us = 20_000 cycles)
 logic [2:0]         bit_cnt;        // 0-7: data bits
 logic [7:0]         tx_data;        // data to send
 logic               parity_bit;     // odd parity
@@ -101,7 +101,7 @@ end
 always_ff @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
         current_state <= `FSM_IDLE;
-        clk_cnt       <= 14'd0;
+        clk_cnt       <= 15'd0;
         bit_cnt       <= 3'd0;
         tx_data       <= 8'd0;
         parity_bit    <= 1'b0;
@@ -109,7 +109,7 @@ always_ff @(posedge CLK or negedge RESET) begin
     end
     else begin
         current_state <= next_state;
-        clk_cnt       <= 14'd0;
+        clk_cnt       <= 15'd0;
         BYTE_SENT     <= 1'b0;
 
         case (current_state)
@@ -120,7 +120,7 @@ always_ff @(posedge CLK or negedge RESET) begin
                 end
             end
             `FSM_CLK_LOW: begin
-                clk_cnt <= (clk_cnt == `CNT_NUM) ? clk_cnt : clk_cnt + 14'd1;
+                clk_cnt <= (clk_cnt == `CNT_NUM) ? clk_cnt : clk_cnt + 15'd1;
             end
             `FSM_DATA: begin
                 if (ps2_clk_vld == 1'b1) begin

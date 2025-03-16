@@ -2,7 +2,6 @@ module top_tb (
     
 );
     logic           clk_100M        ; // 100 MHz oscillator clock
-    logic           clk_50M         ; // 50 MHz force sys_clk
     logic           rst_n           ;
     
     logic   [3:0]   SEG_SELECT_OUT  ;
@@ -11,9 +10,9 @@ module top_tb (
     wire            PS2_CLK         ;
     wire            PS2_DATA        ;
 
-    ps2_if   input_if(clk_50M, rst_n);
-    bus_if   bus_if(clk_50M, rst_n);
-    sw_if    sw_if(clk_50M, rst_n);
+    ps2_if   input_if(clk_100M, rst_n);
+    bus_if   bus_if(clk_100M, rst_n);
+    sw_if    sw_if(clk_100M, rst_n);
 
     initial begin    
         clk_100M = 1'b0;
@@ -35,15 +34,7 @@ module top_tb (
         #5ns; clk_100M <= ~clk_100M; // 100 MHz
     end
 
-    initial begin
-        clk_50M <= 1'b0;
-    end
-
-    always begin
-        #10ns; clk_50M <= ~clk_50M;
-        force top.clk_sys = clk_50M;
-    end
-
+    assign top.clk_sys = clk_100M;
 
     assign (weak0, weak1) PS2_CLK  = input_if.PS2_CLK ;
     assign (weak0, weak1) PS2_DATA = input_if.PS2_DATA;

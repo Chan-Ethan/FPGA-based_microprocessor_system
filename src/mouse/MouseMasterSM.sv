@@ -34,9 +34,9 @@ output      [6:0]   current_state
 `define FSM_STREAM_MOD      7'b1000000
 
 `ifdef SIMULATION
-    `define CNT_NUM_10MS    19'd49_999
+    `define CNT_NUM_10MS    20'd99_999
 `else
-    `define CNT_NUM_10MS    19'd499_999
+    `define CNT_NUM_10MS    20'd999_999
 `endif
 
 `define CNT_BYTES       2'b10
@@ -44,7 +44,7 @@ output      [6:0]   current_state
 logic [6:0]         current_state, next_state;
 logic               waiting_wr_done;
 logic [1:0]         byte_cnt;
-logic [18:0]        cnt_10ms;
+logic [19:0]        cnt_10ms;
 logic [23:0]        pkt_buffer;
 
 // State Transition Logic
@@ -130,10 +130,10 @@ end
 //================= Counters =================//
 always_ff @(posedge CLK or negedge RESET) begin
     if (!RESET) begin
-        cnt_10ms <= 19'd0;
+        cnt_10ms <= 20'd0;
     end
     else begin
-        cnt_10ms <= (cnt_10ms == `CNT_NUM_10MS) ? 19'd0 : cnt_10ms + 19'd1;
+        cnt_10ms <= (cnt_10ms == `CNT_NUM_10MS) ? 20'd0 : cnt_10ms + 20'd1;
     end
 end
 
