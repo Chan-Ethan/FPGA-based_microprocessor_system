@@ -34,7 +34,7 @@ module top_tb (
         #5ns; clk_100M <= ~clk_100M; // 100 MHz
     end
 
-    assign top.clk_sys = clk_100M;
+    // assign top.clk_sys = clk_100M;
 
     assign (weak0, weak1) PS2_CLK  = input_if.PS2_CLK ;
     assign (weak0, weak1) PS2_DATA = input_if.PS2_DATA;

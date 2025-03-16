@@ -50,12 +50,16 @@ always_ff @(posedge CLK100_IN) begin
 end
 
 // Clock wizard (100MHz system clock)
-clk_wiz_0 clk_wiz_inst (
-    .clk_in1    (CLK100_IN),
-    .clk_out1   (clk_sys),   // 100MHz output
-    .resetn     (rst_n),
-    .locked     (LOCKED)
-);
+`ifdef SIMULATION
+    assign clk_sys = CLK100_IN;
+`else
+    clk_wiz_0 clk_wiz_inst (
+        .clk_in1    (CLK100_IN),
+        .clk_out1   (clk_sys),   // 100MHz output
+        .resetn     (rst_n),
+        .locked     (LOCKED)
+    );
+`endif
 
 // microcontroller subsystem
 Processor Processor_inst (
