@@ -30,7 +30,7 @@
 ../../../src/vga/Frame_Buffer.v
 ../../../src/vga/VGA_Sig_Gen.v
 ../../../src/vga/VGA_Bus_Peripheral.v
-../src/
+
 ../../../src/led/led_ctrl.sv
 
 ../../../src/mcu/ALU.v
