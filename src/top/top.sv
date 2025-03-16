@@ -13,6 +13,11 @@ module top(
     output reg [3:0] SEG_SELECT_OUT ,
     output reg [7:0] HEX_OUT        ,
 
+    // VGA Output
+    output [7:0]    VGA_COLOUR      ,
+    output          VGA_HS          ,
+    output          VGA_VS          ,
+
     // LED output
     output reg [15:0] LED           
 );
@@ -181,6 +186,22 @@ led_ctrl led_ctrl_inst (
     
     // LED output
     .LED            (LED            )
+);
+
+// VGA controller
+VGA_Bus VGA_Bus_inst (
+    .CLK            (clk_sys),
+    .RESET          (~rst_n),
+    
+    // IO - Data Bus
+    .DATA           (BUS_DATA       ),
+    .ADDR           (BUS_ADDR       ),
+    .BUS_WE         (BUS_WE         ),
+    
+    // VGA Output
+    .VGA_COLOUR     (VGA_COLOUR     ),
+    .VGA_HS         (VGA_HS         ),
+    .VGA_VS         (VGA_VS         ),
 );
 
 endmodule

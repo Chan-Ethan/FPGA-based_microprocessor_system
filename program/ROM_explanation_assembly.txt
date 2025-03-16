@@ -1,0 +1,139 @@
+    // Initialize X (at 0x02) and Y (at 0x03) to 0
+    WRITE_TO_MEM_FROM_A 0x02  // Store X = 0 in RAM at 0x02
+    WRITE_TO_MEM_FROM_A 0x03  // Store Y = 0 in RAM at 0x03
+
+Outer_Loop:
+    READ_FROM_MEM_TO_A 0x08   // Load zero again
+    WRITE_TO_MEM_FROM_A 0x02  // Reset X to 0 (Pre-Stored in 0x08) properly 
+
+Inner_Loop:
+    READ_FROM_MEM_TO_A 0x02   // Load X from RAM into A
+    READ_FROM_MEM_TO_B 0x03   // Load Y from RAM into B
+    DO_MATHS_OPP_SAVE_IN_A    // A = X + Y (using ALU)
+
+    WRITE_TO_MEM_FROM_A 0x04  // Store (X + Y) at 0x04 for later use
+
+    READ_FROM_MEM_TO_B 0x04   // Load (X + Y) into B directly
+
+    // Right shift A (A >> 1) → Divide by 2
+    DO_MATHS_OPP_SAVE_IN_A    // A = (X + Y) >> 1
+
+    // Left shift A (A << 1) → Multiply by 2 (Reconstruct)
+    DO_MATHS_OPP_SAVE_IN_A    // A = A << 1
+
+    // Compare A with B (Check Even/Odd)
+    IF_A_EQUALITY_B_GOTO EVEN_PIXEL  
+
+    // If not equal, it's odd
+    READ_FROM_MEM_TO_A 0x07   // Load Black Pixel Value (Pre-Stored in 0x07)
+    WRITE_TO_MEM_FROM_A 0x05  // Store Black Pixel in Temp Location
+    GOTO STORE_PIXEL
+
+EVEN_PIXEL:
+    READ_FROM_MEM_TO_A 0x06   // Load White Pixel Value (Pre-Stored in 0x06)
+    WRITE_TO_MEM_FROM_A 0x05  // Store White Pixel in Temp Location
+
+STORE_PIXEL:
+    READ_FROM_MEM_TO_A 0x02    // Load X coordinate
+    WRITE_TO_MEM_FROM_A 0xB0   // Send X via Bus
+
+    READ_FROM_MEM_TO_A 0x03    // Load Y coordinate
+    WRITE_TO_MEM_FROM_A 0xB1   // Send Y via Bus
+
+    READ_FROM_MEM_TO_A 0x05    // Load pixel data (Either White or Black)
+    WRITE_TO_MEM_FROM_A 0xB2   // Write Pixel Data
+
+    // Increment X (X++)
+    READ_FROM_MEM_TO_A 0x02
+    DO_MATHS_OPP_SAVE_IN_A    // A = A + 1
+    WRITE_TO_MEM_FROM_A 0x02  // Store new X
+
+    ////////READ_FROM_MEM_TO_A 0x02   // Load updated X
+    READ_FROM_MEM_TO_B 0x01   // Load 255 from RAM to B
+    IF_A_EQUALITY_B_GOTO Inner_Loop // If X != 255, repeat inner loop
+
+    // Increment Y (Y++)
+    READ_FROM_MEM_TO_A 0x03
+    DO_MATHS_OPP_SAVE_IN_A    // A = A + 1
+    WRITE_TO_MEM_FROM_A 0x03  // Store new Y
+
+    ////////////READ_FROM_MEM_TO_A 0x03   // Load updated Y
+    READ_FROM_MEM_TO_B 0x00   // Load 127 from RAM to B
+    IF_A_EQUALITY_B_GOTO Outer_Loop // If Y != 127, repeat outer loop
+
+
+DELAY_LOOP:
+    READ_FROM_MEM_TO_A 0x23  // Load Lowest Byte
+    READ_FROM_MEM_TO_B 0x08  // Load zero into Register B before comparison
+    IF_A_EQUALITY_B_GOTO DECREMENT_MID   // If zero, move to next byte
+    DO_MATHS_OPP_SAVE_IN_A    // A = A - 1
+    WRITE_TO_MEM_FROM_A 0x23  // Store updated value
+    GOTO DELAY_LOOP           // Loop until done
+
+DECREMENT_MID:
+    READ_FROM_MEM_TO_A 0x22  // Load Next Byte
+    READ_FROM_MEM_TO_B 0x08  // Load zero into Register B before comparison
+    IF_A_EQUALITY_B_GOTO DECREMENT_HIGH   // If zero, move to next byte
+
+    DO_MATHS_OPP_SAVE_IN_A    // A = A - 1
+    WRITE_TO_MEM_FROM_A 0x22  // Store updated value
+
+    // Restore 0x23 (Lowest Byte) to 0xFF using memory location 0x14
+    READ_FROM_MEM_TO_A 0x14   
+    WRITE_TO_MEM_FROM_A 0x23  
+
+    GOTO DELAY_LOOP           // Loop until done
+
+DECREMENT_HIGH:
+    READ_FROM_MEM_TO_A 0x21  // Load Next Byte
+    READ_FROM_MEM_TO_B 0x08  // Load zero into Register B before comparison
+    IF_A_EQUALITY_B_GOTO DECREMENT_HIGHEST  // If zero, move to next byte
+
+    DO_MATHS_OPP_SAVE_IN_A    // A = A - 1
+    WRITE_TO_MEM_FROM_A 0x21  // Store updated value
+
+    // Restore 0x22 and 0x23 to 0xFF using memory location 0x14
+    READ_FROM_MEM_TO_A 0x14  
+    WRITE_TO_MEM_FROM_A 0x22  
+    WRITE_TO_MEM_FROM_A 0x23  
+
+    GOTO DELAY_LOOP           // Loop until done
+
+DECREMENT_HIGHEST:
+    READ_FROM_MEM_TO_A 0x20  // Load Highest Byte
+    READ_FROM_MEM_TO_B 0x08  // Load zero into Register B before comparison
+    IF_A_EQUALITY_B_GOTO END_DELAY  // If zero, exit
+
+    DO_MATHS_OPP_SAVE_IN_A    // A = A - 1
+    WRITE_TO_MEM_FROM_A 0x20  // Store updated value
+
+    // Restore 0x21, 0x22, and 0x23 to 0xFF using memory location 0x14
+    READ_FROM_MEM_TO_A 0x14  
+    WRITE_TO_MEM_FROM_A 0x21  
+    WRITE_TO_MEM_FROM_A 0x22  
+    WRITE_TO_MEM_FROM_A 0x23  
+
+    GOTO DELAY_LOOP           // Loop until done
+
+END_DELAY_Switch Background/foreground:
+   
+READ_FROM_MEM_TO_A 0x06
+READ_FROM_MEM_TO_B 0x07
+WRITE_TO_MEM_FROM_A 0x07
+WRITE_TO_MEM_FROM_B 0x06
+
+READ_FROM_MEM_TO_A 0x10 //reset counter values	
+WRITE_TO_MEM_FROM_A 0x20
+
+READ_FROM_MEM_TO_A 0x11
+WRITE_TO_MEM_FROM_A 0x21
+
+READ_FROM_MEM_TO_A 0x12
+WRITE_TO_MEM_FROM_A 0x22
+
+READ_FROM_MEM_TO_A 0x13
+WRITE_TO_MEM_FROM_A 0x23
+
+    GOTO outerloop
+
+  
