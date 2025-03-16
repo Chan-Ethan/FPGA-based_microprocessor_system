@@ -17,8 +17,6 @@ endfunction
 
 // Main phase: Start the test
 task t1_do_nothing::main_phase(uvm_phase phase);
-    virt_sequence vseq;
-
     super.main_phase(phase);
     `uvm_info("t1_do_nothing", "t1_do_nothing main_phase", UVM_MEDIUM)
 
