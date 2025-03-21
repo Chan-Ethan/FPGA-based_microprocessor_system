@@ -36,7 +36,7 @@
 @26 01 // B <- Mem[0x02]
 @27 02
 @28 96 // Jump to MODE 2 if (A == B)
-@29 40
+@29 50
 // else set MODE = 0 (Display Mouse position)
 @2A 01 // B <- Mem[0x00]
 @2B 00
@@ -60,24 +60,27 @@
 @3B 03
 @3C 02 // LEDs <- A
 @3D C0
-@3E 08 // IDLE
+// Send sw[7:0] to IR
+@3E 02 // IR <- A
+@3F 90
+@40 08 // IDLE
 
 // MODE 2
-@40 02 // Mem[0x20] <- A, Save mode variable 
-@41 20
-@42 00 // A <- Men[0x10]
-@43 10
-@44 01 // B <- Men[0x11]
-@45 11
-@46 02 // Seg7[3:2] <- A
-@47 D0
-@48 03 // Seg7[1:0] <- B
-@49 D1
-@4A 00 // A <- Mem[0x04]
-@4B 04
-@4C 02 // LEDs <- A
-@4D C0
-@4E 08 // IDLE
+@50 02 // Mem[0x20] <- A, Save mode variable 
+@51 20
+@52 00 // A <- Men[0x10]
+@53 10
+@54 01 // B <- Men[0x11]
+@55 11
+@56 02 // Seg7[3:2] <- A
+@57 D0
+@58 03 // Seg7[1:0] <- B
+@59 D1
+@5A 00 // A <- Mem[0x04]
+@5B 04
+@5C 02 // LEDs <- A
+@5D C0
+@5E 08 // IDLE
 
 // ============================================================
 // Timer interrupt handler’s service routine
