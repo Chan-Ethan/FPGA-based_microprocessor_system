@@ -12,8 +12,8 @@ module ROM(
     reg [7:0] rom [2**RAMAddrWidth-1:0];
     
     // Load program
-    // initial $readmemh("../../../program/Read_Mouse.txt", rom);
-    initial $readmemh("../../../program/ROM.txt", rom);
+    initial $readmemh("../../../program/Read_Mouse.txt", rom);
+    // initial $readmemh("../../../program/ROM.txt", rom);
     
     //single port ram
     always@(posedge CLK)

@@ -23,8 +23,8 @@ module RAM(
     reg [7:0] Mem [2**RAMAddrWidth-1:0];
     
     // Initialise the memory for data preloading, initialising variables, and declaring constants
-    // initial $readmemh("../../../program/Complete_Demo_RAM.txt", Mem);
-    initial $readmemh("../../../program/RAM.txt", Mem);
+    initial $readmemh("../../../program/Complete_Demo_RAM.txt", Mem);
+    // initial $readmemh("../../../program/RAM.txt", Mem);
     
     //single port ram
     always@(posedge CLK) begin
