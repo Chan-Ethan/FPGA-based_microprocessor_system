@@ -55,7 +55,9 @@ module top_tb (
 
         .SW                 (sw_if.sw           ),
 
-        .LED                (                   )
+        .LED                (                   ),
+
+        .IR_LED             (                   )
     );
 
     initial begin

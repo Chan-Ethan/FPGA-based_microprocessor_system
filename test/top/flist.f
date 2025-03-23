@@ -31,6 +31,11 @@
 ../../../src/vga/VGA_Sig_Gen.v
 ../../../src/vga/VGA_Bus_Peripheral.v
 
+../../../src/IR/ClockGen.sv
+../../../src/IR/Counter10Hz.sv
+../../../src/IR/IR_TransmitterSM.sv
+../../../src/IR/IRTop.sv
+
 ../../../src/led/led_ctrl.sv
 
 ../../../src/mcu/ALU.v

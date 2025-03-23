@@ -19,7 +19,10 @@ module top(
     output          VGA_VS          ,
 
     // LED output
-    output reg [15:0] LED           
+    output reg [15:0] LED           ,
+
+    // IR LED
+    output reg      IR_LED
 );
 
 logic           clk_sys;    // 100MHz system clock
@@ -202,6 +205,20 @@ VGA_Bus VGA_Bus_inst (
     .VGA_COLOUR     (VGA_COLOUR     ),
     .VGA_HS         (VGA_HS         ),
     .VGA_VS         (VGA_VS         )
+);
+
+// IR transmitter
+IRTop IRTop_inst (
+    .CLK            (clk_sys        ),
+    .RESETN         (rst_n          ),
+    
+    //IO - Data Bus
+    .BUS_DATA       (BUS_DATA       ),
+    .BUS_ADDR       (BUS_ADDR       ),
+    .BUS_WE         (BUS_WE         ),
+    
+    // IR LED
+    .IR_LED         (IR_LED         )
 );
 
 endmodule
