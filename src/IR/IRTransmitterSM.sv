@@ -215,7 +215,8 @@ always_ff @(posedge CLK or negedge RESETN) begin
         IR_LED <= 1'b0;
     end else begin
         // Only output high when ir_out is high AND we're on a CLK_IR pulse
-        IR_LED <= ir_out && CLK_IR;
+        // Using CLK_IR_enable to ensure proper synchronization with the main clock domain
+        IR_LED <= ir_out && CLK_IR_enable;
     end
 end
 
