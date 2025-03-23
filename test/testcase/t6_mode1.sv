@@ -12,7 +12,7 @@ class virt_sequence extends uvm_sequence;
         // send 20 switch transactions
         # 100us;
         repeat (2) begin
-            `uvm_do_on_with(sw_tr, sw_sqr, {
+            `uvm_do_with(sw_tr, {
                 // Configure different switch modes
                 sw_tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
             })
