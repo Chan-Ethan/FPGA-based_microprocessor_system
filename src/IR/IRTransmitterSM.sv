@@ -138,34 +138,40 @@ always_ff @(posedge CLK or negedge RESETN) begin
     else current_state <= next_state;
 end
 
-//================= Pulse Counter and Target Logic =================//
+//================= Pulse Target Logic =================//
+always_ff @(posedge CLK or negedge RESETN) begin
+    if (!RESETN) begin
+        pulse_target <= StartBurstSize;
+    end else if (current_state != next_state) begin
+        // Set new target when transitioning states
+        case (1'b1) // One-hot case for next_state
+            next_state[1]:  pulse_target <= StartBurstSize;     // FSM_START
+            next_state[2]:  pulse_target <= GapSize;            // FSM_GAP1
+            next_state[3]:  pulse_target <= CarSelectBurstSize; // FSM_CARSELECT
+            next_state[4]:  pulse_target <= GapSize;            // FSM_GAP2
+            next_state[5]:  pulse_target <= COMMAND_sync[3] ? AssertBurstSize : DeAssertBurstSize; // FSM_RIGHT
+            next_state[6]:  pulse_target <= GapSize;            // FSM_GAP3
+            next_state[7]:  pulse_target <= COMMAND_sync[2] ? AssertBurstSize : DeAssertBurstSize; // FSM_LEFT
+            next_state[8]:  pulse_target <= GapSize;            // FSM_GAP4
+            next_state[9]:  pulse_target <= COMMAND_sync[1] ? AssertBurstSize : DeAssertBurstSize; // FSM_BACKWARD
+            next_state[10]: pulse_target <= GapSize;            // FSM_GAP5
+            next_state[11]: pulse_target <= COMMAND_sync[0] ? AssertBurstSize : DeAssertBurstSize; // FSM_FORWARD
+            next_state[12]: pulse_target <= GapSize;            // FSM_GAP6
+            default:        pulse_target <= 8'd0;               // FSM_IDLE or invalid
+        endcase
+    end
+end
+
+//================= Pulse Counter Logic =================//
 always_ff @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         pulse_count <= 8'd0;
-        pulse_target <= StartBurstSize;
-    end else if (CLK_IR_posedge) begin // Only update on CLK_IR positive edges
-        if (current_state != next_state) begin
-            // Reset counter and set new target when transitioning states
-            pulse_count <= 8'd0;
-            case (1'b1) // One-hot case for next_state
-                next_state[1]:  pulse_target <= StartBurstSize;     // FSM_START
-                next_state[2]:  pulse_target <= GapSize;            // FSM_GAP1
-                next_state[3]:  pulse_target <= CarSelectBurstSize; // FSM_CARSELECT
-                next_state[4]:  pulse_target <= GapSize;            // FSM_GAP2
-                next_state[5]:  pulse_target <= COMMAND_sync[3] ? AssertBurstSize : DeAssertBurstSize; // FSM_RIGHT
-                next_state[6]:  pulse_target <= GapSize;            // FSM_GAP3
-                next_state[7]:  pulse_target <= COMMAND_sync[2] ? AssertBurstSize : DeAssertBurstSize; // FSM_LEFT
-                next_state[8]:  pulse_target <= GapSize;            // FSM_GAP4
-                next_state[9]:  pulse_target <= COMMAND_sync[1] ? AssertBurstSize : DeAssertBurstSize; // FSM_BACKWARD
-                next_state[10]: pulse_target <= GapSize;            // FSM_GAP5
-                next_state[11]: pulse_target <= COMMAND_sync[0] ? AssertBurstSize : DeAssertBurstSize; // FSM_FORWARD
-                next_state[12]: pulse_target <= GapSize;            // FSM_GAP6
-                default:        pulse_target <= 8'd0;               // FSM_IDLE or invalid
-            endcase
-        end else if (current_state != FSM_IDLE) begin
-            // Increment pulse counter while in active states
-            pulse_count <= pulse_count + 8'd1;
-        end
+    end else if (current_state != next_state) begin
+        // Reset counter when transitioning states
+        pulse_count <= 8'd0;
+    end else if (CLK_IR_posedge && (current_state != FSM_IDLE)) begin
+        // Increment pulse counter while in active states
+        pulse_count <= pulse_count + 8'd1;
     end
 end
 
