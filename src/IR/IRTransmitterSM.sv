@@ -107,44 +107,44 @@ always_comb begin
             if (CLK_IR_posedge && SEND_PACKET_latched) next_state = FSM_START;
         end
         current_state[1]: begin // FSM_START
-            if (pulse_count == StartBurstSize) next_state = FSM_GAP1;
+            if (pulse_count >= StartBurstSize-1 && CLK_IR_posedge) next_state = FSM_GAP1;
         end
         current_state[2]: begin // FSM_GAP1
-            if (pulse_count == GapSize) next_state = FSM_CARSELECT;
+            if (pulse_count >= GapSize-1 && CLK_IR_posedge) next_state = FSM_CARSELECT;
         end
         current_state[3]: begin // FSM_CARSELECT
-            if (pulse_count == CarSelectBurstSize) next_state = FSM_GAP2;
+            if (pulse_count >= CarSelectBurstSize-1 && CLK_IR_posedge) next_state = FSM_GAP2;
         end
         current_state[4]: begin // FSM_GAP2
-            if (pulse_count == GapSize) next_state = FSM_RIGHT;
+            if (pulse_count >= GapSize-1 && CLK_IR_posedge) next_state = FSM_RIGHT;
         end
         current_state[5]: begin // FSM_RIGHT
-            if (pulse_count == (COMMAND_sync[3] ? AssertBurstSize : DeAssertBurstSize))
+            if (pulse_count >= (COMMAND_sync[3] ? AssertBurstSize-1 : DeAssertBurstSize-1) && CLK_IR_posedge)
                 next_state = FSM_GAP3;
         end
         current_state[6]: begin // FSM_GAP3
-            if (pulse_count == GapSize) next_state = FSM_LEFT;
+            if (pulse_count >= GapSize-1 && CLK_IR_posedge) next_state = FSM_LEFT;
         end
         current_state[7]: begin // FSM_LEFT
-            if (pulse_count == (COMMAND_sync[2] ? AssertBurstSize : DeAssertBurstSize))
+            if (pulse_count >= (COMMAND_sync[2] ? AssertBurstSize-1 : DeAssertBurstSize-1) && CLK_IR_posedge)
                 next_state = FSM_GAP4;
         end
         current_state[8]: begin // FSM_GAP4
-            if (pulse_count == GapSize) next_state = FSM_BACKWARD;
+            if (pulse_count >= GapSize-1 && CLK_IR_posedge) next_state = FSM_BACKWARD;
         end
         current_state[9]: begin // FSM_BACKWARD
-            if (pulse_count == (COMMAND_sync[1] ? AssertBurstSize : DeAssertBurstSize))
+            if (pulse_count >= (COMMAND_sync[1] ? AssertBurstSize-1 : DeAssertBurstSize-1) && CLK_IR_posedge)
                 next_state = FSM_GAP5;
         end
         current_state[10]: begin // FSM_GAP5
-            if (pulse_count == GapSize) next_state = FSM_FORWARD;
+            if (pulse_count >= GapSize-1 && CLK_IR_posedge) next_state = FSM_FORWARD;
         end
         current_state[11]: begin // FSM_FORWARD
-            if (pulse_count == (COMMAND_sync[0] ? AssertBurstSize : DeAssertBurstSize))
+            if (pulse_count >= (COMMAND_sync[0] ? AssertBurstSize-1 : DeAssertBurstSize-1) && CLK_IR_posedge)
                 next_state = FSM_GAP6;
         end
         current_state[12]: begin // FSM_GAP6
-            if (pulse_count == GapSize) next_state = FSM_IDLE;
+            if (pulse_count >= GapSize-1 && CLK_IR_posedge) next_state = FSM_IDLE;
         end
         default: next_state = FSM_IDLE; // Fallback to Idle on invalid state
     endcase
@@ -203,8 +203,9 @@ always_ff @(posedge CLK or negedge RESETN) begin
             current_state[6] || current_state[8] || current_state[10] || current_state[12]) begin
             ir_out <= 1'b0; // LED off in IDLE and all GAP states
         end else begin
-            // Generate pulse when count is below target for non-GAP states
-            ir_out <= (pulse_count < pulse_target);
+            // Generate pulse when count is strictly less than target for non-GAP states
+            // This ensures clean transition at state boundaries
+            ir_out <= (pulse_count < pulse_target - 1);
         end
     end
 end
