@@ -8,4 +8,4 @@ do
     echo ${file/.sv/} >> test_list
 done
 
-echo 'finish'
+echo 'test_list generation completed'

@@ -1,5 +1,7 @@
+t0_do_nothing
 t1_mouse_smoke
 t2_no_ack
 t3_switch_smoke
 t4_change_mode
 t5_mouse_sw
+t6_mode1
