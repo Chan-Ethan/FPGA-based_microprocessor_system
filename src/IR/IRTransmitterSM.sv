@@ -38,6 +38,7 @@ logic           CLK_IR;             // 36 kHz clock for IR modulation
 logic           CLK_IR_enable;      // CLK_IR signal synchronized to main clock domain
 logic           CLK_IR_prev;        // Previous CLK_IR value for edge detection
 logic           CLK_IR_posedge;     // Positive edge of CLK_IR detected in main clock domain
+logic           CLK_IR_negedge;     // Negative edge of CLK_IR detected in main clock domain
 
 logic [12:0]    current_state;      // Current FSM state (one-hot)
 logic [12:0]    next_state;         // Next FSM state (one-hot)
@@ -68,10 +69,12 @@ always_ff @(posedge CLK or negedge RESETN) begin
         CLK_IR_enable <= 1'b0;
         CLK_IR_prev <= 1'b0;
         CLK_IR_posedge <= 1'b0;
+        CLK_IR_negedge <= 1'b0;
     end else begin
         CLK_IR_prev <= CLK_IR_enable;
         CLK_IR_enable <= CLK_IR;
         CLK_IR_posedge <= CLK_IR_enable && !CLK_IR_prev;
+        CLK_IR_negedge <= !CLK_IR_enable && CLK_IR_prev;
     end
 end
 
@@ -197,17 +200,16 @@ end
 always_ff @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         ir_out <= 1'b0;
-    end else begin
-        // GAP state detection logic
-        if (current_state == FSM_IDLE || current_state[2] || current_state[4] || 
-            current_state[6] || current_state[8] || current_state[10] || current_state[12]) begin
-            ir_out <= 1'b0; // LED off in IDLE and all GAP states
-        end else begin
-            // Generate pulse when count is strictly less than target for non-GAP states
-            // This ensures clean transition at state boundaries
-            ir_out <= (pulse_count < pulse_target - 1);
-        end
+    end else if (CLK_IR_negedge) begin
+        ir_out <= 1'b0;
     end
+    else if (current_state == FSM_IDLE || current_state[2] || current_state[4] || 
+             current_state[6] || current_state[8] || current_state[10] || current_state[12]) begin
+        ir_out <= 1'b0; // LED off in IDLE and all GAP states
+    end else if (CLK_IR_posedge) begin
+        ir_out <= 1'b1;
+    end
+    else;
 end
 
 // Modulate the output with the IR carrier frequency
