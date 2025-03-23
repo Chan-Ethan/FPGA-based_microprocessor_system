@@ -13,7 +13,7 @@ function print_help() {
     echo '    -e|E : run all error testcases listed by ./run/problem_list,'
     echo '           default: run all testcases listed by ./run/test_list'
     echo '    -h|H : print help infomation'
-    echo '    -i|I : initial: clean all testcase folder and regresion result folder'
+    echo '    -i|I : initial: clean all testcase folder and regresion result folder, generate testlist'
     echo '    -l|L : print test list'
     echo '    -t|T : set thread_number for running testcases, run thread_num testcases at the same time'
     echo '           default: thread_num = 10'
@@ -79,6 +79,9 @@ do
         h|H)    print_help
                 exit;;
         i|I)    clean_tmp_file
+                cd run
+                ./gen_test_list
+                cd ..
                 exit;;
         l|L)    print_list=1;;
         t|T)    thread_num=$OPTARG;;

@@ -23,7 +23,7 @@ task t0_do_nothing::main_phase(uvm_phase phase);
     phase.raise_objection(this);
 
     // do nothing, just wait for 20 ms
-    #20ms;
+    #30ms;
 
     phase.drop_objection(this);
 endtask
