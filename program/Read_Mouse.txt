@@ -61,7 +61,7 @@
 @3C 02 // LEDs <- A
 @3D C0
 // Send sw[7:0] to IR
-@3E 02 // IR <- A
+@3E 03 // IR <- B
 @3F 90
 @40 08 // IDLE
 

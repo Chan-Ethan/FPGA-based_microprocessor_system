@@ -117,7 +117,8 @@ task my_model::main_phase(uvm_phase phase);
                 bus_op(8'hD0, 8'h00, 1'b1); // Write 0x00 to Seg7[3:2]
                 bus_op(8'hD1, sw_tr.slide_switch[7:0], 1'b1); // Write sw[7:0] to Seg7[1:0]
                 bus_op(8'h03, 8'hF0, 1'b0); // Read 0x03 from memory to A
-                bus_op(8'hC0, 8'hF0, 1'b1); // write 0xF0 to LEDs
+                bus_op(8'hC0, 8'hF0, 1'b1); // write 0xF0 to LEDs+
+                bus_op(8'h90, sw_tr.slide_switch[7:0], 1'b1); // Write sw[7:0] to IR transmitter
             end
             else begin
                 bus_op(8'h02, 8'h40, 1'b0); // Read Men[0x02] to B
