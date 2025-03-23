@@ -14,7 +14,7 @@ class virt_sequence extends uvm_sequence;
         repeat (2) begin
             `uvm_do_with(tr, {
                 // Configure different switch modes
-                sw_tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
+                tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
             })
             # 22ms;
         end
