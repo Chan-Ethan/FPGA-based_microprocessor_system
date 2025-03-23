@@ -46,6 +46,7 @@ logic [7:0]     pulse_count;        // Counter for pulses in current burst
 logic [7:0]     pulse_target;       // Target number of pulses for current state
 
 logic           SEND_PACKET_sync;   // Synchronized SEND_PACKET signal
+logic           SEND_PACKET_latched; // Latched SEND_PACKET signal
 logic [3:0]     COMMAND_sync;       // Synchronized COMMAND signal
 
 logic           ir_out;             // IR output signal (pre-modulation)
@@ -61,23 +62,39 @@ ClockGen #(
 
 //================= Synchronize cross-clock domain signals =================//
 // Double-flop synchronizer for CLK_IR to main clock domain
+// Clock domain synchronization logic
 always_ff @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         CLK_IR_enable <= 1'b0;
         CLK_IR_prev <= 1'b0;
         CLK_IR_posedge <= 1'b0;
+    end else begin
+        CLK_IR_prev <= CLK_IR_enable;
+        CLK_IR_enable <= CLK_IR;
+        CLK_IR_posedge <= CLK_IR_enable && !CLK_IR_prev;
+    end
+end
+
+// Input signal synchronization
+always_ff @(posedge CLK or negedge RESETN) begin
+    if (!RESETN) begin
         SEND_PACKET_sync <= 1'b0;
         COMMAND_sync <= 4'b0000;
     end else begin
-        // Synchronize CLK_IR to main clock domain
-        CLK_IR_prev <= CLK_IR_enable;
-        CLK_IR_enable <= CLK_IR;
-        // Detect positive edge of CLK_IR in main clock domain
-        CLK_IR_posedge <= CLK_IR_enable && !CLK_IR_prev;
-        
-        // Synchronize input signals
         SEND_PACKET_sync <= SEND_PACKET;
         COMMAND_sync <= COMMAND;
+    end
+end
+
+// SEND_PACKET latching logic
+always_ff @(posedge CLK or negedge RESETN) begin
+    if (!RESETN) begin
+        SEND_PACKET_latched <= 1'b0;
+    end else begin
+        if (SEND_PACKET_sync)
+            SEND_PACKET_latched <= 1'b1;
+        else if (current_state == FSM_START)
+            SEND_PACKET_latched <= 1'b0;
     end
 end
 
@@ -86,7 +103,8 @@ always_comb begin
     next_state = current_state; // Default: stay in current state
     case (1'b1) // One-hot case statement: check which bit is set
         current_state[0]: begin // FSM_IDLE
-            if (SEND_PACKET_sync) next_state = FSM_START;
+            // Only transition on CLK_IR_posedge and when SEND_PACKET has been latched
+            if (CLK_IR_posedge && SEND_PACKET_latched) next_state = FSM_START;
         end
         current_state[1]: begin // FSM_START
             if (pulse_count == StartBurstSize) next_state = FSM_GAP1;
