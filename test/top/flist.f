@@ -33,7 +33,7 @@
 
 ../../../src/IR/ClockGen.sv
 ../../../src/IR/Counter10Hz.sv
-../../../src/IR/IR_TransmitterSM.sv
+../../../src/IR/IRTransmitterSM.sv
 ../../../src/IR/IRTop.sv
 
 ../../../src/led/led_ctrl.sv
