@@ -200,16 +200,14 @@ end
 always_ff @(posedge CLK or negedge RESETN) begin
     if (!RESETN) begin
         ir_out <= 1'b0;
+    end else if (next_state == FSM_IDLE || next_state[2] || next_state[4] || 
+                 next_state[6] || next_state[8] || next_state[10] || next_state[12]) begin
+        ir_out <= 1'b0;
     end else if (CLK_IR_negedge) begin
         ir_out <= 1'b0;
-    end
-    else if (current_state == FSM_IDLE || current_state[2] || current_state[4] || 
-             current_state[6] || current_state[8] || current_state[10] || current_state[12]) begin
-        ir_out <= 1'b0; // LED off in IDLE and all GAP states
     end else if (CLK_IR_posedge) begin
         ir_out <= 1'b1;
-    end
-    else;
+    end else;
 end
 
 // Modulate the output with the IR carrier frequency
