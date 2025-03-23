@@ -10,13 +10,13 @@ class virt_sequence extends uvm_sequence;
 
     virtual task body();
         // send 20 switch transactions
-        # 100us;
+        # 15ms;
         repeat (2) begin
             `uvm_do_with(tr, {
                 // Configure different switch modes
                 tr.slide_switch[15:8] inside {8'h80, 8'h40, 8'h00};
             })
-            # 22ms;
+            # 20ms;
         end
     endtask
 endclass
