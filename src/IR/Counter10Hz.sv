@@ -6,9 +6,9 @@ module Counter10Hz(
 );
 
 `ifdef SIMULATION
-    localparam [23:0] CNT_NUM = 24'd499999; // 2,000,000 cycles to get 50Hz from 100MHz
+    localparam [23:0] CNT_NUM = 24'd1_999_999; // 2,000,000 cycles to get 50Hz from 100MHz
 `else
-    localparam [23:0] CNT_NUM = 24'd4999999; // 10,000,000 cycles to get 10Hz from 100MHz
+    localparam [23:0] CNT_NUM = 24'd9_999_999; // 10,000,000 cycles to get 10Hz from 100MHz
 `endif
 
 // Internal signals
