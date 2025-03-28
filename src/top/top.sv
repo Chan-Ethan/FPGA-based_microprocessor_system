@@ -21,7 +21,7 @@ module top(
     // LED output
     output reg [15:0] LED           ,
 
-    // IR LED
+    // IR LED, connected to JB4
     output reg      IR_LED
 );
 

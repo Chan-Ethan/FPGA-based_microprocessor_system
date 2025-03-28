@@ -88,3 +88,7 @@ set_property PACKAGE_PIN P19 [get_ports VGA_HS]
 set_property PACKAGE_PIN R19 [get_ports VGA_VS]
 set_property IOSTANDARD LVCMOS33 [get_ports VGA_HS]
 set_property IOSTANDARD LVCMOS33 [get_ports VGA_VS]
+
+## IR LED Constraints
+set_property PACKAGE_PIN B16 [get_ports IR_LED]
+set_property IOSTANDARD LVCMOS33 [get_ports IR_LED]

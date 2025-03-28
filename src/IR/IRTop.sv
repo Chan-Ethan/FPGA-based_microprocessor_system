@@ -10,7 +10,7 @@ module IRTop(
     input   [7:0]   BUS_ADDR,
     input           BUS_WE,
 
-    // IR LED
+    // IR LED, connected to JB4
     output          IR_LED
 );
 
