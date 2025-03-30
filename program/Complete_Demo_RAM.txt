@@ -3,13 +3,5 @@
 @02 40 // constant for MODE 2
 @03 F0 // MODE 1 LED display content
 @04 0F // MODE 2 LED display content
-@05
-@06 
-@07 
-@08 
-@09 
-@0A
-@10 01
-@11 23
 
 @20 00 // save MODE: 0x00 - display mouse position; 0x80 - display sw[7:0]; 0x40 - display 0~9
