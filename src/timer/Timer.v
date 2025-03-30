@@ -11,9 +11,9 @@ module Timer(
     );
     
     `ifdef SIMULATION
-        parameter [31:0] DownCountNum = 32'd499; // 500 cycles to get 10us
+        parameter [31:0] DownCountNum = 32'd166_666; // 166667 cycles to get 600 Hz
     `else
-        parameter [31:0] DownCountNum = 32'd49999; // 50,000 cycles to get 1ms
+        parameter [31:0] DownCountNum = 32'd1_666_666; // 1666667 cycles to get 60 Hz
     `endif
 
     parameter [7:0] TimerBaseAddr = 8'hF0; // Timer Base Address in the Memory Map

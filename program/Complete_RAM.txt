@@ -1,3 +1,4 @@
+// VGA Display
 @00 7F //(0x00)--------ylimit 127
 @01 FF //(0x01)-------->xlimit 255
 @02 00 //(0x02)-------->x
@@ -17,6 +18,18 @@
 @20 78 //120(0x20)
 @21 A0 //160(0x21)
 
-@30 00 // save MODE: 0x00 - display mouse position; 0x80 - display sw[7:0]; 0x40 - display 0~9
-@31 80 // constant for MODE 1
-@32 F0 // MODE 1 LED display content
+// Mouse Pointer
+@30 00 // Previous X position
+@31 00 // Previous Y position
+
+// Car Control
+// 0 0 0 0 R L B F
+@40 05 // Left & Forward
+@41 01 // Forward
+@42 09 // Right & Forward
+@43 04 // Left
+@44 00 // IDLE
+@45 08 // Right
+@46 06 // Left & Backward
+@47 02 // Backward
+@48 0A // Right & Backward
