@@ -11,13 +11,13 @@ module Timer(
     );
     
     `ifdef SIMULATION
-        parameter [31:0] DownCountNum = 32'd166_666; // 166667 cycles to get 600 Hz
+        parameter [31:0] DownCountNum = 32'd9_999; // 10_000 cycles to get 100 us
     `else
-        parameter [31:0] DownCountNum = 32'd1_666_666; // 1666667 cycles to get 60 Hz
+        parameter [31:0] DownCountNum = 32'd99_999; // 100,000 cycles to get 1 ms
     `endif
 
     parameter [7:0] TimerBaseAddr = 8'hF0; // Timer Base Address in the Memory Map
-    parameter InitialIterruptRate = 100; // Default interrupt rate leading to 1 interrupt every 100 ms
+    parameter InitialIterruptRate = 17; // Default interrupt rate leading to 1 interrupt every 17 ms
     parameter InitialIterruptEnable = 1'b1; // By default the Interrupt is Enabled
     
     //////////////////////
