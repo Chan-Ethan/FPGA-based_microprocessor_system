@@ -13,7 +13,7 @@ module ROM(
     
     // Load program
     // initial $readmemh("../../../program/Read_Mouse.txt", rom);
-    initial $readmemh("../../../program/Complete_ROM.txt", rom);
+    initial $readmemh("../../../program/Complete_ROM2.txt", rom);
     
     //single port ram
     always@(posedge CLK)

@@ -33,3 +33,14 @@
 @46 06 // Left & Backward
 @47 02 // Backward
 @48 0A // Right & Backward
+
+// Display on Seg7
+@50 CF // Left & Forward
+@51 0F // Forward
+@52 AF // Right & Forward
+@53 C0 // Left
+@54 01 // IDLE
+@55 A0 // Right
+@56 CB // Left & Backward
+@57 0B // Backward
+@58 AB // Right & Backward
