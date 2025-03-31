@@ -34,6 +34,8 @@ module VGA_Bus(
     reg [7:0] STATE;  // Current state register
     wire DPR_CLK;  // VGA clock (25MHz)
 
+    reg [6:0] Y_REG_INV; // Y_REG_INV = 120 - Y_REG
+
     // Instantiate Frame Buffer (Stores pixel data)
     Frame_Buffer FrameBuffer (
         .A_CLK(CLK), 
@@ -56,6 +58,15 @@ module VGA_Bus(
         .VGA_VS(VGA_VS), 
         .VGA_COLOUR(VGA_COLOUR)
     );
+
+    // Invert Y-coordinate
+    always @(posedge CLK) begin
+        if (RESET) begin
+            Y_REG_INV <= 7'd0;
+        end else begin
+            Y_REG_INV <= 7'd120 - Y_REG;
+        end
+    end
 
     // State Machine Logic
     always @(posedge CLK) begin
@@ -86,7 +97,7 @@ module VGA_Bus(
                 // Step 3: Detect Pixel and Write
                 WAIT_FOR_PIXEL: begin
                     if (ADDR == 8'hB2) begin
-                        BUFFER_ADDR <= {Y_REG[6:0], X_REG}; // Compute Frame Buffer Address
+                        BUFFER_ADDR <= {Y_REG_INV, X_REG}; // Compute Frame Buffer Address
                         BUFFER_DATA <= DATA;   // Store Pixel Data
                         BUFFER_WE   <= 1'b1;   // Enable Write
                         STATE       <= WAIT_FOR_X; // Go back to waiting for X
