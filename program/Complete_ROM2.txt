@@ -360,5 +360,5 @@
 // interrupt handler’s service routine
 // ============================================================
 @FD F0 // Switches interrupt address, reserved
-@FE C0 // Timer interrupt address
+@FE C6 // Timer interrupt address
 @FF 65 // Mouse interrupt address
