@@ -46,18 +46,71 @@ task my_model::main_phase(uvm_phase phase);
     ps2_transaction mouse_tr;
     sw_transaction sw_tr;
     bit [7:0] mode;
+    bit [7:0] X, Y;
+    bit [7:0] X1 = 8'h3F;
+    bit [7:0] X2 = 8'h7B;
+    bit [7:0] Y1 = 8'h28;
+    bit [7:0] Y2 = 8'h50;
 
     super.main_phase(phase);
 
-    // Processor’s init (read Mouse data)
-    bus_op(8'h00, 8'h00, 1'b0); // Read 00 from memory to A
-    bus_op(8'h20, 8'h00, 1'b0); // Read 20 from memory to B
-    bus_op(8'hA0, 8'h00, 1'b0); // Read mouse status from memory to A
-    bus_op(8'hC0, 8'h00, 1'b1); // write mouse status to LEDs
-    bus_op(8'hA1, 8'h00, 1'b0); // Read mouse X position
-    bus_op(8'hA2, 8'h00, 1'b0); // Read mouse Y position
-    bus_op(8'hD0, 8'h00, 1'b1); // Write mouse X position to Seg7[3:2]
-    bus_op(8'hD1, 8'h00, 1'b1); // Write mouse Y position to Seg7[1:0]
+    // Screen Init
+    // Outer_Loop_X50: Draw vertical line at X=50
+    X = X1;
+    for (Y = 0; Y < 120; Y++) begin
+        bus_op(8'h03, Y, 1'b0); // Read Y=0 from memory address 0x03 to A
+        bus_op(8'h10, X, 1'b0); // Read X=50 (assumed at 0x10, 50 = 0x32) from memory to B
+        bus_op(8'hB0, X, 1'b1); // Write X=50 to VGA_X (address 0xB0)
+        bus_op(8'hB1, Y, 1'b1); // Write Y=0 to VGA_Y (address 0xB1)
+        bus_op(8'h06, 8'h01, 1'b0); // Read foreground color (assumed 1) from memory address 0x06 to A
+        bus_op(8'hB2, 8'h01, 1'b1); // Write foreground color to VGA_COLOR (address 0xB2)
+        bus_op(8'h03, Y, 1'b0); // Read Y=0 from memory address 0x03 to A
+        bus_op(8'h03, Y+1, 1'b1); // Write Y = Y + 1
+    end
+    // Loop logic for Y increment handled in hardware, only initial bus ops shown
+
+    // Reset Y and start Outer_Loop_X110: Draw vertical line at X=110
+    bus_op(8'h08, 8'h00, 1'b0); // Read 0 from memory address 0x08 to A
+    bus_op(8'h03, 8'h00, 1'b1); // Write 0 to memory address 0x03 (reset Y)
+    X = X2;
+    for (Y = 0; Y < 120; Y++) begin
+        bus_op(8'h03, Y, 1'b0); // Read Y=0 from memory address 0x03 to A
+        bus_op(8'h11, X, 1'b0); // Read X=110 (assumed at 0x11, 110 = 0x6E) from memory to B
+        bus_op(8'hB0, X, 1'b1); // Write X=110 to VGA_X (address 0xB0)
+        bus_op(8'hB1, Y, 1'b1); // Write Y=0 to VGA_Y (address 0xB1)
+        bus_op(8'h06, 8'h01, 1'b0); // Read foreground color from memory address 0x06 to A
+        bus_op(8'hB2, 8'h01, 1'b1); // Write foreground color to VGA_COLOR (address 0xB2)
+        bus_op(8'h03, Y, 1'b0); // Read Y=0 from memory address 0x03 to A
+        bus_op(8'h03, Y+1, 1'b1); // Write Y = Y + 1
+    end
+
+    // Loop_Y40: Draw horizontal line at Y=40
+    Y = Y1;
+    for (X = 0; X < 160; X++) begin
+        bus_op(8'h02, X, 1'b0); // Read X=0 from memory address 0x02 to A
+        bus_op(8'h12, Y, 1'b0); // Read Y=40 (assumed at 0x12, 40 = 0x28) from memory to B
+        bus_op(8'hB1, Y, 1'b1); // Write Y=40 to VGA_Y (address 0xB1)
+        bus_op(8'hB0, X, 1'b1); // Write X=0 to VGA_X (address 0xB0)
+        bus_op(8'h06, 8'h01, 1'b0); // Read foreground color from memory address 0x06 to A
+        bus_op(8'hB2, 8'h01, 1'b1); // Write foreground color to VGA_COLOR (address 0xB2)
+        bus_op(8'h02, X, 1'b0); // Read X=0 from memory address 0x02 to A
+        bus_op(8'h02, X+1, 1'b1); // Write X = X + 1
+    end
+
+    // Reset X and start Outer_Loop_Y80: Draw horizontal line at Y=80
+    bus_op(8'h08, 8'h00, 1'b0); // Read 0 from memory address 0x08 to A
+    bus_op(8'h02, 8'h00, 1'b1); // Write 0 to memory address 0x02 (reset X)
+    Y = Y2; 
+    for (X = 0; X < 160; X++) begin
+        bus_op(8'h02, X, 1'b0); // Read X=0 from memory address 0x02 to A
+        bus_op(8'h13, Y, 1'b0); // Read Y=80 (assumed at 0x13, 80 = 0x50) from memory to B
+        bus_op(8'hB1, Y, 1'b1); // Write Y=80 to VGA_Y (address 0xB1)
+        bus_op(8'hB0, X, 1'b1); // Write X=0 to VGA_X (address 0xB0)
+        bus_op(8'h06, 8'h01, 1'b0); // Read foreground color from memory address 0x06 to A
+        bus_op(8'hB2, 8'h01, 1'b1); // Write foreground color to VGA_COLOR (address 0xB2)
+        bus_op(8'h02, X, 1'b0); // Read X=0 from memory address 0x02 to A
+        bus_op(8'h02, X+1, 1'b1); // Write X = X + 1
+    end
 
     fork
         while (1) begin
