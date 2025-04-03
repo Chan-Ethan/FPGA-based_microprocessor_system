@@ -67,7 +67,25 @@ always @(posedge DPR_CLK) begin
 end
 
 // generate pixel address for the frame buffer
-assign VGA_ADDR = {v_count[8:2], h_count[9:2]}; // Combine vertical and horizontal counts and shift 2 bits to represent 4x4 pixel with 1 address
+wire [9:0] h_disp_offset = h_count - HDisplayRegionStart;
+wire [8:0] v_disp_offset = v_count - VDisplayRegionStart;
+
+reg [14:0] addr_reg;
+assign VGA_ADDR = addr_reg;
+
+always @(posedge DPR_CLK) begin
+    if ((h_count >= HDisplayRegionStart && h_count < HDisplayRegionEnd) &&
+        (v_count >= VDisplayRegionStart && v_count < VDisplayRegionEnd)) begin
+
+        // Ensure offset doesn't exceed bounds
+        addr_reg <= {v_disp_offset[8:2], h_disp_offset[9:2]};
+    end else begin
+        // Assign safe value when outside display region
+        addr_reg <= 15'd0; // or 15'h7FFF if you'd prefer a "black pixel" address
+    end
+end
+
+
 assign H_Counter1=h_count[9:0]; //for simulation purposes(COMMENT IT OUT WHILE IMPLEMENTING ON FPGA)///////////////////////////////////
 assign V_Counter1=v_count[9:0]; //for simulation purposes(COMMENT IT OUT WHILE IMPLEMENTING ON FPGA)/////////////////////////////////
 

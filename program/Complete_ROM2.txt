@@ -1,6 +1,50 @@
 // ============================================================
 // Screen Init
 // ============================================================ 
+// Y = 0
+// do {
+// X = 50
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// Y = Y + 1
+// } while (Y != 120)
+
+// Y = 0  // Reset Y
+
+// do {
+// X = 110
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// Y = Y + 1
+// } while (Y != 120)
+
+// X = 0
+// do {
+// Y = 40
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// X = X + 1
+// } while (X != 160)
+
+// X = 0  // Reset X
+
+// do {
+// Y = 80
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// X = X + 1
+// } while (X != 160)
+
+// Go idle and wait for interrupts
+
 // Outer_Loop_X50:
 @00 00 //READ_FROM_MEM_TO_A 0x03 Load Y value from RAM (starting at 0)
 @01 03 
@@ -122,8 +166,8 @@
 // Control Car according to Mouse position, pseudocode
 // if X <= X1: (Branch 1)
 //      if Y <= Y1: (Branch 2)
-//          Reg[A] = Mem[40] // Move Forward and Left
-//          Reg[B] = Mem[50]
+//          Reg[A] = Mem[40] // Move Forward and Left (car)
+//          Reg[B] = Mem[50] // Seven segment
 //      else if Y <= Y2: (Branch 3)
 //          Reg[A] = Mem[43] // Move Left
 //          Reg[B] = Mem[53]
@@ -268,7 +312,7 @@
 @BF 01 // B <- Mem[0x52]
 @C0 52
 // Write IR (and seg7)
-@C1 02 // IR <- B
+@C1 02 // IR <- A
 @C2 90
 @C3 03 // Seg7[1:0] <- B
 @C4 D1
