@@ -17,8 +17,8 @@ module MousePosCal(
     output  reg [7:0]   MOUSE_POS_Y
 );
 
-`define MOUSE_X_MAX 8'd160
-`define MOUSE_Y_MAX 8'd120
+`define MOUSE_X_MAX 8'd159
+`define MOUSE_Y_MAX 8'd119
 
 logic   [7:0]   next_pos_x, next_pos_y;
 logic           interrupt_1dly; // 1 cycle delay of INTERRUPT
