@@ -107,10 +107,10 @@
 @33 02 
 @34 01 //READ_FROM_MEM_TO_B 0x12  // Load Y = 40 from RAM
 @35 12
-@36 03 //WRITE_TO_MEM_FROM_B 0xB1 // Send Y = 40 to VGA bus
-@37 B1
-@38 02 //WRITE_TO_MEM_FROM_A 0xB0 // Send X to VGA bus
-@39 B0
+@36 02 //WRITE_TO_MEM_FROM_A 0xB0 // Send X to VGA bus
+@37 B0
+@38 03 //WRITE_TO_MEM_FROM_B 0xB1 // Send Y = 40 to VGA bus
+@39 B1 
 @3A 00 //READ_FROM_MEM_TO_A 0x06  // Load the foreground color
 @3B 06
 @3C 02 //WRITE_TO_MEM_FROM_A 0xB2 // Send color data to VGA bus
@@ -138,10 +138,10 @@
 @4E 02 
 @4F 01 // READ_FROM_MEM_TO_B 0x13  // Load Y = 80 from RAM
 @50 13
-@51 03 // WRITE_TO_MEM_FROM_B 0xB1 // Send Y = 80 to VGA bus
-@52 B1
-@53 02 // WRITE_TO_MEM_FROM_A 0xB0 // Send X to VGA bus
-@54 B0
+@51 02 // WRITE_TO_MEM_FROM_A 0xB0 // Send X to VGA bus
+@52 B0
+@53 03 // WRITE_TO_MEM_FROM_B 0xB1 // Send Y = 80 to VGA bus
+@54 B1 
 @55 00 // READ_FROM_MEM_TO_A 0x06  // Load the foreground color
 @56 06
 @57 02 // WRITE_TO_MEM_FROM_A 0xB2 // Send color data to VGA bus
