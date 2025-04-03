@@ -1,6 +1,50 @@
 // ============================================================
 // Screen Init
 // ============================================================ 
+// Y = 0
+// do {
+// X = 50
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// Y = Y + 1
+// } while (Y != 120)
+
+// Y = 0  // Reset Y
+
+// do {
+// X = 110
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// Y = Y + 1
+// } while (Y != 120)
+
+// X = 0
+// do {
+// Y = 40
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// X = X + 1
+// } while (X != 160)
+
+// X = 0  // Reset X
+
+// do {
+// Y = 80
+// VGA_X = X
+// VGA_Y = Y
+// VGA_COLOR = foreground_color (0x06)
+
+// X = X + 1
+// } while (X != 160)
+
+// Go idle and wait for interrupts
+
 // Outer_Loop_X50:
 @00 00 //READ_FROM_MEM_TO_A 0x03 Load Y value from RAM (starting at 0)
 @01 03 
@@ -119,113 +163,121 @@
 // ============================================================
 // Mouse interrupt handler’s service routine
 // ============================================================
-// Read Mouse data display it on Seven Segment Display, and Control Car via IR transmitter
-@65 00 // A <- mouse status
-@66 A0
-@67 02 // LEDs <- A
-@68 C0
-@69 00 // A <- mouse X position
-@6A A1
-@6B 01 // B <- mouse Y position
-@6C A2
-@6D 02 // Seg7[3:2] <- A
-@6E D0
-@6F 03 // Seg7[1:0] <- B
-@70 D1
-// ============================================================
 // Control Car according to Mouse position, pseudocode
 // if X <= X1: (Branch 1)
 //      if Y <= Y1: (Branch 2)
-//          Reg[A] = Mem[40] // Move Forward and Left
+//          Reg[A] = Mem[40] // Move Forward and Left (car)
+//          Reg[B] = Mem[50] // Seven segment
 //      else if Y <= Y2: (Branch 3)
 //          Reg[A] = Mem[43] // Move Left
+//          Reg[B] = Mem[53]
 //      else (Y > Y2): (Branch 4)
 //          Reg[A] = Mem[46] // Move Backward and Left
+//          Reg[B] = Mem[56]
 // else if X <= X2: (Branch 5)
 //      if Y <= Y1: (Branch 6)
 //          Reg[A] = Mem[41] // Move Forward
+//          Reg[B] = Mem[51]
 //      else if Y <= Y2: (Branch 7)
 //          Reg[A] = Mem[44] // Keep Idle
+//          Reg[B] = Mem[54]
 //      else (Y > Y2): (Branch 8)
 //          Reg[A] = Mem[47] // Move Backward
+//          Reg[B] = Mem[57]
 // else (X > X2): (Branch 9)
 //      if Y <= Y1: (Branch 10)
 //          Reg[A] = Mem[42] // Move Forward and Right
+//          Reg[B] = Mem[52]
 //      else if Y <= Y2: (Branch 11)
 //          Reg[A] = Mem[45] // Move Right
+//          Reg[B] = Mem[55]
 //      else (Y > Y2): (Branch 12)
 //          Reg[A] = Mem[48] // Move Backward and Right
+//          Reg[B] = Mem[58]
 // IR = Reg[A]
+// Seg[1:0] = Reg[B]
 // Finish, Go IDLE
 // ============================================================
 // Control Car according to Mouse position, real machine code
 // Branch 1
-@71 01 // B <- Mem[0x10] (X1)
-@72 10
-@73 00 // A <- mouse X position
-@74 A1
-@75 A6 // if (X > X1) Jump to Branch 5
-@76 8D
+@65 01 // B <- Mem[0x10] (X1)
+@66 10
+@67 00 // A <- mouse X position
+@68 A1
+@69 A6 // if (X > X1) Jump to Branch 5
+@6A 87
 // else Branch 2
-@77 00 // A <- mouse Y position
-@78 A2
-@79 01 // B <- Mem[0x12] (Y1)
-@7A 12
-@7B A6 // if (Y > Y1) Jump to Branch 3
-@7C 81
-// else, Move Forward and Left
-@7D 00 // A <- Mem[0x40]
-@7E 40
-@7F 07 // Jump to Write IR
-@80 BB
+@6B 00 // A <- mouse Y position
+@6C A2
+@6D 01 // B <- Mem[0x12] (Y1)
+@6E 12
+@6F A6 // if (Y > Y1) Jump to Branch 3
+@70 77
+// else, Move Backward and Left
+@71 00 // A <- Mem[0x46]
+@72 46
+@73 01 // B <- Mem[0x56]
+@74 56
+@75 07 // Jump to Write IR
+@76 C1
 // Branch 3
-@81 01 // B <- Mem[0x13] (Y2)
-@82 13
-@83 A6 // if (Y > Y2) Jump to Branch 4
-@84 89
+@77 01 // B <- Mem[0x13] (Y2)
+@78 13
+@79 A6 // if (Y > Y2) Jump to Branch 4
+@7A 81
 // else Move Left
-@85 00 // A <- Mem[0x43]
-@86 43
-@87 07 // Jump to Write IR
-@88 BB
-// Branch 4, Move Backward and Left
-@89 00 // A <- Mem[0x46]
-@8A 46
-@8B 07 // Jump to Write IR
-@8C BB
+@7B 00 // A <- Mem[0x43]
+@7C 43
+@7D 01 // B <- Mem[0x53]
+@7E 53
+@7F 07 // Jump to Write IR
+@80 C1
+// Branch 4, Move Forward and Left
+@81 00 // A <- Mem[0x40]
+@82 40
+@83 01 // B <- Mem[0x50]
+@84 50
+@85 07 // Jump to Write IR
+@86 C1
 
 // Branch 5
-@8D 01 // B <- Mem[0x11] (X2)
-@8E 11
-@8F A6 // if (X > X2) Jump to Branch 9
-@90 A7
+@87 01 // B <- Mem[0x11] (X2)
+@88 11
+@89 A6 // if (X > X2) Jump to Branch 9
+@8A A7
 // else Branch 6
-@91 00 // A <- mouse Y position
-@92 A2
-@93 01 // B <- Mem[0x12] (Y1)
-@94 12
-@95 A6 // if (Y > Y1) Jump to Branch 7
-@96 9B
-// else Move Forward
-@97 00 // A <- Mem[0x41]
-@98 41
-@99 07 // Jump to Write IR
-@9A BB
+@8B 00 // A <- mouse Y position
+@8C A2
+@8D 01 // B <- Mem[0x12] (Y1)
+@8E 12
+@8F A6 // if (Y > Y1) Jump to Branch 7
+@90 97
+// else Move Backward
+@91 00 // A <- Mem[0x47]
+@92 47
+@93 01 // B <- Mem[0x57]
+@94 57
+@95 07 // Jump to Write IR
+@96 C1
 // Branch 7
-@9B 01 // B <- Mem[0x13] (Y2)
-@9C 13
-@9D A6 // if (Y > Y2) Jump to Branch 8
-@9E A3
+@97 01 // B <- Mem[0x13] (Y2)
+@98 13
+@99 A6 // if (Y > Y2) Jump to Branch 8
+@9A A1
 // else Car IDLE
-@9F 00 // A <- Mem[0x44]
-@A0 44
-@A1 07 // Jump to Write IR
-@A2 BB
-// Branch 8, Move Backward
-@A3 00 // A <- Mem[0x47]
-@A4 47
+@9B 00 // A <- Mem[0x44]
+@9C 44
+@9D 01 // B <- Mem[0x54]
+@9E 54
+@9F 07 // Jump to Write IR
+@A0 C1
+// Branch 8, Move Forward
+@A1 00 // A <- Mem[0x41]
+@A2 41
+@A3 01 // B <- Mem[0x51]
+@A4 51
 @A5 07 // Jump to Write IR
-@A6 BB
+@A6 C1
 
 // Branch 9
 // Branch 10
@@ -234,29 +286,37 @@
 @A9 01 // B <- Mem[0x12] (Y1)
 @AA 12
 @AB A6 // if (Y > Y1) Jump to Branch 11
-@AC B1
-// else Move Forward and Right
-@AD 00 // A <- Mem[0x42]
-@AE 42
-@AF 07 // Jump to Write IR
-@B0 BB
+@AC B3
+// else Move Backward and Right
+@AD 00 // A <- Mem[0x48]
+@AE 48
+@AF 01 // B <- Mem[0x58]
+@B0 58
+@B1 07 // Jump to Write IR
+@B2 C1
 // Branch 11
-@B1 01 // B <- Mem[0x13] (Y2)
-@B2 13
-@B3 A6 // if (Y > Y2) Jump to Branch 12
-@B4 B9
+@B3 01 // B <- Mem[0x13] (Y2)
+@B4 13
+@B5 A6 // if (Y > Y2) Jump to Branch 12
+@B6 BD
 // else Move Right
-@B5 00 // A <- Mem[0x45]
-@B6 45
-@B7 07 // Jump to Write IR
-@B8 BB
-// Branch 12, Move Backward and Right
-@B9 00 // A <- Mem[0x48]
-@BA 48
-// Write IR
-@BB 03 // IR <- B
-@BC 90
-@BD 08 // IDLE
+@B7 00 // A <- Mem[0x45]
+@B8 45
+@B9 01 // B <- Mem[0x55]
+@BA 55
+@BB 07 // Jump to Write IR
+@BC C1
+// Branch 12, Move Forward and Right
+@BD 00 // A <- Mem[0x42]
+@BE 42
+@BF 01 // B <- Mem[0x52]
+@C0 52
+// Write IR (and seg7)
+@C1 02 // IR <- A
+@C2 90
+@C3 03 // Seg7[1:0] <- B
+@C4 D1
+@C5 08 // IDLE
 
 // ============================================================
 // Timer interrupt handler’s service routine: update pointer
@@ -285,64 +345,64 @@
 // ============================================================
 // Mouse Pointer Update, real machine code
 // Branch 1
-@C0 00 // A <- Mem[30] (Previous X position)
-@C1 30
-@C2 01 // B <- Mem[10] (X1)
-@C3 10
-@C4 96 // if (Prev_X == X1) Jump to Draw new Pointer
-@C5 E0
+@C6 00 // A <- Mem[30] (Previous X position)
+@C7 30
+@C8 01 // B <- Mem[10] (X1)
+@C9 10
+@CA 96 // if (Prev_X == X1) Jump to Draw new Pointer
+@CB E6
 // else Branch 2
-@C6 01 // B <- Mem[11] (X2)
-@C7 11
-@C8 96 // if (Prev_X == X2) Jump to Draw new Pointer
-@C9 E0
+@CC 01 // B <- Mem[11] (X2)
+@CD 11
+@CE 96 // if (Prev_X == X2) Jump to Draw new Pointer
+@CF E6
 // else Branch 3
-@CA 00 // A <- Mem[31] (Previous Y position)
-@CB 31
-@CC 01 // B <- Mem[12] (Y1)
-@CD 12
-@CE 96 // if (Prev_Y == Y1) Jump to Draw new Pointer
-@CF E0
+@D0 00 // A <- Mem[31] (Previous Y position)
+@D1 31
+@D2 01 // B <- Mem[12] (Y1)
+@D3 12
+@D4 96 // if (Prev_Y == Y1) Jump to Draw new Pointer
+@D5 E6
 // else Branch 4
-@D0 01 // B <- Mem[13] (Y2)
-@D1 13
-@D2 96 // if (Prev_Y == Y1) Jump to Draw new Pointer
-@D3 E0
+@D6 01 // B <- Mem[13] (Y2)
+@D7 13
+@D8 96 // if (Prev_Y == Y1) Jump to Draw new Pointer
+@D9 E6
 // else clean previous pointer on screen
-@D4 00 // A <- Mem[30] (Previous X position)
-@D5 30
-@D6 02 // VGA_X <- A
-@D7 B0
-@D8 00 // A <- Mem[31] (Previous Y position)
-@D9 31
-@DA 02 // VGA_Y <- A
-@DB B1
-@DC 00 // A <- Mem[07] (background 0)
-@DD 07
-@DE 02 // VGA_COLOR <- A
-@DF B2
+@DA 00 // A <- Mem[30] (Previous X position)
+@DB 30
+@DC 02 // VGA_X <- A
+@DD B0
+@DE 00 // A <- Mem[31] (Previous Y position)
+@DF 31
+@E0 02 // VGA_Y <- A
+@E1 B1
+@E2 00 // A <- Mem[07] (background 0)
+@E3 07
+@E4 02 // VGA_COLOR <- A
+@E5 B2
 // Draw new Pointer (and save X, Y as Prev_X, Prev_Y)
-@E0 00 // A <- Mouse X position
-@E1 A1
-@E2 02 // VGA_X <- A
-@E3 B0
-@E4 02 // Prev_X <- A0
-@E5 30
-@E6 00 // A <- Mouse Y position
-@E7 A2
-@E8 02 // VGA_Y <- A
-@E9 B1
-@EA 02 // Prev_Y <- A0
-@EB 31
-@EC 00 // A <- Mem[06] (foreground 1)
-@ED 06
-@EE 02 // VGA_COLOR <- A
-@EF B2
-@F0 08 // GO IDLE
+@E6 00 // A <- Mouse X position
+@E7 A1
+@E8 02 // VGA_X <- A
+@E9 B0
+@EA 02 // Prev_X <- A0
+@EB 30
+@EC 00 // A <- Mouse Y position
+@ED A2
+@EE 02 // VGA_Y <- A
+@EF B1
+@F0 02 // Prev_Y <- A0
+@F1 31
+@F2 00 // A <- Mem[06] (foreground 1)
+@F3 06
+@F4 02 // VGA_COLOR <- A
+@F5 B2
+@F6 08 // GO IDLE
 
 // ============================================================
 // interrupt handler’s service routine
 // ============================================================
 @FD F0 // Switches interrupt address, reserved
-@FE C0 // Timer interrupt address
+@FE C6 // Timer interrupt address
 @FF 65 // Mouse interrupt address
