@@ -1,7 +1,7 @@
 -- Copyright 1986-2015 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2015.2 (win64) Build 1266856 Fri Jun 26 16:35:25 MDT 2015
--- Date        : Fri Mar 21 11:32:08 2025
+-- Date        : Thu Apr 03 14:20:22 2025
 -- Host        : DESKTOP-05T10QC running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
 --               C:/Users/wsqlb/Documents/work/FPGA_IC/digital_sys_lab/ip/clk_wiz_0/clk_wiz_0_stub.vhdl
